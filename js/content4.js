@@ -163,7 +163,7 @@
         {
           id: "trend",
           sol: "CH.3.f",
-          stem: "Which statement is supported by the data in the table?",
+          stem: "Which statement about fizzing time is supported by the table?",
           choices: [
             { letter: "A", text: "The reaction ran fastest in the coldest water." },
             { letter: "B", text: "Raising the temperature shortened the fizzing time." },
