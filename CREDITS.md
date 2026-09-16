@@ -1,6 +1,6 @@
 # Credits
 
-SOL Lab is the SOL Labyrinth engine rebuilt for Biology. It is built with Phaser 3.80.1 (MIT, shipped in `js/vendor/phaser.min.js`) and PeerJS 1.5.4 (MIT, `js/vendor/peerjs.min.js`). Written for NNPS students practising the Virginia EOC Biology SOL.
+SOL Lab is the SOL Labyrinth engine rebuilt for Chemistry. It is built with Phaser 3.80.1 (MIT, shipped in `js/vendor/phaser.min.js`) and PeerJS 1.5.4 (MIT, `js/vendor/peerjs.min.js`). Written for NNPS students practising the Virginia EOC Chemistry SOL.
 
 ## Music
 All background music is from **Game Background Music Pack** by **EpsilonGamesOfficial** (itch.io, name-your-own-price):

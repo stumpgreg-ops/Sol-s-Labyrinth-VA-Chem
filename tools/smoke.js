@@ -30,9 +30,9 @@ var srv = http.createServer(function (req, res) {
   await page.goto(base + "index.html", { waitUntil: "load" });
   await page.waitForTimeout(800);
   check(await page.isVisible("#title-screen") && !(await page.isVisible("#state-screen")), "title screen shows first (no state gateway)");
-  check((await page.$$eval("#title-screen .card[data-family]", function (l) { return l.length; })) === 9, "nine unit cards (Full review + 8 units)");
+  check((await page.$$eval("#title-screen .card[data-family]", function (l) { return l.length; })) === 6, "six unit cards (Full review + 5 reporting categories)");
   check(await page.isVisible('#title-screen .card.selected[data-family="ALL"]'), "Full review is selected by default");
-  check((await page.textContent("#title-kicker")).indexOf("Biology") !== -1, "kicker names Biology");
+  check((await page.textContent("#title-kicker")).indexOf("Chemistry") !== -1, "kicker names Chemistry");
   await shot("01-title");
 
   /* content pools: every unit has a pool, every skill card of every unit has items, and the
@@ -53,7 +53,7 @@ var srv = http.createServer(function (req, res) {
     return out;
   });
   console.log("pools", JSON.stringify(pools));
-  check(pools.units.ALL.all > 400 && Object.keys(pools.units).every(function (k) { return k === "ALL" || pools.units[k].all >= 40; }), "every unit has at least 40 questions and Full review has 400+");
+  check(pools.units.ALL.all > 350 && Object.keys(pools.units).every(function (k) { return k === "ALL" || pools.units[k].all >= 60; }), "every unit has at least 60 questions and Full review has 350+");
   check(pools.empty.length === 0, "every skill card has questions: " + (pools.empty.join(", ") || "none empty"));
 
   /* v4.9.7: the shop is open from night 1 — with no build yet it asks Town or Castle first, and a wall
@@ -269,12 +269,12 @@ var srv = http.createServer(function (req, res) {
   await page.evaluate(function () { SolBuild._rotate(-217); SolBuild._zoom(0.8); });
   await page.keyboard.press("Escape");
 
-  /* start an Ecology level */
-  await page.click('#title-screen .card[data-family="ECO"]');
+  /* start a Phases of Matter level */
+  await page.click('#title-screen .card[data-family="KMT"]');
   await page.waitForSelector("#skill-screen:not(.hidden)");
-  check((await page.$$eval("#skill-packs .card", function (l) { return l.length; })) === 5, "five Ecology skill cards (BIO.8 a–d + All)");
-  check(/Ecology/.test(await page.textContent("#skill-kicker")), "skill kicker names the unit");
-  await shot("10-skills-eco");
+  check((await page.$$eval("#skill-packs .card", function (l) { return l.length; })) === 6, "six Phases of Matter skill cards (CH.5 a–g grouped + All)");
+  check(/Phases of Matter/.test(await page.textContent("#skill-kicker")), "skill kicker names the unit");
+  await shot("10-skills-kmt");
   await page.click("#btn-skill-start");
   await page.waitForTimeout(300);
   if (await page.isVisible("#btn-char-confirm")) await page.click("#btn-char-confirm");
@@ -283,7 +283,7 @@ var srv = http.createServer(function (req, res) {
   await page.waitForTimeout(1500);
   var hud = await page.evaluate(function () { return { sol: document.getElementById("job-sol").textContent, coins: document.getElementById("bonus-pip").textContent, stem: document.getElementById("eoc-stem").textContent, kick: document.getElementById("read-kicker") && document.getElementById("read-kicker").textContent }; });
   console.log("hud", JSON.stringify(hud));
-  check(/^SOL · BIO\.\d\.[a-f] · Level [123]/.test(hud.sol), "HUD shows the SOL code and the adaptive level: " + hud.sol);
+  check(/^SOL · CH\.[1-5]\.[a-j] · Level [123]/.test(hud.sol), "HUD shows the SOL code and the adaptive level: " + hud.sol);
   check(/^Coins/.test(hud.coins), "HUD shows coins");
   check(hud.stem.length > 10, "a question is loaded");
   await shot("11-night-read");

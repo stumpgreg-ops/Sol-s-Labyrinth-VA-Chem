@@ -1,4 +1,4 @@
-/* SOL Lab — question-pack machinery for the Virginia EOC Biology SOL build.
+/* SOL Lab — question-pack machinery for the Virginia EOC Chemistry SOL build.
    The packs themselves live in js/content2.js onward (one file per unit) and push into
    HEIST_PACKS. This file defines the units (families), the standards map that drives the
    skill screen, the strand filter, the adaptive level estimate and the stamina schedule. */
@@ -6,126 +6,105 @@
   var PACKS = [];
 
   /* Units. `id` is the pack family; the title screen shows one card per unit plus Full review.
+     The five units are the five reporting categories of the EOC Chemistry SOL test blueprint,
+     one per standard CH.1–CH.5 (CH.6, organic chemistry and biochemistry, is not tested).
      `stds` lists the standard prefixes a pack in that unit may use (checked by the validator). */
   var FAMILIES = [
-    { id: "ALL", label: "Full review", short: "Full review", kind: "All units", meta: "Every unit mixed, leaning toward the standards you miss most. Best in the last weeks before the test.", stds: ["BIO.1", "BIO.2", "BIO.3", "BIO.4", "BIO.5", "BIO.6", "BIO.7", "BIO.8"] },
-    { id: "INV", label: "Scientific Investigation", short: "Investigation", kind: "BIO.1", meta: "Variables, controls, data tables, graphs, conclusions and models. The practices every other unit is tested through.", stds: ["BIO.1"] },
-    { id: "CHEM", label: "Biochemistry", short: "Biochemistry", kind: "BIO.2", meta: "Water, macromolecules, enzymes, photosynthesis and cellular respiration.", stds: ["BIO.2"] },
-    { id: "CELL", label: "Cell Structure & Function", short: "Cells", kind: "BIO.3", meta: "Cell theory, organelles, levels of organization, the membrane and transport, specialization.", stds: ["BIO.3"] },
-    { id: "MICRO", label: "Bacteria & Viruses", short: "Bacteria & Viruses", kind: "BIO.4", meta: "Virus and bacterium structure, replication, roles in ecosystems and the germ theory of disease.", stds: ["BIO.4"] },
-    { id: "GEN", label: "Genetics & Heredity", short: "Genetics", kind: "BIO.5", meta: "Meiosis, Mendel, Punnett squares, pedigrees, mutations, variation and biotechnology.", stds: ["BIO.5"] },
-    { id: "DNA", label: "DNA & Protein Synthesis", short: "DNA & Proteins", kind: "BIO.2 · BIO.5", meta: "DNA structure and replication, transcription, translation and the history of the DNA model.", stds: ["BIO.2.d", "BIO.5.a", "BIO.5.b"] },
-    { id: "EVO", label: "Evolution & Classification", short: "Evolution", kind: "BIO.6 · BIO.7", meta: "Cladograms, domains and kingdoms, fossils, natural selection, adaptation and speciation.", stds: ["BIO.6", "BIO.7"] },
-    { id: "ECO", label: "Ecology", short: "Ecology", kind: "BIO.8", meta: "Populations, food webs, energy flow, nutrient cycles, succession, human impact and Virginia ecosystems.", stds: ["BIO.8"] }
+    { id: "ALL", label: "Full review", short: "Full review", kind: "All units", meta: "Every reporting category mixed, leaning toward the standards you miss most. Best in the last weeks before the test.", stds: ["CH.1", "CH.2", "CH.3", "CH.4", "CH.5"] },
+    { id: "INV", label: "Scientific Investigation", short: "Investigation", kind: "CH.1", meta: "Lab technique and safety, variables and trials, data and error analysis, SI units, significant digits and dimensional analysis.", stds: ["CH.1"] },
+    { id: "ATOM", label: "Atomic Structure & Periodic Relationships", short: "Atoms & Periodic Table", kind: "CH.2", meta: "Atomic number and mass, isotopes and half-life, groups and periods, periodic trends, electron configurations and atomic models.", stds: ["CH.2"] },
+    { id: "RXN", label: "Nomenclature, Formulas & Reactions", short: "Formulas & Reactions", kind: "CH.3", meta: "Naming compounds, writing formulas, balancing equations, bonding, reaction types, rates and equilibrium.", stds: ["CH.3"] },
+    { id: "MOLE", label: "Molar Relationships", short: "Moles", kind: "CH.4", meta: "The mole and molar volume, stoichiometry, solution concentration, acids, bases, pH and titration.", stds: ["CH.4"] },
+    { id: "KMT", label: "Phases of Matter & Kinetic Molecular Theory", short: "Gases & Phases", kind: "CH.5", meta: "Pressure, temperature and volume, gas laws, vapor pressure, phase changes, heats of fusion and vaporization, specific heat, colligative properties.", stds: ["CH.5"] }
   ];
   /* Which pack families feed each selection. */
   var FAMILY_POOL = {};
   FAMILIES.forEach(function (f) { FAMILY_POOL[f.id] = f.id === "ALL" ? FAMILIES.filter(function (x) { return x.id !== "ALL"; }).map(function (x) { return x.id; }) : [f.id]; });
 
-  /* Standards map (2018 Virginia Biology Standards of Learning, BIO.1–BIO.8 with their key
-     ideas). The skill screen shows these as cards; `strand` is the prefix a claim's `sol`
-     code must start with. Unit cards list only the key ideas that unit teaches. */
+  /* Standards map: the Virginia Chemistry Standards of Learning CH.1–CH.5 with their lettered key
+     concepts, as the EOC Chemistry test blueprint cites them. The skill screen shows these as
+     cards; `strand` is the prefix a claim's `sol` code must start with. */
   var STANDARDS = {
-    "BIO.1": { name: "Scientific investigation", keys: {
-      a: "asking questions and defining problems",
-      b: "planning and carrying out investigations",
-      c: "interpreting, analyzing, and evaluating data",
-      d: "constructing and critiquing conclusions and explanations",
-      e: "developing and using models",
-      f: "obtaining, evaluating, and communicating information" } },
-    "BIO.2": { name: "Chemical and biochemical processes", keys: {
-      a: "water chemistry and its impact on life processes",
-      b: "the structure and function of macromolecules",
-      c: "the nature of enzymes",
-      d: "protein synthesis: DNA as the code for proteins",
-      e: "the capture, storage, transformation, and flow of energy through photosynthesis and respiration" } },
-    "BIO.3": { name: "Cell structure and function", keys: {
-      a: "the cell theory is supported by evidence",
-      b: "structures in unicellular and multicellular organisms work interdependently to carry out life processes",
-      c: "the structure and function of the cell membrane support cell transport",
-      d: "specialization leads to the development of different types of cells" } },
-    "BIO.4": { name: "Bacteria and viruses", keys: {
-      a: "viruses depend on a host for metabolic processes",
-      b: "the modes of reproduction and replication can be compared",
-      c: "the structures and functions can be compared",
-      d: "bacteria and viruses have a role in other organisms and the environment",
-      e: "the germ theory of infectious disease is supported by evidence" } },
-    "BIO.5": { name: "Mechanisms of inheritance", keys: {
-      a: "DNA has structure and is the foundation for protein synthesis",
-      b: "the structural model of DNA has developed over time",
-      c: "cell division and gamete formation pass genes to the next generation",
-      d: "the variety of traits in an organism are the result of the expression of various combinations of alleles",
-      e: "mutations and genetic variation",
-      f: "synthetic biology has biological and ethical implications" } },
-    "BIO.6": { name: "Modern classification", keys: {
-      a: "structural similarities among organisms",
-      b: "fossil record interpretation",
-      c: "comparison of developmental stages",
-      d: "biochemical similarities and differences",
-      e: "classification systems are adaptable to new scientific discoveries" } },
-    "BIO.7": { name: "Populations change through time", keys: {
-      a: "evidence found in fossil records",
-      b: "how variation of traits, reproductive strategies, and environmental pressures affect survival",
-      c: "how natural selection leads to adaptations",
-      d: "the emergence of new species",
-      e: "scientific evidence and explanations for biological evolution" } },
-    "BIO.8": { name: "Dynamic equilibria in ecosystems", keys: {
-      a: "interactions within and among populations: carrying capacity, limiting factors, and growth curves",
-      b: "nutrient cycling with energy flow through ecosystems",
-      c: "succession patterns in ecosystems",
-      d: "natural events and human activities influence local and global ecosystems and the flora and fauna of Virginia" } }
+    "CH.1": { name: "Scientific investigation", keys: {
+      a: "designated laboratory techniques",
+      b: "safe use of chemicals and equipment",
+      c: "proper response to emergency situations",
+      d: "manipulation of multiple variables, using repeated trials",
+      e: "accurate recording, organization, and analysis of data through repeated trials",
+      f: "mathematical and procedural error analysis",
+      g: "mathematical manipulations including SI units, scientific notation, linear equations, graphing, ratio and proportion, significant digits, and dimensional analysis",
+      h: "use of appropriate technology including calculators, computers, balances, pH meters, spectrophotometers, probeware, and standard laboratory glassware",
+      i: "construction and defense of a scientific viewpoint",
+      j: "the use of current applications to reinforce chemistry concepts" } },
+    "CH.2": { name: "Atomic structure and periodic relationships", keys: {
+      a: "average atomic mass, mass number, and atomic number",
+      b: "isotopes, half lives, and radioactive decay",
+      c: "mass and charge characteristics of subatomic particles",
+      d: "families or groups",
+      e: "periods",
+      f: "trends including atomic radii, electronegativity, shielding effect, and ionization energy",
+      g: "electron configurations, valence electrons, and oxidation numbers",
+      h: "chemical and physical properties",
+      i: "historical and quantum models" } },
+    "CH.3": { name: "Nomenclature, chemical formulas, and reactions", keys: {
+      a: "nomenclature",
+      b: "balancing chemical equations",
+      c: "writing chemical formulas",
+      d: "bonding types",
+      e: "reaction types",
+      f: "reaction rates, kinetics, and equilibrium" } },
+    "CH.4": { name: "Molar relationships", keys: {
+      a: "Avogadro's principle and molar volume",
+      b: "stoichiometric relationships",
+      c: "solution concentrations",
+      d: "acid/base theory: strong, weak, and nonelectrolytes; dissociation and ionization; pH and pOH; and the titration process" } },
+    "CH.5": { name: "Phases of matter and kinetic molecular theory", keys: {
+      a: "pressure, temperature, and volume",
+      b: "partial pressure and gas laws",
+      c: "vapor pressure",
+      d: "phase changes",
+      e: "molar heats of fusion and vaporization",
+      f: "specific heat capacity",
+      g: "colligative properties" } }
   };
 
-  /* Skill cards per unit (strand = the sol-code prefix the filter keeps). */
+  /* Skill cards per unit (strand = the sol-code prefix the filter keeps; STRAND_ALIASES below
+     lets one card cover neighbouring key concepts). */
   var SKILLS = {
     INV: [
-      { strand: "BIO.1.A", kind: "BIO.1 a", name: "Questions & hypotheses", meta: "Testable questions, hypotheses, and what a study can and cannot answer." },
-      { strand: "BIO.1.B", kind: "BIO.1 b", name: "Design & variables", meta: "Independent, dependent and controlled variables, control groups, trials and safety." },
-      { strand: "BIO.1.C", kind: "BIO.1 c", name: "Data & graphs", meta: "Reading tables and graphs, trends, averages, outliers and precision." },
-      { strand: "BIO.1.D", kind: "BIO.1 d", name: "Conclusions", meta: "Claims that the evidence supports, sources of error, and what to test next." },
-      { strand: "BIO.1.E", kind: "BIO.1 e", name: "Models", meta: "Diagrams, simulations and equations: what a model shows and where it breaks down." }
+      { strand: "CH.1.A", kind: "CH.1 a · b · c · h", name: "Lab technique & safety", meta: "Glassware, balances, probes and pH meters; handling chemicals, reading labels, responding to spills, burns and fires." },
+      { strand: "CH.1.D", kind: "CH.1 d · e", name: "Design, trials & data", meta: "Independent, dependent and controlled variables, repeated trials, recording and organizing data, reading tables and graphs." },
+      { strand: "CH.1.F", kind: "CH.1 f", name: "Error analysis", meta: "Percent error, precision and accuracy, systematic and random error, what a bad trial does to an average." },
+      { strand: "CH.1.G", kind: "CH.1 g", name: "Math of chemistry", meta: "SI units and prefixes, scientific notation, significant digits, ratio and proportion, dimensional analysis, linear graphs." },
+      { strand: "CH.1.I", kind: "CH.1 i · j", name: "Claims & applications", meta: "Defending a conclusion with evidence, and chemistry in current applications: batteries, water treatment, food, medicine." }
     ],
-    CHEM: [
-      { strand: "BIO.2.A", kind: "BIO.2 a", name: "Water", meta: "Polarity, hydrogen bonds, cohesion, adhesion, pH and why water matters to cells." },
-      { strand: "BIO.2.B", kind: "BIO.2 b", name: "Macromolecules", meta: "Carbohydrates, lipids, proteins and nucleic acids: monomers, structure and jobs." },
-      { strand: "BIO.2.C", kind: "BIO.2 c", name: "Enzymes", meta: "Active sites, substrates, activation energy, temperature and pH." },
-      { strand: "BIO.2.E", kind: "BIO.2 e", name: "Photosynthesis & respiration", meta: "Reactants, products, ATP, chloroplasts, mitochondria and the flow of energy." }
+    ATOM: [
+      { strand: "CH.2.A", kind: "CH.2 a · c", name: "Atomic number, mass & particles", meta: "Protons, neutrons and electrons; atomic number, mass number and average atomic mass from isotope abundances." },
+      { strand: "CH.2.B", kind: "CH.2 b", name: "Isotopes & nuclear decay", meta: "Isotope notation, alpha, beta and gamma decay, half-life problems and decay equations." },
+      { strand: "CH.2.D", kind: "CH.2 d · e", name: "Groups & periods", meta: "Alkali metals, alkaline earths, halogens, noble gases, transition metals; what a period and a group tell you." },
+      { strand: "CH.2.F", kind: "CH.2 f", name: "Periodic trends", meta: "Atomic radius, ionization energy, electronegativity and shielding across a period and down a group." },
+      { strand: "CH.2.G", kind: "CH.2 g", name: "Electrons & oxidation numbers", meta: "Electron configurations, orbital diagrams, valence electrons, ion charges and oxidation numbers." },
+      { strand: "CH.2.H", kind: "CH.2 h · i", name: "Properties & atomic models", meta: "Physical and chemical properties and changes; Dalton, Thomson, Rutherford, Bohr and the quantum model." }
     ],
-    CELL: [
-      { strand: "BIO.3.A", kind: "BIO.3 a", name: "Cell theory", meta: "Evidence for the cell theory, microscopes, prokaryotes and eukaryotes." },
-      { strand: "BIO.3.B", kind: "BIO.3 b", name: "Organelles & organization", meta: "Organelle jobs, plant vs animal cells, cells to tissues to organs to systems." },
-      { strand: "BIO.3.C", kind: "BIO.3 c", name: "Membrane & transport", meta: "Phospholipid bilayer, diffusion, osmosis, facilitated and active transport." },
-      { strand: "BIO.3.D", kind: "BIO.3 d", name: "Specialization", meta: "Stem cells, differentiation, and how a cell's shape fits its job." }
+    RXN: [
+      { strand: "CH.3.A", kind: "CH.3 a · c", name: "Nomenclature & formulas", meta: "Naming and writing formulas for ionic, covalent and acid compounds, polyatomic ions and hydrates." },
+      { strand: "CH.3.B", kind: "CH.3 b", name: "Balancing equations", meta: "Coefficients, conservation of mass, states of matter in equations, and the smallest whole-number ratio." },
+      { strand: "CH.3.D", kind: "CH.3 d", name: "Bonding", meta: "Ionic, covalent and metallic bonds, polarity, Lewis structures, molecular shape and intermolecular forces." },
+      { strand: "CH.3.E", kind: "CH.3 e", name: "Reaction types", meta: "Synthesis, decomposition, single and double replacement, combustion, and predicting products." },
+      { strand: "CH.3.F", kind: "CH.3 f", name: "Rates & equilibrium", meta: "Collision theory, catalysts, concentration and temperature, activation energy, and Le Chatelier's principle." }
     ],
-    MICRO: [
-      { strand: "BIO.4.A", kind: "BIO.4 a", name: "Viruses need a host", meta: "Why viruses are not cells, and how they take over a host's machinery." },
-      { strand: "BIO.4.B", kind: "BIO.4 b", name: "Reproduction & replication", meta: "Binary fission, conjugation, lytic and lysogenic cycles." },
-      { strand: "BIO.4.C", kind: "BIO.4 c", name: "Structure comparison", meta: "Capsids, cell walls, plasmids, flagella and size." },
-      { strand: "BIO.4.D", kind: "BIO.4 d", name: "Roles in nature", meta: "Decomposers, nitrogen fixers, gut bacteria, biotechnology and disease." },
-      { strand: "BIO.4.E", kind: "BIO.4 e", name: "Germ theory", meta: "Evidence for the germ theory, vaccines, antibiotics and resistance." }
+    MOLE: [
+      { strand: "CH.4.A", kind: "CH.4 a", name: "Moles & molar volume", meta: "Avogadro's number, molar mass, mole-mass-particle conversions, molar volume at STP, percent composition and empirical formulas." },
+      { strand: "CH.4.B", kind: "CH.4 b", name: "Stoichiometry", meta: "Mole ratios from balanced equations, mass-to-mass problems, limiting reactant and percent yield." },
+      { strand: "CH.4.C", kind: "CH.4 c", name: "Solutions", meta: "Molarity, dilution, molality, preparing a solution, solubility and concentration units." },
+      { strand: "CH.4.D", kind: "CH.4 d", name: "Acids & bases", meta: "Arrhenius and Bronsted-Lowry, strong and weak electrolytes, dissociation and ionization, pH and pOH, titration." }
     ],
-    GEN: [
-      { strand: "BIO.5.C", kind: "BIO.5 c", name: "Meiosis & gametes", meta: "Chromosome number, crossing over, independent assortment and mitosis vs meiosis." },
-      { strand: "BIO.5.D", kind: "BIO.5 d", name: "Alleles & Punnett squares", meta: "Dominant and recessive, genotype and phenotype, ratios, pedigrees, sex-linked traits." },
-      { strand: "BIO.5.E", kind: "BIO.5 e", name: "Mutations & variation", meta: "Point and frameshift mutations, chromosome changes, and where variation comes from." },
-      { strand: "BIO.5.F", kind: "BIO.5 f", name: "Biotechnology", meta: "Gel electrophoresis, GMOs, gene therapy, cloning and the ethics of each." }
-    ],
-    DNA: [
-      { strand: "BIO.5.A", kind: "BIO.5 a", name: "DNA structure & replication", meta: "Nucleotides, base pairing, the double helix and semi-conservative replication." },
-      { strand: "BIO.2.D", kind: "BIO.2 d", name: "Protein synthesis", meta: "Transcription, translation, codons, the genetic code and RNA types." },
-      { strand: "BIO.5.B", kind: "BIO.5 b", name: "History of the DNA model", meta: "Griffith, Avery, Hershey and Chase, Chargaff, Franklin, Watson and Crick." }
-    ],
-    EVO: [
-      { strand: "BIO.6", kind: "BIO.6", name: "Classification", meta: "Domains, kingdoms, binomial names, cladograms and the evidence used to sort life." },
-      { strand: "BIO.7.A", kind: "BIO.7 a · e", name: "Evidence for evolution", meta: "Fossils, homologous structures, embryos and DNA comparisons." },
-      { strand: "BIO.7.B", kind: "BIO.7 b · c", name: "Natural selection", meta: "Variation, environmental pressure, fitness and adaptation." },
-      { strand: "BIO.7.D", kind: "BIO.7 d", name: "Speciation", meta: "Isolation, divergence and how new species arise." }
-    ],
-    ECO: [
-      { strand: "BIO.8.A", kind: "BIO.8 a", name: "Populations", meta: "Growth curves, carrying capacity, limiting factors, predation and competition." },
-      { strand: "BIO.8.B", kind: "BIO.8 b", name: "Energy & cycles", meta: "Food webs, trophic levels, energy pyramids, and the carbon, nitrogen and water cycles." },
-      { strand: "BIO.8.C", kind: "BIO.8 c", name: "Succession", meta: "Primary and secondary succession, pioneer species and climax communities." },
-      { strand: "BIO.8.D", kind: "BIO.8 d", name: "Human impact & Virginia", meta: "The Chesapeake Bay, invasive species, pollution, climate and conservation." }
+    KMT: [
+      { strand: "CH.5.A", kind: "CH.5 a", name: "Pressure, temperature & volume", meta: "Kinetic molecular theory, kelvin, pressure units, and how P, V and T are related." },
+      { strand: "CH.5.B", kind: "CH.5 b", name: "Gas laws & partial pressure", meta: "Boyle, Charles, Gay-Lussac, the combined and ideal gas laws, Dalton's law of partial pressures." },
+      { strand: "CH.5.C", kind: "CH.5 c · d", name: "Vapor pressure & phase changes", meta: "Vapor pressure and boiling, heating curves, phase diagrams, melting, freezing, sublimation and condensation." },
+      { strand: "CH.5.E", kind: "CH.5 e · f", name: "Heat: fusion, vaporization, specific heat", meta: "q = mcΔT, molar heat of fusion and vaporization, calorimetry and heating-curve energy." },
+      { strand: "CH.5.G", kind: "CH.5 g", name: "Colligative properties", meta: "Freezing point depression, boiling point elevation, vapor pressure lowering, and how ionic solutes count." }
     ]
   };
   SKILLS.ALL = Object.keys(STANDARDS).map(function (k) {
@@ -134,8 +113,18 @@
   Object.keys(SKILLS).forEach(function (fam) {
     SKILLS[fam].push({ strand: "ALL", kind: "All skills", name: "All", meta: fam === "ALL" ? "Every standard mixed, leaning toward the ones you miss most." : "Everything in this unit mixed, leaning toward the skills you miss most." });
   });
-  /* Some skill cards cover two key ideas (BIO.7 a·e, BIO.7 b·c): extra prefixes the card also keeps. */
-  var STRAND_ALIASES = { "BIO.7.A": ["BIO.7.E"], "BIO.7.B": ["BIO.7.C"] };
+  /* Skill cards that cover several key concepts: extra prefixes the card also keeps. */
+  var STRAND_ALIASES = {
+    "CH.1.A": ["CH.1.B", "CH.1.C", "CH.1.H"],
+    "CH.1.D": ["CH.1.E"],
+    "CH.1.I": ["CH.1.J"],
+    "CH.2.A": ["CH.2.C"],
+    "CH.2.D": ["CH.2.E"],
+    "CH.2.H": ["CH.2.I"],
+    "CH.3.A": ["CH.3.C"],
+    "CH.5.C": ["CH.5.D"],
+    "CH.5.E": ["CH.5.F"]
+  };
 
   function wordCount(s) {
     return String(s).replace(/<[^>]+>/g, " ").trim().split(/\s+/).filter(Boolean).length;
@@ -165,15 +154,15 @@
     return correctList(claim).length > 1;
   }
 
-  /* A claim's strand is its full standard code, upper-cased: "BIO.8.a" -> "BIO.8.A". */
+  /* A claim's strand is its full standard code, upper-cased: "CH.4.b" -> "CH.4.B". */
   function strandOf(claim) {
     if (claim && claim.strand) return String(claim.strand).toUpperCase();
     var sol = String((claim && claim.sol) || "").toUpperCase().replace(/\s+/g, "");
-    return /^BIO\.\d/.test(sol) ? sol : "BIO.1";
+    return /^CH\.\d/.test(sol) ? sol : "CH.1";
   }
   function standardOf(claim) {
-    var m = /^(BIO\.\d)/.exec(strandOf(claim));
-    return m ? m[1] : "BIO.1";
+    var m = /^(CH\.\d)/.exec(strandOf(claim));
+    return m ? m[1] : "CH.1";
   }
   function prefixMatch(code, prefix) {
     return code === prefix || code.indexOf(prefix + ".") === 0;
@@ -181,7 +170,7 @@
   function strandMatch(claim, strand) {
     strand = String(strand || "ALL").toUpperCase();
     if (!strand || strand === "ALL" || strand === "NULL") return true;
-    if (!/^BIO\.\d/.test(strand)) return true;
+    if (!/^CH\.\d/.test(strand)) return true;
     var code = strandOf(claim);
     if (prefixMatch(code, strand)) return true;
     var extra = STRAND_ALIASES[strand] || [];
@@ -298,6 +287,7 @@
   global.HEIST_FAMILY_POOL = FAMILY_POOL;
   global.HEIST_STANDARDS = STANDARDS;
   global.HEIST_SKILLS = SKILLS;
+  global.HEIST_STRAND_ALIASES = STRAND_ALIASES;
   global.heistWordCount = wordCount;
   global.heistBuildPack = buildPack;
   global.heistCorrectList = correctList;

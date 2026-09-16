@@ -40,10 +40,10 @@
   var LS_CHAR = "afterHours.v1.charPreset";
   var LS_STATE = "afterHours.v1.state";
   var LS_ADAPT = "afterHours.v1.adapt.";
-  /* v6 (Biology): one course. The unit cards on the title screen are the families defined in
+  /* v6 (Chemistry): one course. The unit cards on the title screen are the families defined in
      js/content.js (HEIST_FAMILIES); the old New Jersey / Virginia gateway is gone. */
   var STATE_DEFS = {
-    VA: { name: "Virginia", kicker: "Virginia EOC Biology SOL · 100 levels", families: (window.HEIST_FAMILIES || []).map(function (f) { return f.id; }), def: "ALL", hud: "SOL" }
+    VA: { name: "Virginia", kicker: "Virginia EOC Chemistry SOL · 100 levels", families: (window.HEIST_FAMILIES || []).map(function (f) { return f.id; }), def: "ALL", hud: "SOL" }
   };
 
   var Input = { ax: 0, ay: 0, act: false, actEdge: false, sprint: false, shutterEdge: false };
@@ -2978,7 +2978,7 @@
   function adaptEvent(scene, kind, claim) {
     var a = scene.adapt;
     if (!a) return;
-    var st = (claim && claim.strand) || "BIO.1";
+    var st = (claim && claim.strand) || "CH.1";
     var rec = a.strands[st] || (a.strands[st] = { r: 0, w: 0 });
     if (kind === "wrong") { rec.w++; a.ability = Math.max(1, a.ability - 0.18); }
     else if (kind === "clean") { rec.r++; a.ability = Math.min(3, a.ability + 0.12); }
@@ -6909,7 +6909,7 @@
         var wantWords = (typeof heistTargetWords === "function") ? heistTargetWords(this.night) : 250;
         /* v4.9.6: when the pool has enough stimuli inside the level's length band (60%–160% of the
            target) only those are drawn, so level 90 never serves a 60-word note; thin pools fall back.
-           v6 (Biology): a unit pool is far smaller than the old grade pools, and a science item set
+           v6 (science builds): a unit pool is far smaller than the old grade pools, and a science item set
            normally asks several questions on one set of lab notes, so a level prefers notes it has not
            used yet but may come back to a stimulus when that keeps the length band honest. */
         var inBand = function (idx) { var cw = claims[idx].words; return !cw || (cw >= wantWords * 0.6 && cw <= wantWords * 1.6); };
@@ -6923,7 +6923,7 @@
           w = Math.exp(-Math.abs((c.level || 2) - target) * 1.3);
           if (c.words) w *= Math.exp(-Math.abs(c.words - wantWords) / (0.18 * wantWords));
           if (allStrands && a) {
-            rec = a.strands[c.strand || "BIO.1"];
+            rec = a.strands[c.strand || "CH.1"];
             acc = rec ? (rec.r + 1) / (rec.r + rec.w + 2) : 0.5;
             w *= 1 + (1 - acc) * 0.9;
           }
@@ -26669,7 +26669,7 @@
     return (el && el.getAttribute("data-family")) || (st && st.def) || "ALL";
   }
 
-  /* v6: a single course (Virginia Biology). applyState keeps the family cards in sync and shows the title screen. */
+  /* v6: a single course (Virginia Chemistry). applyState keeps the family cards in sync and shows the title screen. */
   function applyState(st, silent) {
     if (!STATE_DEFS[st]) st = "VA";
     cfg.state = st;

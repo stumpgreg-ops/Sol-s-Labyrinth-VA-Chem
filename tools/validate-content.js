@@ -59,8 +59,8 @@ packs.forEach(function (p, pi) {
     if (!c.id) errors.push(w + ": missing claim id");
     if (p.claims.filter(function (x) { return x.id === c.id; }).length > 1) errors.push(w + ": duplicate claim id in pack");
     var sol = String(c.sol || "");
-    var m = /^(BIO\.[1-8])\.([a-f])$/.exec(sol);
-    if (!m) errors.push(w + ": sol code should look like BIO.8.a, got " + sol);
+    var m = /^(CH\.[1-5])\.([a-j])$/.exec(sol);
+    if (!m) errors.push(w + ": sol code should look like CH.4.b, got " + sol);
     else {
       var std = STANDARDS[m[1]];
       if (!std || !std.keys[m[2]]) errors.push(w + ": " + sol + " is not a key idea in the standards map");
