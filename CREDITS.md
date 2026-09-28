@@ -40,3 +40,9 @@ All in-game sound effects (grab, alarm, camera beep, catch, chime…) are synthe
 - **Kenney Graveyard Kit** (CC0) — benches, lamp posts, urns, pillars and the great column. https://kenney.nl/assets/graveyard-kit
 - **Kenney Animal Pack Redux** (CC0) — the cow, horse, pig, goat, chicken, dog, rabbit, duck and owl stand-ups. https://kenney.nl/assets/animal-pack-redux
 All are cropped, re-anchored and scaled to the castle kit's cell by `tools/make-castle-kit.py`; the stone knight and king are desaturated Castle Kit figures.
+
+## three.js (engine v5.5)
+The castle builder's 3D view uses **three.js** r160 (MIT licence, © 2010-2024 three.js authors), bundled with its glTF and OBJ loaders into `js/vendor/three.min.js`. https://threejs.org
+
+## KayKit castle (engine v5.3)
+The Great castle, town hall, barracks, houses, mills, towers, soldiers, carts and the other `k-` pieces are rendered from **KayKit Medieval Hexagon Pack** by **Kay Lousberg** (www.kaylousberg.com), Creative Commons Zero (CC0). "This content is free to use in personal, educational and commercial projects." Rendered to isometric sprites by `tools/render-kaykit.js` and drawn from the pack's own glTF models in the browser (`tools/pack-models.js`); the four team colours are the game's four house colours. Credited with thanks. https://kaylousberg.itch.io/kaykit-medieval-hexagon

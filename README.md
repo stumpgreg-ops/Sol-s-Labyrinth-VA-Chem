@@ -8,6 +8,17 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## Engine update to SOL Labyrinth v5.7.1 (Chemistry 1.1.0, 2026-09-28)
+
+Everything the SOL Labyrinth session shipped between v5.2 and v5.7.1 is in this build, on top of the Chemistry bank:
+
+- **Nine realms and Ragnarok** (v5.6). Every ten levels is a realm with its own colours, wall dressing, music and creature: ravens that call the wolves (Niflheim), trolls, fire vents, the serpent, golden boars, wisps, draugr that only move when Sol looks away, valkyries; Ragnarok mixes them. Every tenth level is a **Fenrir boss level**: the great wolf chains the gate with one chain per question, a banked answer breaks a chain, a wrong letter sets him off. Castle buildings on the student's field grant **perks** in the maze (Blessing 1UP, Castle guard, Rune of Sol, Swift feet, Trade).
+- **Shooter levels** (v5.7 / v5.7.1) on levels 2, 4, 6 and 8 of each realm: Eagle Swoop (Galaga style), Rune Rocks (Asteroids style), Sun Chariot (side-scrolling flyer) and Wolf Ring. Same question, same lab notes in the side panel, same lives and coins; only the playfield changes. Mouse buttons shoot without moving Sol.
+- **Castle in 3D** (v5.3–v5.5): KayKit Medieval Hexagon pieces drawn from their glTF models with three.js, so every piece turns with the map by the degree; walls, gates, hedges and fences drawn as geometry.
+- **Logo and version label** (v5.4.1, v5.5.1) on the title screen; the Sol's Labyrinth favicon.
+- **One game, locked to Virginia.** `index.html` sets `window.SOL_STATE = "VA"` before any script, the v5.2 locked-state path hides the state gateway for good, and the Chemistry units are the only cards. The New Jersey / Virginia two-build tooling (`tools/build-games.js`, `tools/publish-pages.sh`) is not carried over; `sh tools/make-itch-zip.sh` still builds the single upload.
+- `tools/export-questions.js` writes the whole bank as one HTML document (unit → level → pack → questions with keys) for teacher review: `node tools/export-questions.js > questions.html`.
+
 ## What changed from SOL Labyrinth (Chemistry 1.0, 2026-09-16)
 
 - **All English content removed.** The Reading packs (Virginia grades 9–11 and New Jersey grade 5), the grade cards and the state gateway are gone. Nothing from the Reading build's item bank remains.
@@ -25,7 +36,7 @@ Progress saves in this browser profile (`afterHours.v1.night`). Itch login does 
 - **Skill screen = key concepts.** Each unit's skill cards are the lettered key concepts of its standard, grouped where the test treats them together (for Phases of Matter: Pressure, temperature & volume CH.5 a · Gas laws & partial pressure CH.5 b · Vapor pressure & phase changes CH.5 c·d · Heat CH.5 e·f · Colligative properties CH.5 g · All). Full review's skill cards are the five standards themselves. The filter matches on the question's `sol` code prefix; `HEIST_STRAND_ALIASES` in `js/content.js` lets one card keep several letters.
 - **Lab notes instead of passages.** Every question pack is a short stimulus — a procedure, a data table, a set of equations, a model described in words — with 4–6 test-style items. Any molar mass, constant or formula an item needs is printed in the stimulus, the way the real test supplies a periodic table and formula sheet. The HUD reads `SOL · CH.4.b · Level 2`.
 - **Item bank.** `js/content2.js`–`content6.js`, one file per unit, about 14 packs and 75–80 questions each. Every item is original and keyed to a CH.1–CH.5 key concept; numeric items were worked before the key was set, and the distractors are the results of the usual mistakes (no kelvin conversion, mass ratio for mole ratio, an inverted factor).
-- Engine, maze, wolves, traps, music, coins, shop, Town & Castle builder, teacher monitor, adaptive picker and stamina schedule: unchanged from the Biology build (SOL Lab v6.0) and SOL Labyrinth v5.1.1.
+- Engine, maze, wolves, traps, music, coins, shop, Town & Castle builder, teacher monitor, adaptive picker and stamina schedule: from the Biology build (SOL Lab v6.0) and SOL Labyrinth v5.1.1, updated to v5.7.1 above.
 
 ## The standards this build reviews
 
