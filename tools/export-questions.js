@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-/* Exports the whole question bank as one HTML document for teacher review:
-     node tools/export-questions.js > questions.html
+/* Exports the question bank as one HTML document for teacher review:
+     node tools/export-questions.js > questions.html          (every unit)
+     node tools/export-questions.js MOLE > mole.html         (one unit: INV | ATOM | RXN | MOLE | KMT)
    Organised by unit (reporting category), then by level 1 → 2 → 3, then by pack in
    order of stimulus length, so a reader can see questions getting harder and the lab
    notes getting longer as the levels rise. Every item shows its SOL code, the four
@@ -12,7 +13,9 @@ var files = fs.readdirSync(path.join(root, "js")).filter(function (f) { return /
 function num(f) { var m = f.match(/content(\d*)\.js/); return m[1] === "" ? 0 : parseInt(m[1], 10); }
 var W = {}; W.window = W; W.global = W;
 files.forEach(function (f) { vm.runInNewContext(fs.readFileSync(path.join(root, "js", f), "utf8"), W, { filename: f }); });
-var PACKS = W.HEIST_PACKS, FAMILIES = W.HEIST_FAMILIES, STANDARDS = W.HEIST_STANDARDS;
+var ONLY = process.argv[2] ? String(process.argv[2]).toUpperCase() : null;
+var PACKS = W.HEIST_PACKS, FAMILIES = W.HEIST_FAMILIES.filter(function (f) { return !ONLY || f.id === "ALL" || f.id === ONLY; }), STANDARDS = W.HEIST_STANDARDS;
+if (ONLY) PACKS = PACKS.filter(function (p) { return p.family === ONLY; });
 var TIERS = [["tiny", 1, 15, "40–70"], ["short", 16, 40, "70–110"], ["medium", 41, 70, "110–160"], ["long", 71, 100, "160–220"]];
 function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function words(html) { return String(html).replace(/<[^>]+>/g, " ").replace(/\(\d+\)/g, " ").replace(/\s+/g, " ").trim().split(" ").filter(Boolean).length; }
