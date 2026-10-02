@@ -6913,7 +6913,7 @@
       var unused = function (c) { return self.usedClaims.indexOf(c.id) === -1; };
       /* v4.9: an NJSLA Part B (evidence) item always follows its Part A. */
       if (this.claim && this.claim.partB) {
-        for (i = 0; i < claims.length; i++) if (claims[i].id === this.claim.partB && unused(claims[i])) { pick = i; break; }
+        for (i = 0; i < claims.length; i++) if (claims[i].id === this.claim.partB) { pick = i; break; }   /* v5.7.1: also when a Part A is asked again */
       }
       if (pick < 0) {
         var pool = [], fresh = [];
@@ -6935,15 +6935,28 @@
            v6 (science builds): a unit pool is far smaller than the old grade pools, and a science item set
            normally asks several questions on one set of lab notes, so a level prefers notes it has not
            used yet but may come back to a stimulus when that keeps the length band honest. */
-        var inBand = function (idx) { var cw = claims[idx].words; return !cw || (cw >= wantWords * 0.6 && cw <= wantWords * 1.6); };
+        var loW = wantWords * 0.6, hiW = wantWords * 1.6;
+        var inBand = function (idx) { var cw = claims[idx].words; return !cw || (cw >= loW && cw <= hiW); };
         var bandFresh = fresh.filter(inBand), bandAll = pool.filter(inBand), BAND_MIN = 8;
         if (bandFresh.length >= BAND_MIN) pool = bandFresh;
         else if (bandAll.length >= BAND_MIN) pool = bandAll;
-        else if (fresh.length) pool = fresh;
+        else {
+          /* v5.7.2 (engine): few unused stimuli of the right length left (a small pool late in the campaign).
+             Asking again from right-length items not seen in the last 20 questions beats dropping to a short one. */
+          var recent = this.usedClaims.slice(-20), again = [];
+          for (i = 0; i < claims.length; i++) {
+            var cc = claims[i];
+            if (cc.isPartB || recent.indexOf(cc.id) !== -1 || this.nightPacks.indexOf(cc.packId) !== -1) continue;
+            if (!cc.words || (cc.words >= loW && cc.words <= hiW)) again.push(i);
+          }
+          if (again.length >= BAND_MIN) pool = again;
+          else if (fresh.length) pool = fresh;
+        }
         var weights = [], total = 0, w, rec, acc;
         for (i = 0; i < pool.length; i++) {
           var c = claims[pool[i]];
           w = Math.exp(-Math.abs((c.level || 2) - target) * 1.3);
+          if (!unused(c)) w *= 0.35;   /* a question asked before only when the fresh ones are far off */
           if (c.words) w *= Math.exp(-Math.abs(c.words - wantWords) / (0.18 * wantWords));
           if (allStrands && a) {
             rec = a.strands[c.strand || "CH.1"];
@@ -7012,6 +7025,17 @@
       var ex = this.player.carryExtra || [], i;
       for (i = 0; i < ex.length; i++) if (ex[i]) out.push(ex[i]);
       return out;
+    }
+    /* v5.7.9: remember a wrong pick so the end screen can say which letter was picked and which the
+       question's key wants (a teacher checking a question sees at once what the game expected). */
+    noteWrongLetter(L) {
+      this._lastWrongLetter = L || "";
+      try { console.log("[SOL] wrong letter " + L + " on " + (this.claim && this.claim.id) + "; key: " + (this.need || []).join("+")); } catch (e) {}
+    }
+    wrongLetterNote() {
+      var L = this._lastWrongLetter, need = this.need || [];
+      if (!L || !need.length) return "";
+      return "You picked " + L + "; the answer to that question was " + need.join(" and ") + ". ";
     }
     carriedLetters() {
       return this.carriedSlips().map(function (s) { return s.letter; }).join(" + ");
@@ -8413,6 +8437,29 @@
         try { this.expiryRim.clear(); this.expiryRim.setVisible(false); } catch (e) {}
       }
     }
+    /* v5.7.9: Sol rides the sun's chariot, pulled by two horses, while the CHARIOT power lasts (the Sun Chariot
+       level's own art): the car covers Sol's legs, the horses lead the way Sol runs, and it sheds sparks. It fades out in the
+       last half second so the end of the power is easy to see. */
+    tickChariotRide() {
+      var on = (this.lockerPowerMs || 0) > 0 && this.player && !this.ended, spr = this.chariotRide;
+      if (!on) { if (spr) spr.setVisible(false); return; }
+      if (!spr || !spr.active) {
+        if (window.SolModes && SolModes.ensureChariotArt) SolModes.ensureChariotArt(this);
+        if (!this.textures.exists("md-team-0")) return;
+        spr = this.chariotRide = this.add.image(0, 0, "md-team-0").setScale(0.62).setDepth(12.5);
+      }
+      /* the horses lead the way Sol runs (left or right; up and down keep the last way) */
+      var face = this.playerFaceDir || "down", t = (this.time && this.time.now) || 0, T = (window.SolModes && SolModes.TEAM) || { w: 200, car: 45 };
+      if (face === "left") spr.setFlipX(true); else if (face === "right") spr.setFlipX(false);
+      var dir = spr.flipX ? -1 : 1, off = (T.w / 2 - T.car) * spr.scaleX;
+      spr.setVisible(true).setTexture("md-team-" + (Math.floor(t / 140) % 2));
+      spr.setAlpha(this.lockerPowerMs < 500 ? Math.max(0.2, this.lockerPowerMs / 500) : 1);
+      spr.setPosition(this.player.x + dir * off, this.player.y + 4 + Math.sin(t / 110) * 1.5);
+      this._chariotSparkAcc = (this._chariotSparkAcc || 0) + 1;
+      if (this.sparks && this._chariotSparkAcc % 6 === 0) {
+        try { this.sparks.emitParticleAt(this.player.x - dir * 30, this.player.y + 16, 1); } catch (e) {}
+      }
+    }
     tickLockerPower(step) {
       if ((this.frightWanderFlash || 0) > 0) {
         var _fwPrev = this.frightWanderFlash;
@@ -8430,6 +8477,7 @@
           if (rj && (rj.roleFlipMs || 0) > 0) rj.roleFlipMs = Math.max(0, rj.roleFlipMs - step);
         }
       }
+      this.tickChariotRide();
       if ((this.lockerPowerMs || 0) <= 0) {
         if ((this.lockerPowerFlash || 0) > 0) {
           this.lockerPowerFlash = Math.max(0, this.lockerPowerFlash - step);
@@ -15245,7 +15293,8 @@
       }
       if (this.caughtFlashTag) {
         var camW = this.cameras && this.cameras.main, livesLeftW = Math.max(0, (this.needStrikes || 3) - (this.strikes || 0));
-        this.caughtFlashTag.setText(spendSpare ? "WRONG LETTER · 1UP saved you" : (livesLeftW > 0 ? "WRONG LETTER · " + livesLeftW + " left" : "WRONG LETTER"));
+        var wlTag = this._lastWrongLetter ? "WRONG LETTER (" + this._lastWrongLetter + ")" : "WRONG LETTER";   /* v5.7.9: says which letter was picked */
+        this.caughtFlashTag.setText(spendSpare ? wlTag + " · 1UP saved you" : (livesLeftW > 0 ? wlTag + " · " + livesLeftW + " left" : wlTag));
         this.caughtFlashTag.setPosition((camW && camW.width ? camW.width : 1280) / 2, (camW && camW.height ? camW.height : 720) * 0.38);
         this.caughtFlashTag.setAlpha(1);
         this.caughtFlashTag.setVisible(true);
@@ -15350,6 +15399,7 @@
       if (!best) return;
       var ok = this.need.indexOf(best.letter) !== -1;
       if (!ok) {
+        this.noteWrongLetter(best.letter);
         this.flagWrongAlarm({ x: best.homeX != null ? best.homeX : best.x, y: best.homeY != null ? best.homeY : best.y });
         return;
       }
@@ -17042,6 +17092,7 @@
         LC = carried[ci].letter;
         if (this.need.indexOf(LC) === -1) {
           var bad = carried[ci];
+          this.noteWrongLetter(LC);
           this.flagWrongAlarm({ x: bad && bad.homeX != null ? bad.homeX : this.player.x, y: bad && bad.homeY != null ? bad.homeY : this.player.y });
           return;
         }
@@ -17354,7 +17405,7 @@
       } else {
         writeSavedNight(this.night);
         document.getElementById("win-title").textContent = "Run over";
-        document.getElementById("win-msg").textContent = (this.lastStrikeReason === "wrong" ? "That wrong letter used your last life. " : "Caught in the cone. ") +
+        document.getElementById("win-msg").textContent = (this.lastStrikeReason === "wrong" ? "That wrong letter used your last life. " + this.wrongLetterNote() : "Caught in the cone. ") +
           "Wrong letters and catches both cost a life. Retry this level — the campaign stays here.";
         retryBtn.classList.remove("hidden");
         retryBtn.textContent = "Retry this level";
@@ -26681,6 +26732,7 @@
   }
 
   function pingTeacher(scene, status) {
+    if (window.SolClass && SolClass.report) { try { SolClass.report(scene, status, adaptLevelLabel(scene.adapt)); } catch (eC) {} }
     var tokenEl = document.getElementById("token-pip");
     var tok = makeToken(scene.night, scene.score, scene.strikes);
     if (tokenEl) tokenEl.textContent = "Token " + tok;
@@ -26733,7 +26785,10 @@
     return f ? (f.label + " · " + f.kind) : "Full review";
   }
 
+  /* v5.8: a class session (Apps Script ?class=CODE, js/classes.js) plays one grade */
+  function classGrade() { var C = window.SOL_CLASS, fams = (window.HEIST_FAMILIES || []).map(function (f) { return f.id; }); return C && fams.indexOf(C.grade || "") !== -1 ? C.grade : null; }   /* Chemistry: a class plays one unit (ALL, INV, ATOM, RXN, MOLE or KMT) */
   function selectedFamily() {
+    if (classGrade()) return classGrade();
     var el = document.querySelector("#title-screen .card.selected[data-family]:not(.hidden)");
     var st = STATE_DEFS[cfg.state];
     return (el && el.getAttribute("data-family")) || (st && st.def) || "ALL";
@@ -26745,19 +26800,20 @@
     if (!STATE_DEFS[st]) st = "VA";
     cfg.state = st;
     try { localStorage.setItem(LS_STATE, st); } catch (e) {}
-    var def = STATE_DEFS[st], any = false;
+    var def = STATE_DEFS[st], any = false, cg = classGrade();
+    if (cg && def.families.indexOf(cg) !== -1) cfg.family = cg;
     document.querySelectorAll("#title-screen .card[data-family]").forEach(function (c) {
-      var fam = c.getAttribute("data-family"), ok = def.families.indexOf(fam) !== -1;
+      var fam = c.getAttribute("data-family"), ok = def.families.indexOf(fam) !== -1 && (!cg || fam === cg);
       c.classList.toggle("hidden", !ok);
       if (!ok) c.classList.remove("selected");
       if (ok && c.classList.contains("selected")) any = true;
     });
     if (!any || def.families.indexOf(cfg.family) === -1) {
-      cfg.family = def.def;
+      cfg.family = (cg && def.families.indexOf(cg) !== -1) ? cg : def.def;
       document.querySelectorAll("#title-screen .card[data-family]").forEach(function (c) { c.classList.toggle("selected", c.getAttribute("data-family") === cfg.family); });
     }
     var kick = document.getElementById("title-kicker");
-    if (kick) kick.textContent = def.kicker;
+    if (kick) kick.textContent = def.kicker + (window.SOL_CLASS ? " · Class: " + (window.SOL_CLASS.name || window.SOL_CLASS.code) : "");
     var sw = document.getElementById("btn-state");
     if (sw) { sw.textContent = def.name + " · change"; sw.classList.toggle("hidden", !!LOCKED_STATE); }
     var stateScreen = document.getElementById("state-screen"), title = document.getElementById("title-screen");

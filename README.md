@@ -8,6 +8,19 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## Engine update to SOL Labyrinth v5.8.0 (Chemistry 1.2.0, 2026-10-02)
+
+The browser (HTML) game is now on the SOL Labyrinth v5.8.0 engine. Everything the SOL Labyrinth session shipped between v5.7.1 and v5.8.0 is in this build, with the Chemistry bank unchanged:
+
+- **Shooters climb every realm** (v5.7.5–v5.7.9). Each shooter adds something every time it comes round, and its intro card names the new twist: Eagle Swoop (no shots until the flock forms, birds always diving, guard ravens, bird poo, iron helms, storm clouds), Rune Rocks (comets, iron rocks, guard stones, a valkyrie, rock showers), Sun Chariot (letter orbs inside turning shields with one gap, feathers, sparks, guard ravens; two horses pull the chariot), Wolf Ring (runestones rise one or two at a time after the wolves attack; packs, alpha wolf, poo ravens, sliding stones, quiver, leaping wolves).
+- **Rune Rocks beam card** (v5.7.3–v5.7.4): a one-card "how to pull a rock in" pop-up after the lab-notes pop-up, shown until the student has pulled a rock in on that Chromebook. The left mouse button fires, the right button holds the beam; clicking never steers the ship or flies the chariot.
+- **Fenrir hunts** (v5.7.6): the boss stalks Sol through the maze, charges every 10 s (sooner as chains break) and comes for her when she picks up a right letter. Beating him pays 100 coins + 25 per realm, **Fenrir's Fang** (+1 coin on every answer for good, shown on the win screen) and the realm's **monument**, one of ten castle pieces never sold or offered as rewards.
+- **Chariot ride** (v5.7.9): the maze CHARIOT power shows Sol riding the horse team. Wrong-letter banner and the end screen name the letter picked and the one the key wanted, so a teacher checking a question sees at once what the game expected.
+- **Town builder fixes** (v5.7.9): the view holds still while dragging, the dropped piece stays put, Turn mirrors a town picture.
+- **Picker** (v5.7.2): late in the campaign, when few unused stimuli of the right length are left, the game asks again from right-length items not seen in the last 20 questions instead of dropping to a short one.
+- **Class sessions** (v5.8.0): `js/classes.js` is loaded so a `?class=CODE` link can play a teacher's class settings (one unit, hidden or reworded questions, the class's own question sets). The plain link ignores it. The teacher page and the class store live in the SOL Labyrinth Google Apps Script build and are **not** part of this HTML build; nothing changes for a student opening `index.html`.
+- Not carried over: the Apps Script packaging (`tools/appsscript/`, `tools/build-appsscript.js`, `tools/smoke-appsscript.js`) and the Reading question-list Word files under `docs/questions/`. The Chemistry equivalents are `tools/export-questions.js` and `tools/simulate-student.js`.
+
 ## Engine update to SOL Labyrinth v5.7.1 (Chemistry 1.1.0, 2026-09-28)
 
 Everything the SOL Labyrinth session shipped between v5.2 and v5.7.1 is in this build, on top of the Chemistry bank:
@@ -36,7 +49,7 @@ Everything the SOL Labyrinth session shipped between v5.2 and v5.7.1 is in this 
 - **Skill screen = key concepts.** Each unit's skill cards are the lettered key concepts of its standard, grouped where the test treats them together (for Phases of Matter: Pressure, temperature & volume CH.5 a · Gas laws & partial pressure CH.5 b · Vapor pressure & phase changes CH.5 c·d · Heat CH.5 e·f · Colligative properties CH.5 g · All). Full review's skill cards are the five standards themselves. The filter matches on the question's `sol` code prefix; `HEIST_STRAND_ALIASES` in `js/content.js` lets one card keep several letters.
 - **Lab notes instead of passages.** Every question pack is a short stimulus — a procedure, a data table, a set of equations, a model described in words — with 4–6 test-style items. Any molar mass, constant or formula an item needs is printed in the stimulus, the way the real test supplies a periodic table and formula sheet. The HUD reads `SOL · CH.4.b · Level 2`.
 - **Item bank.** `js/content2.js`–`content6.js`, one file per unit, about 14 packs and 75–80 questions each. Every item is original and keyed to a CH.1–CH.5 key concept; numeric items were worked before the key was set, and the distractors are the results of the usual mistakes (no kelvin conversion, mass ratio for mole ratio, an inverted factor).
-- Engine, maze, wolves, traps, music, coins, shop, Town & Castle builder, teacher monitor, adaptive picker and stamina schedule: from the Biology build (SOL Lab v6.0) and SOL Labyrinth v5.1.1, updated to v5.7.1 above.
+- Engine, maze, wolves, traps, music, coins, shop, Town & Castle builder, teacher monitor, adaptive picker and stamina schedule: from the Biology build (SOL Lab v6.0) and SOL Labyrinth v5.1.1, updated to v5.7.1 and then v5.8.0 above.
 
 ## The standards this build reviews
 
