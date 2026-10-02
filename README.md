@@ -19,7 +19,21 @@ The browser (HTML) game is now on the SOL Labyrinth v5.8.0 engine. Everything th
 - **Town builder fixes** (v5.7.9): the view holds still while dragging, the dropped piece stays put, Turn mirrors a town picture.
 - **Picker** (v5.7.2): late in the campaign, when few unused stimuli of the right length are left, the game asks again from right-length items not seen in the last 20 questions instead of dropping to a short one.
 - **Class sessions** (v5.8.0): `js/classes.js` is loaded so a `?class=CODE` link can play a teacher's class settings (one unit, hidden or reworded questions, the class's own question sets). The plain link ignores it. The teacher page and the class store live in the SOL Labyrinth Google Apps Script build and are **not** part of this HTML build; nothing changes for a student opening `index.html`.
-- Not carried over: the Apps Script packaging (`tools/appsscript/`, `tools/build-appsscript.js`, `tools/smoke-appsscript.js`) and the Reading question-list Word files under `docs/questions/`. The Chemistry equivalents are `tools/export-questions.js` and `tools/simulate-student.js`.
+- Not carried over: the Reading question-list Word files under `docs/questions/`. The Chemistry equivalents are `tools/export-questions.js` and `tools/simulate-student.js`.
+
+## Google Apps Script version (for schools that block github.io)
+
+School filters often block github.io and itch.io but allow script.google.com. The Apps Script version is one small file, `appsscript/Code.gs`: the teacher pastes it into an Apps Script project and deploys it as a web app. The script runs on Google's servers, fetches the game bundle from this repository (`appsscript/manifest.json` and the `sol-*.bin` parts, read through raw.githubusercontent.com, with GitHub Pages as the fallback) and hands it to the Chromebook, which keeps it in IndexedDB so each student downloads it once per version. No music in this version (the 3D castle stays).
+
+Set up once:
+
+1. Open https://script.google.com → **New project**. Delete what is in `Code.gs`, paste the whole of `appsscript/Code.gs`, click **Save**.
+2. **Deploy → New deployment → gear icon → Web app.** Execute as: **Me**. Who has access: **Anyone** (or Anyone in your school's domain). Click **Deploy**, then **Authorize access** and allow it (it needs "connect to an external service").
+3. Copy the **Web app URL** (ends in `/exec`). That is the game link. In Google Sites: Insert → Embed → By URL → paste it → Insert, then drag the frame bigger.
+
+Teacher page and classes (v5.8.0): the game link with `?admin=1` on the end opens a PIN-locked teacher page (choose the PIN the first time). There a teacher makes **classes**: pick a unit (or Full review), write the class's own **question sets** (lab notes plus 4-choice questions, each tagged with its CH standard), and **hide or reword** any regular question for that class only. A class's link is the game link with `?class=CODE` on the end; it asks each student once for a nickname and shows the teacher each student's highest level, right and wrong counts and current level. Everything is stored inside the Apps Script project; nothing is written to Google Drive. The plain link always plays the untouched core game.
+
+Rebuilding after a content or engine change: `node tools/build-appsscript.js` rewrites `appsscript/` (parts, manifest, loader.html, Code.gs) for the current branch; commit and push it, and every deployed script picks up the new version on the next load (nothing to redeploy). `node tools/smoke-appsscript.js` checks the build headlessly through a local stand-in for Apps Script (`appsscript/test.html`).
 
 ## Engine update to SOL Labyrinth v5.7.1 (Chemistry 1.1.0, 2026-09-28)
 

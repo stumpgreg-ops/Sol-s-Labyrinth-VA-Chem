@@ -43,6 +43,15 @@
 
   /* 2. the class's own sets become packs: sentences numbered like the regular passages */
   var gradeNum = "CH";   /* Chemistry build: SOL tags read CH.<standard> */
+  /* a class set's pack must sit in a real unit: "ALL" (Full review) draws from the five unit pools, never from a
+     pack whose family is "ALL" itself. A unit class keeps its unit; a Full-review class files the set under the
+     unit of its first question's standard (CH.1 → Scientific Investigation, …). */
+  var FAMS = global.HEIST_FAMILIES || [];
+  function unitFor(grade, skill) {
+    if (grade && grade !== "ALL" && FAMS.some(function (f) { return f.id === grade; })) return grade;
+    var hit = FAMS.filter(function (f) { return f.kind === "CH." + String(skill || "1"); })[0];
+    return hit ? hit.id : (FAMS.filter(function (f) { return f.id !== "ALL"; })[0] || { id: "INV" }).id;
+  }
   function passageHtml(text) {
     var n = 0;
     return String(text || "").split(/\n\s*\n/).map(function (para) {
@@ -57,7 +66,7 @@
     var qs = (set.questions || []).filter(function (q) { return q && q.stem && q.choices && q.choices.filter(Boolean).length >= 2 && /^[A-D]$/.test(q.correct || ""); });
     if (!qs.length) return;
     var pack = {
-      id: "class-" + C.code + "-" + (set.id || si), family: C.grade || "ALL", title: String(set.title || "Class set"),
+      id: "class-" + C.code + "-" + (set.id || si), family: unitFor(C.grade, qs[0].skill), title: String(set.title || "Class set"),
       kind: "Class set · " + esc(set.title || ""), blurb: "", level: set.level >= 1 && set.level <= 3 ? set.level : 2, classSet: true,
       passage: passageHtml(set.passage),
       claims: qs.map(function (q, qi) {
