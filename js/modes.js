@@ -22,22 +22,22 @@
   var MODES = {
     raid: {
       id: "raid", name: "Eagle Swoop", kind: "galaga-style level",
-      how: "Great eagles fly in and take the top of the sky, each carrying a letter in its talons, with two guard ravens under each eagle and rows of ravens below. Once the flock has formed, shoot the eagle that carries the right answer — it takes two arrows. Birds are always swooping down at Sol, and an eagle can stop and shine a beam down to catch him.",
+      how: "Great eagles fly in and take the top of the sky, each carrying a letter in its talons, with two guard ravens under each eagle and rows of birds below. Once the flock has formed, shoot the eagle that carries the right answer — it takes two arrows. Birds are always swooping down at Sol, and an eagle can stop and shine a beam down to catch him. A bird you shoot down stays down: the rows thin out as you clear them. From the second realm on, the rows bring new birds with tricks of their own (listed below).",
       rules: "A wrong letter costs a life. So does bird poo landing on you, a bird crashing into you, or getting caught in an eagle's beam. You can't shoot until the flock has flown into formation.",
       keys: "◀ ▶ or A / D move · Space, FIRE or a mouse button shoots (clicking does not move Sol).",
       tip: "EAGLE SWOOP — shoot the eagle with the right letter. Dodge the poo and the beams.",
       hint1: "Shoot the eagle carrying the right letter — it takes two arrows. The lab notes stay in the side panel.",
       hint2: "This question has two right letters. Shoot both eagles that carry them.",
       news: ["",
-        "Bird poo now drifts toward where you stand, and every diving bird drops two.",
-        "The eagles trade places in the formation now and then. Keep your eye on the right letter.",
-        "Iron-helmed eagles: an eagle now takes three arrows.",
-        "A third row of ravens guards the eagles.",
+        "Magpies take the top row: fast divers that zig-zag on the way down. Bird poo now drifts toward where you stand, and every diving bird drops two.",
+        "Hawks take the top row: a hawk takes two arrows and steers at you in mid-dive. The eagles trade places in the formation now and then.",
+        "Iron-helmed eagles: an eagle now takes three arrows. Magpies are back in the second row.",
+        "A third row. Owls join it: an owl drops a spread of three.",
         "A storm cloud drifts across the flock. Arrows can't get through it.",
-        "An eagle's catching beam now follows you.",
-        "Ravens in the formation drop poo too, not just the divers.",
+        "Falcons take the top row: the fastest bird, it dives straight at you and corrects its aim. An eagle's catching beam now follows you.",
+        "Birds in the formation drop poo too, not just the divers.",
         "Two storm clouds, and the eagles trade places more often.",
-        "Ragnarok: one more bird dives at a time, on top of everything else."]
+        "Ragnarok: the rows are a mix of every bird, and one more dives at a time."]
     },
     rocks: {
       id: "rocks", name: "Rune Rocks", kind: "asteroids level",
@@ -95,17 +95,57 @@
         "The runestones stay up for less time, and two alpha wolves can come at once.",
         "Leaping wolves: some crouch, then leap the last stretch.",
         "Ragnarok: the wolves come faster, on top of everything else."]
+    },
+    worms: {
+      id: "worms", name: "Root Worms", kind: "centipede-style level",
+      how: "Nidhogg's worms wind down from the top of the mushroom field, row by row, turning at every mushroom they meet. Some segments glow with a letter. Shoot the segment that glows with the right answer. Shooting any other segment breaks the worm in two and leaves a mushroom where it was, and your arrows chip away mushrooms too (three hits each). Sol moves in the clearing at the bottom.",
+      rules: "Shooting a wrong letter costs a life. So does a worm reaching Sol, or a wolf or a falling raven running into you. One arrow in the air at a time.",
+      keys: "◀ ▶ ▲ ▼ or WASD move Sol in the clearing · Space, FIRE or a mouse button shoots (clicking does not move Sol).",
+      tip: "ROOT WORMS — shoot the glowing segment with the right letter. Keep the worms off you.",
+      hint1: "Shoot the worm segment that glows with the right letter. The lab notes stay in the side panel.",
+      hint2: "This question has two right letters. Shoot both glowing segments that carry them.",
+      news: ["",
+        "A wolf prowls the clearing, zig-zagging and eating mushrooms. Shoot it or stay clear of it.",
+        "Two worms at once.",
+        "Ravens drop out of the sky and plant mushrooms as they fall. A raven takes two arrows.",
+        "The worms are longer and faster.",
+        "A wisp drifts across the field and poisons the mushrooms it touches (they turn purple). A worm that meets a poisoned mushroom plunges straight down at you.",
+        "The lead worm wears an iron helm: its head takes two arrows. The wolf is quicker.",
+        "Ravens fall faster, and mushrooms take four hits.",
+        "Three worms at once.",
+        "Ragnarok: the worms come faster, on top of everything else."]
     }
   };
+  /* v1.3 (Chemistry): five shooters share the four shooter slots of a realm (levels 2, 4, 6 and 8). The order
+     turns one place every realm, so each mode comes round in four realms out of five and the first realm keeps
+     the old order: raid, rocks, sky, ring. SLOTS is that first-realm order. */
+  var ORDER = ["raid", "rocks", "sky", "ring", "worms"];
   var SLOTS = { 2: "raid", 4: "rocks", 6: "sky", 8: "ring" };
+  function modeAt(realm, k) { return ORDER[(k + realm) % ORDER.length]; }
+  function modeInRealm(id, realm) { for (var k = 0; k < 4; k++) if (modeAt(realm, k) === id) return true; return false; }
   var BEAM_KEY = "afterHours.v1.beamLearned";   /* set once a student has pulled a rock in */
 
   function modeFor(n) {
     n = Math.floor(Number(n) || 0);
     if (n < 1 || n > 100) return null;
-    var id = SLOTS[((n - 1) % 10) + 1];
-    return id ? MODES[id] : null;
+    var k = { 2: 0, 4: 1, 6: 2, 8: 3 }[((n - 1) % 10) + 1];
+    return k == null ? null : MODES[modeAt(Math.floor((n - 1) / 10), k)];
   }
+
+  /* v1.3 (Chemistry): the birds that fill Eagle Swoop's rows, Galaga's bees and butterflies. A row is one kind;
+     which kinds fly depends on the realm (raidKindsFor). dur scales the dive time; wobble is a zig-zag on the dive;
+     steer turns the dive toward Sol in mid-air; drops(tier) is how much poo a dive drops. */
+  var BIRDS = {
+    raven:  { name: "Ravens",  plural: "Twelve ravens",  skill: "plain divers", hp: 1, scale: 0.72, tint: null,     dur: 1,    wobble: 0,  steer: 0,   drops: function (t) { return t >= 1 ? 2 : 1; } },
+    magpie: { name: "Magpies", plural: "Twelve magpies", skill: "fast, zig-zag on the dive", hp: 1, scale: 0.62, tint: 0xdfe8ff, dur: 0.7,  wobble: 34, steer: 0,   drops: function () { return 1; } },
+    hawk:   { name: "Hawks",   plural: "Twelve hawks",   skill: "take two arrows, steer at you in mid-dive", hp: 2, scale: 0.84, tint: 0xd09050, dur: 1.15, wobble: 0,  steer: 2.2, drops: function () { return 0; } },
+    owl:    { name: "Owls",    plural: "Twelve owls",    skill: "drop a spread of three", hp: 1, scale: 0.8,  tint: 0xe0cfa0, dur: 1.05, wobble: 0,  steer: 0,   drops: function () { return 3; } },
+    falcon: { name: "Falcons", plural: "Twelve falcons", skill: "the fastest; dive straight at you and correct their aim", hp: 1, scale: 0.66, tint: 0x9ab8ff, dur: 0.55, wobble: 0,  steer: 5,   drops: function () { return 0; } }
+  };
+  /* the rows (top to bottom) for each realm; Ragnarok mixes every bird */
+  var BIRD_ROWS = [["raven", "raven"], ["magpie", "raven"], ["hawk", "raven"], ["hawk", "magpie"], ["hawk", "owl", "raven"],
+    ["hawk", "owl", "magpie"], ["falcon", "hawk", "raven"], ["falcon", "owl", "magpie"], ["falcon", "hawk", "owl"], null];
+  function raidKindsFor(tier) { return BIRD_ROWS[clamp(tier, 0, 9)] || Object.keys(BIRDS); }
 
   /* ── small helpers ── */
   function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
@@ -308,7 +348,34 @@
       c.lineTo(w, h); c.closePath(); c.fill();
     };
   }
+  /* v1.3: Root Worms — a toadstool, a worm segment and a worm head */
+  function drawShroom(c, w, h) {
+    c.fillStyle = "#e8dcc0"; c.strokeStyle = "#3a2a18"; c.lineWidth = 1.5;
+    c.beginPath(); c.rect(w * 0.38, h * 0.46, w * 0.24, h * 0.46); c.fill(); c.stroke();
+    c.fillStyle = "#c8402a"; c.beginPath(); c.moveTo(2, h * 0.52); c.quadraticCurveTo(w / 2, -h * 0.25, w - 2, h * 0.52); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = "#fff2e0";
+    [[0.3, 0.3, 0.08], [0.55, 0.18, 0.07], [0.74, 0.36, 0.06], [0.45, 0.42, 0.05]].forEach(function (q) { c.beginPath(); c.arc(q[0] * w, q[1] * h, q[2] * w, 0, Math.PI * 2); c.fill(); });
+  }
+  function drawWorm(head) {
+    return function (c, w, h) {
+      var cx = w / 2, cy = h / 2, r = w * 0.4;
+      c.strokeStyle = "#2a3a14"; c.lineWidth = 3; c.lineCap = "round";
+      [-1, 1].forEach(function (sd) { c.beginPath(); c.moveTo(cx + sd * r * 0.5, cy + r * 0.5); c.lineTo(cx + sd * r * 1.15, cy + r * 1.05); c.moveTo(cx + sd * r * 0.9, cy - r * 0.1); c.lineTo(cx + sd * r * 1.2, cy + r * 0.5); c.stroke(); });
+      var g = c.createRadialGradient(cx - r * 0.3, cy - r * 0.3, r * 0.1, cx, cy, r);
+      if (head) { g.addColorStop(0, "#9ab050"); g.addColorStop(1, "#3e5a1e"); } else { g.addColorStop(0, "#a8c45a"); g.addColorStop(1, "#4d6e24"); }
+      c.fillStyle = g; c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = "#1e2c0c"; c.lineWidth = 2; c.stroke();
+      if (head) {
+        c.fillStyle = "#fff6d8"; c.beginPath(); c.arc(cx - r * 0.38, cy - r * 0.25, r * 0.3, 0, Math.PI * 2); c.arc(cx + r * 0.38, cy - r * 0.25, r * 0.3, 0, Math.PI * 2); c.fill();
+        c.fillStyle = "#1a1008"; c.beginPath(); c.arc(cx - r * 0.34, cy - r * 0.22, r * 0.14, 0, Math.PI * 2); c.arc(cx + r * 0.42, cy - r * 0.22, r * 0.14, 0, Math.PI * 2); c.fill();
+        c.strokeStyle = "#e8d6a8"; c.lineWidth = 2.5; c.beginPath(); c.moveTo(cx - r * 0.45, cy + r * 0.45); c.lineTo(cx - r * 0.75, cy + r * 1.05); c.moveTo(cx + r * 0.45, cy + r * 0.45); c.lineTo(cx + r * 0.75, cy + r * 1.05); c.stroke();
+      } else { c.fillStyle = "rgba(255,255,255,0.22)"; c.beginPath(); c.arc(cx - r * 0.3, cy - r * 0.35, r * 0.28, 0, Math.PI * 2); c.fill(); }
+    };
+  }
   function ensureModeArt(scene, pal) {
+    canvasTex(scene, "md-shroom", 34, 34, drawShroom);
+    canvasTex(scene, "md-worm-seg", 34, 34, drawWorm(false));
+    canvasTex(scene, "md-worm-head", 34, 34, drawWorm(true));
     canvasTex(scene, "md-arrow", 12, 34, drawArrow);
     canvasTex(scene, "md-bolt", 34, 12, drawBolt);
     canvasTex(scene, "md-feather", 16, 32, drawFeather);
@@ -670,11 +737,18 @@
         }
         if (card) {
           if (reason === "start") {
+            /* a mode skips one realm in five: the card also tells what came in while it was away */
+            var news = [], tn;
+            if (m.news) {
+              for (tn = this.tier - 1; tn >= 1 && !modeInRealm(m.id, tn); tn--) if (m.news[tn]) news.unshift(m.news[tn]);
+              if (this.tier > 0 && m.news[this.tier]) news.push(m.news[this.tier]);
+            }
             card.innerHTML = '<p class="rk">Level ' + this.night + " · shooter level · " + (this.realm ? this.realm.name : "") + "</p>" +
               "<h3>" + m.name + " <span>· " + m.kind + "</span></h3>" +
               "<p>" + m.how + "</p><p class=\"foe\"><b>Lives:</b> " + m.rules + "</p>" +
               "<p class=\"perks\"><b>Controls:</b> " + m.keys + "</p>" +
-              (this.tier > 0 && m.news && m.news[this.tier] ? "<p class=\"new\"><b>New this time:</b> " + m.news[this.tier] + "</p>" : "");
+              (news.length ? "<p class=\"new\"><b>New this time:</b> " + news.join(" ") + "</p>" : "") +
+              (m.id === "raid" && this.tier > 0 ? "<p class=\"birds\"><b>Birds in the rows:</b> " + raidKindsFor(this.tier).map(function (k) { return BIRDS[k].name + " (" + BIRDS[k].skill + ")"; }).join(" · ") + "</p>" : "");
             card.classList.remove("hidden");
             card.setAttribute("data-mode", m.id);
           } else card.classList.add("hidden");
@@ -721,7 +795,7 @@
         this.raidGround();
         this.makeSol(this.W / 2, this.H - 62, "up");
         this.raid = { arrows: [], feathers: [], ravens: [], ravSlots: [], cd: 0, clock: 0, fcx: this.W / 2, breath: 1, swayAmp: 60, top: 112,
-          diveCd: 4000, refillCd: 8000, huginn: null, huginnCd: rnd(12000, 18000), fired: 0, total: 1 };
+          diveCd: 4000, huginn: null, huginnCd: rnd(12000, 18000), fired: 0, total: 1, told: {} };
       }
       raidGround() {
         if (this.groundG) this.groundG.destroy();
@@ -755,9 +829,16 @@
           eg.label = this.letterText(-99, -99, eg.letter, 22, "#2a1604", "#fff6d8");
           list.push(eg);
         }
-        for (r = 0; r < rows; r++) for (c = 0; c < cols; c++) R.ravSlots.push({ sx: (c - (cols - 1) / 2) * gapR, sy: 112 + r * 54 });
+        /* v1.3: each row is one kind of bird (Ragnarok mixes them); a bird shot down is not replaced */
+        var kinds = raidKindsFor(this.tier), mixed = this.tier >= 9;
+        for (r = 0; r < rows; r++) for (c = 0; c < cols; c++) {
+          R.ravSlots.push({ sx: (c - (cols - 1) / 2) * gapR, sy: 112 + r * 54, row: r, bird: mixed ? kinds[Math.floor(Math.random() * kinds.length)] : (kinds[r] || "raven") });
+        }
         var rav = [];
         R.ravSlots.forEach(function (sl, k) { rav.push(self.raidRaven(k)); });
+        var fresh = [];
+        R.ravSlots.forEach(function (sl) { if (sl.bird !== "raven" && fresh.indexOf(sl.bird) === -1) fresh.push(sl.bird); });
+        if (fresh.length && !R.told.birds) { R.told.birds = true; this.toast("Birds in the rows: " + fresh.map(function (k) { return BIRDS[k].name + " — " + BIRDS[k].skill; }).join(". ") + ".", 5200); }
         /* v5.7.7: two guard ravens hang just under every eagle's letter; they never dive, and fly back if shot */
         list.forEach(function (eg2) { [-1, 1].forEach(function (sd) { rav.push(self.raidGuard(eg2, sd)); }); });
         R.total = rav.length;
@@ -773,7 +854,6 @@
         R.ready = false; R.readyWarned = false; R.guardCd = 5000;   /* v5.7.7: no arrows until the flock has formed */
         this.showTag("GET READY — THE FLOCK IS FLYING IN", "#ffe08a");
         R.diveCd = 600;
-        R.refillCd = 9000;
         this.raidSway();
         snd("caw");
       }
@@ -783,9 +863,10 @@
         return e;
       }
       raidRaven(k) {
-        var sl = this.raid.ravSlots[k];
-        var e = { kind: "raven", letter: null, hp: 1, alive: true, slot: k, sx: sl.sx, sy: sl.sy, state: "wait", x: -99, y: -99 };
-        e.spr = this.add.image(-99, -99, "rf-raven-0").setScale(0.72).setDepth(12);
+        var sl = this.raid.ravSlots[k], B = BIRDS[sl.bird] || BIRDS.raven;
+        var e = { kind: "raven", bird: sl.bird || "raven", letter: null, hp: B.hp, alive: true, slot: k, sx: sl.sx, sy: sl.sy, state: "wait", x: -99, y: -99 };
+        e.spr = this.add.image(-99, -99, "rf-raven-0").setScale(B.scale).setDepth(12);
+        if (B.tint) e.spr.setTint(B.tint);
         return e;
       }
       raidSlot(e) {
@@ -812,8 +893,8 @@
       raidDive(e, dx) {
         var W = this.W, H = this.H, p = this.player, sd = e.x < W / 2 ? -1 : 1, tx = clamp(p.x + rnd(-40, 40), 40, W - 40);
         e.state = "dive"; e.drops = 0; e.dx = dx || 0;
-        var spd = 1 + Math.min(0.6, this.night / 160);
-        e.path = { p0: { x: e.x, y: e.y }, p1: { x: e.x + sd * 130, y: e.y - 110 }, p2: { x: tx - sd * 190 + e.dx, y: H * 0.72 }, p3: { x: tx + sd * 140 + e.dx, y: H + 70 }, t: 0, dur: 2.8 / spd, next: "return" };
+        var spd = 1 + Math.min(0.6, this.night / 160), B = e.kind === "raven" ? (BIRDS[e.bird] || BIRDS.raven) : null;
+        e.path = { p0: { x: e.x, y: e.y }, p1: { x: e.x + sd * 130, y: e.y - 110 }, p2: { x: tx - sd * 190 + e.dx, y: H * 0.72 }, p3: { x: tx + sd * 140 + e.dx, y: H + 70 }, t: 0, dur: 2.8 / spd * (B ? B.dur : 1), next: "return" };
       }
       raidBeamDive(e) {
         var W = this.W, H = this.H, p = this.player, sd = e.x < W / 2 ? -1 : 1, tx = clamp(p.x + rnd(-50, 50), 70, W - 70), hy = Math.max(e.y + 80, H * 0.44);
@@ -822,13 +903,14 @@
       }
       raidHit(o) {
         if (!o || !o.alive) return;
-        var x = o.x, y = o.y;
-        if (o.kind === "eagle" && o.hp > 1) {
+        var x = o.x, y = o.y, R = this.raid, B = o.kind === "raven" ? (BIRDS[o.bird] || BIRDS.raven) : null;
+        if (o.hp > 1) {
           o.hp -= 1;
           if (o.spr) o.spr.setTint(0xffb08a);
           this.burst(x, y, 0xffb08a, 10);
           snd("pop");
-          this.toast(o.hp === 1 ? "That eagle is hurt. One more arrow and its letter " + o.letter + " is your answer." : "That eagle's iron helm took it. " + o.hp + " more arrows for letter " + o.letter + ".", 2600);
+          if (o.kind === "eagle") this.toast(o.hp === 1 ? "That eagle is hurt. One more arrow and its letter " + o.letter + " is your answer." : "That eagle's iron helm took it. " + o.hp + " more arrows for letter " + o.letter + ".", 2600);
+          else if (!R.told.tough) { R.told.tough = true; this.toast((B ? B.name : "These birds") + " take two arrows. One more!", 2200); }
           return;
         }
         o.alive = false;
@@ -836,7 +918,7 @@
         this.burst(x, y, o.kind === "eagle" ? 0xc89a5a : 0x5a4a78, 12);
         snd("pop");
         if (o.letter) this.answerPick(o.letter, x, y);
-        else this.addKill(x, y, "Twelve ravens");
+        else this.addKill(x, y, B ? B.plural : "Twelve ravens");
       }
       /* the target an arrow meets first, coming up from below (so the ravens shield the eagles) */
       raidArrowHit(ax, y0, y1) {
@@ -905,10 +987,17 @@
             if (!e.alive) continue;
           } else if (e.path) {
             e.path.t += s / e.path.dur;
+            var B = e.kind === "raven" ? (BIRDS[e.bird] || BIRDS.raven) : null;
+            /* v1.3: hawks and falcons steer the dive toward Sol while they are still high */
+            if (B && B.steer && e.state === "dive" && !e.beamer && e.path.p3 && e.path.t < 0.72) {
+              e.path.p3.x += clamp(p.x + (e.dx || 0) - e.path.p3.x, -1, 1) * B.steer * 60 * s;
+              e.path.p2.x += (e.path.p3.x - e.path.p2.x) * Math.min(1, 0.9 * s);
+            }
             var q = this.raidBez(e); e.x = q.x; e.y = q.y;
+            if (B && B.wobble && e.state === "dive") e.x += Math.sin(e.path.t * Math.PI * 5) * B.wobble;   /* a magpie's zig-zag */
             if (e.state === "dive" && !e.beamer) {
-              var want = this.tier >= 1 ? 2 : 1;
-              if (e.drops < want && e.path.t > 0.42 + e.drops * 0.14 && e.y < p.y - 110 && e.y > 0) { e.drops++; this.raidFeather(e.x, e.y + 16); }
+              var want = B ? B.drops(this.tier) : (this.tier >= 1 ? 2 : 1);
+              if (e.drops < want && e.path.t > 0.42 + e.drops * (want > 2 ? 0.09 : 0.14) && e.y < p.y - 110 && e.y > 0) { e.drops++; this.raidFeather(e.x, e.y + 16, want > 2 ? (e.drops - 2) * 95 : 0); }
             }
             if (e.path.t >= 1) {
               var nx = e.path.next;
@@ -976,19 +1065,7 @@
             });
           });
         }
-        /* when the ravens thin out, more fly in to shield the eagles */
-        R.refillCd -= ms;
-        if (R.refillCd <= 0) {
-          R.refillCd = 5000;
-          var used = {}, liveRav = 0;
-          R.ravens.forEach(function (o) { if (o.kind === "raven" && !o.guard) { used[o.slot] = 1; liveRav++; } });
-          if (liveRav <= R.total * 0.75 && R.ravens.some(function (o) { return o.kind === "eagle"; })) {
-            var empties = R.ravSlots.map(function (x, k) { return k; }).filter(function (k) { return !used[k]; });
-            shuffle(empties).slice(0, 4).forEach(function (k, j) {
-              var nr = self.raidRaven(k); nr.delay = j * 130; nr.side = Math.random() < 0.5 ? -1 : 1; R.ravens.push(nr);
-            });
-          }
-        }
+        /* v1.3: the rows never refill — a bird shot down stays down until the next wave (the next question) */
         /* falling feathers */
         for (i = R.feathers.length - 1; i >= 0; i--) {
           var f = R.feathers[i], gone = false;
@@ -1050,9 +1127,9 @@
         this.tweens.add({ targets: sp, alpha: 0, delay: onSol ? 700 : 500, duration: onSol ? 500 : 700, onComplete: function () { sp.destroy(); },
           onUpdate: function () { if (onSol && p) sp.setPosition(p.x, p.y - 22); } });
       }
-      raidFeather(x, y) {
+      raidFeather(x, y, dvx) {
         var p = this.player, fall = Math.max(0.4, (p.y - y) / (210 + this.night * 1.1));
-        var vx = clamp((p.x - x) / fall, -140, 140) * (this.tier >= 1 ? 1 : 0.6);
+        var vx = clamp((p.x - x) / fall, -140, 140) * (this.tier >= 1 ? 1 : 0.6) + (dvx || 0);
         this.raid.feathers.push({ x: x, y: y, vx: vx, t: 0, spr: this.add.image(x, y, "md-poo").setDepth(17) });
       }
       raidLaunch() {
@@ -1901,6 +1978,282 @@
         rg.stones = [];
         rg.spawnCd = 2400;
       }
+
+      /* ═══ 5. ROOT WORMS — centipede ═══════════════════════════════════════
+         v1.3 (Chemistry). Nidhogg's worms wind down a mushroom field one row
+         at a time, turning at every mushroom, like Centipede. A few segments
+         glow with a letter; the right one answers. A plain segment shot
+         becomes a mushroom and splits the worm. Sol walks in the clearing at
+         the bottom with one arrow in the air at a time. Wolf = the spider,
+         raven = the flea, wisp = the scorpion (poisons mushrooms). */
+      setup_worms() {
+        this.wm = { arrows: [], shrooms: {}, worms: [], cd: 0, spider: null, spiderCd: 4000, flea: null, fleaCd: 9000, wisp: null, wispCd: 12000, told: {} };
+        this.wormLayout();
+        this.makeSol(this.W / 2, this.H - 60, "up");
+        this.wormSeed();
+      }
+      wormLayout() {
+        var W = this.W, H = this.H, wm = this.wm, pal = this.pal, i;
+        /* the grid starts under the top-right page controls (fullscreen, music, Look), which sit over the first 60 px */
+        wm.cs = 34; wm.cols = Math.floor((W - 16) / wm.cs); wm.rows = Math.floor((H - 84) / wm.cs);
+        wm.x0 = (W - wm.cols * wm.cs) / 2 + wm.cs / 2; wm.y0 = 70 + wm.cs / 2;
+        wm.zone = wm.rows - 5;   /* the first row of the clearing Sol walks in */
+        if (this.bgG) this.bgG.destroy();
+        var g = this.bgG = this.add.graphics().setDepth(0), zy = this.wormCellY(wm.zone) - wm.cs / 2;
+        g.fillStyle(mix(pal.void, 0x000000, 0.25), 1); g.fillRect(0, 0, W, H);
+        /* the roots of the world tree hang down the sides */
+        g.lineStyle(10, mix(pal.wall, 0x000000, 0.35), 0.8);
+        for (i = 0; i < 6; i++) { var rx = i < 3 ? 6 + i * 14 : W - 6 - (i - 3) * 14; g.lineBetween(rx, 0, rx + (i < 3 ? 1 : -1) * rnd(10, 40), H * rnd(0.5, 0.95)); }
+        g.fillStyle(mix(pal.floorB, 0x000000, 0.5), 1); g.fillRect(0, zy, W, H - zy);
+        g.fillStyle(mix(pal.floorA, 0x000000, 0.4), 1); for (i = 0; i < 40; i++) g.fillCircle(rnd(0, W), rnd(zy + 8, H - 8), rnd(1.5, 4));
+        g.lineStyle(2, mix(pal.accent || 0xffe08a, 0x000000, 0.3), 0.6); g.lineBetween(0, zy, W, zy);
+        var self = this;
+        Object.keys(wm.shrooms).forEach(function (k) { var sh = wm.shrooms[k]; sh.spr.setPosition(self.wormCellX(sh.c), self.wormCellY(sh.r)); });
+      }
+      resize_worms() {
+        this.wormLayout();
+        if (this.player) { this.player.x = clamp(this.player.x, 20, this.W - 20); this.player.y = clamp(this.player.y, this.wormCellY(this.wm.zone) - 6, this.H - 44); }
+      }
+      wormCellX(c) { return this.wm.x0 + c * this.wm.cs; }
+      wormCellY(r) { return this.wm.y0 + r * this.wm.cs; }
+      wormKey(c, r) { return c + "," + r; }
+      wormShroomHp() { return this.tier >= 7 ? 4 : 3; }
+      wormShroom(c, r, hp) {
+        var wm = this.wm, k = this.wormKey(c, r);
+        if (c < 0 || c >= wm.cols || r < 0 || r >= wm.rows || wm.shrooms[k]) return null;
+        var sh = { c: c, r: r, hp: hp || this.wormShroomHp(), poison: false, spr: this.add.image(this.wormCellX(c), this.wormCellY(r), "md-shroom").setDepth(8) };
+        this.wormDrawShroom(sh);
+        wm.shrooms[k] = sh;
+        return sh;
+      }
+      wormDrawShroom(sh) { var k = sh.hp / this.wormShroomHp(); sh.spr.setScale(0.55 + 0.45 * k).setAlpha(0.6 + 0.4 * k); }
+      wormShroomHit(sh) {
+        sh.hp -= 1;
+        this.burst(sh.spr.x, sh.spr.y, sh.poison ? 0xb070ff : 0xe8b0a0, 5);
+        if (sh.hp <= 0) this.wormShroomRemove(sh); else this.wormDrawShroom(sh);
+      }
+      wormShroomRemove(sh) { delete this.wm.shrooms[this.wormKey(sh.c, sh.r)]; kill(sh); }
+      wormSeed() {
+        var wm = this.wm, n = Math.round(wm.cols * (wm.zone - 2) * 0.11), tries = 0;
+        while (n > 0 && tries++ < 2000) { if (this.wormShroom(Math.floor(rnd(0, wm.cols)), Math.floor(rnd(1, wm.zone - 1)))) n--; }
+      }
+      wormStepMs() { return Math.max(85, 170 - this.night * 0.55) * (this.tier >= 4 ? 0.85 : 1) * (this.tier >= 9 ? 0.85 : 1); }
+      /* a new worm: n segments in a line off one edge of row r; letters spaced along the body */
+      wormMake(n, r, fromL, letters, delayMs) {
+        var segs = [], i, at = {};
+        letters.forEach(function (L, j) { at[2 + Math.floor(j * (n - 3) / Math.max(1, letters.length))] = L; });
+        for (i = 0; i < n; i++) segs.push(this.wormSeg(fromL ? -1 - i : this.wm.cols + i, r, at[i] || null, i === 0));
+        var w = { segs: segs, dir: fromL ? 1 : -1, vdir: 1, acc: -(delayMs || 0), stepMs: this.wormStepMs(), plunge: false };
+        this.wm.worms.push(w);
+        return w;
+      }
+      wormSeg(c, r, letter, head) {
+        var e = { c: c, r: r, pc: c, pr: r, letter: letter || null, dead: false, hp: head && this.tier >= 6 ? 2 : 1, x: -999, y: -999 };
+        e.spr = this.add.image(-999, -999, head ? "md-worm-head" : "md-worm-seg").setDepth(12).setScale(letter ? 1.08 : 0.96);
+        if (letter) { e.spr.setTint(0xffe08a); e.label = this.letterText(-999, -999, letter, 19, "#2a1604", "#fff6d8").setDepth(14); }
+        else if (head && e.hp > 1) e.spr.setTint(0xcfd8e6);   /* an iron helm */
+        return e;
+      }
+      answers_worms() {
+        var wm = this.wm, self = this;
+        wm.worms.forEach(function (w) { w.segs.forEach(kill); w.segs.length = 0; }); wm.worms = [];
+        var letters = shuffle(this.choiceLetters().slice()), fromL = Math.random() < 0.5;
+        this.wormMake(13 + Math.min(this.tier, 6), 0, fromL, letters, 0);
+        if (this.tier >= 2) this.wormMake(6, 2, !fromL, [], 2600);
+        if (this.tier >= 8) this.wormMake(6, 4, fromL, [], 5200);
+        this.showTag("THE WORMS ARE COMING", "#ffe08a");
+        snd("rock");
+        if (!wm.told.start) { wm.told.start = true; this.toast("Shoot the glowing segment with the right letter. A plain segment shot splits the worm and leaves a mushroom.", 4200); }
+      }
+      wormPlace(e, f) {
+        var x0 = this.wormCellX(e.pc), x1 = this.wormCellX(e.c), y0 = this.wormCellY(e.pr), y1 = this.wormCellY(e.r);
+        e.x = x0 + (x1 - x0) * f; e.y = y0 + (y1 - y0) * f;
+        e.spr.setPosition(e.x, e.y).setFlipX(e.c < e.pc);
+        if (e.label) e.label.setPosition(e.x, e.y - 1);
+      }
+      /* one grid step: the body follows the head; the head turns and drops a row at a mushroom or a wall */
+      wormStep(w) {
+        var wm = this.wm, segs = w.segs, h = segs[0], i;
+        if (!h) return;
+        for (i = segs.length - 1; i >= 1; i--) { segs[i].pc = segs[i].c; segs[i].pr = segs[i].r; segs[i].c = segs[i - 1].c; segs[i].r = segs[i - 1].r; }
+        h.pc = h.c; h.pr = h.r;
+        if (w.plunge) {
+          h.r = Math.min(wm.rows - 1, h.r + 1);
+          if (h.r >= wm.zone || h.r >= wm.rows - 1) w.plunge = false;
+          return;
+        }
+        var nc = h.c + w.dir, inside = h.c >= 0 && h.c < wm.cols, sh = wm.shrooms[this.wormKey(nc, h.r)];
+        if (sh && sh.poison) { w.plunge = true; this.wormShroomRemove(sh); h.r = Math.min(wm.rows - 1, h.r + 1); return; }
+        var blocked = (nc < 0 || nc >= wm.cols) ? inside : !!sh;
+        if (blocked) {
+          var nr = h.r + w.vdir;
+          if (nr >= wm.rows) { w.vdir = -1; nr = h.r - 1; }
+          else if (nr < wm.zone && w.vdir < 0) { w.vdir = 1; nr = h.r + 1; }
+          h.r = nr; w.dir = -w.dir;
+        } else h.c = nc;
+      }
+      /* an arrow met segment i of worm w */
+      wormShot(w, i) {
+        var e = w.segs[i], wm = this.wm;
+        if (!e) return;
+        if (e.hp > 1) {
+          e.hp -= 1; e.spr.setTint(0xffb08a); this.burst(e.x, e.y, 0xffb08a, 8); snd("pop");
+          if (!wm.told.helm) { wm.told.helm = true; this.toast("The lead worm's iron helm took that. One more arrow for its head.", 2400); }
+          return;
+        }
+        if (e.letter && !e.dead) {
+          var res = this.answerPick(e.letter, e.x, e.y);
+          if (res === "wrong") this.wormRemoveSeg(w, i, true);
+          else if (res === "partial") { e.dead = true; e.spr.setTint(0x9aefc0); e.label.setText("✓"); }
+          return;
+        }
+        this.burst(e.x, e.y, 0x8fd06a, 12); snd("pop");
+        this.addKill(e.x, e.y, "Twelve worm segments");
+        this.wormRemoveSeg(w, i, true);
+      }
+      /* the segment goes (a mushroom where it was); the segments behind it become a worm of their own */
+      wormRemoveSeg(w, i, shroom) {
+        var e = w.segs[i], wm = this.wm;
+        if (shroom && e.c >= 0 && e.c < wm.cols && e.r >= 0) this.wormShroom(e.c, e.r);
+        kill(e);
+        var tail = w.segs.splice(i); tail.shift();
+        if (tail.length) {
+          var nw = { segs: tail, dir: i === 0 ? w.dir : -w.dir, vdir: w.vdir, acc: Math.max(0, w.acc), stepMs: w.stepMs, plunge: false };
+          tail[0].spr.setTexture("md-worm-head"); if (!tail[0].letter) tail[0].spr.clearTint();
+          wm.worms.push(nw);
+        }
+      }
+      tick_worms(s, inp, ms) {
+        var wm = this.wm, p = this.player, W = this.W, H = this.H, self = this, i, k;
+        /* Sol walks the clearing; a click only shoots */
+        var ax = inp.ax, ay = inp.ay, l = Math.sqrt(ax * ax + ay * ay) || 1;
+        p.x = clamp(p.x + ax / l * 330 * s, 20, W - 20); p.y = clamp(p.y + ay / l * 330 * s, this.wormCellY(wm.zone) - 6, H - 44);
+        this.playerFaceDir = "up";
+        this.tickPlayerCharAnim(ax, ay, false);
+        this.blink(p);
+        /* one arrow in the air at a time, as in Centipede */
+        wm.cd -= ms;
+        if (inp.fire && wm.cd <= 0 && !wm.arrows.length) {
+          wm.arrows.push({ x: p.x, y: p.y - 30, spr: this.add.image(p.x, p.y - 30, "md-arrow").setDepth(18) });
+          wm.cd = 110; snd("shot");
+        }
+        for (i = wm.arrows.length - 1; i >= 0; i--) {
+          var a = wm.arrows[i], y0 = a.y, hit = false;
+          a.y -= 900 * s; a.spr.y = a.y;
+          if (!this._finishing) {
+            var best = null, bw = null, bi = -1;
+            wm.worms.forEach(function (w) { w.segs.forEach(function (e, j) { if (e.dead || e.x < -20) return; if (Math.abs(a.x - e.x) < 17 && e.y + 15 >= a.y && e.y - 15 <= y0 && (!best || e.y > best.y)) { best = e; bw = w; bi = j; } }); });
+            if (best) { hit = true; this.wormShot(bw, bi); }
+            else {
+              var sp = wm.spider, fl = wm.flea, ws = wm.wisp;
+              if (sp && Math.abs(a.x - sp.x) < 28 && sp.y + 20 >= a.y && sp.y - 20 <= y0) { hit = true; this.burst(sp.x, sp.y, 0xbfd8ff, 14); snd("yelp"); this.addKill(sp.x, sp.y, "Wolves chased off"); kill(sp); wm.spider = null; wm.spiderCd = rnd(6000, 10000); }
+              else if (fl && Math.abs(a.x - fl.x) < 26 && fl.y + 20 >= a.y && fl.y - 20 <= y0) {
+                hit = true; fl.hp -= 1;
+                if (fl.hp > 0) { fl.vy *= 1.8; fl.spr.setTint(0xffb08a); this.burst(fl.x, fl.y, 0xffb08a, 8); snd("pop"); }
+                else { this.burst(fl.x, fl.y, 0x5a4a78, 14); snd("pop"); this.addKill(fl.x, fl.y, "Ravens shot down"); kill(fl); wm.flea = null; wm.fleaCd = rnd(9000, 14000); }
+              } else if (ws && Math.abs(a.x - ws.x) < 24 && ws.y + 18 >= a.y && ws.y - 18 <= y0) { hit = true; this.burst(ws.x, ws.y, 0xc080ff, 16); snd("pop"); this.awardBonusPoints(1000, "Wisp put out"); kill(ws); wm.wisp = null; wm.wispCd = rnd(10000, 16000); }
+              else {
+                var c = Math.round((a.x - wm.x0) / wm.cs), r = Math.round((a.y - wm.y0) / wm.cs), sh = wm.shrooms[this.wormKey(c, r)];
+                if (sh) { hit = true; this.wormShroomHit(sh); }
+              }
+            }
+          }
+          if (hit || a.y < -20) { a.spr.destroy(); wm.arrows.splice(i, 1); }
+          if (this._finishing) return;
+        }
+        /* the worms step along the grid; the sprites glide between cells */
+        wm.worms.forEach(function (w) {
+          w.acc += ms;
+          while (w.acc >= w.stepMs && w.segs.length) { w.acc -= w.stepMs; self.wormStep(w); }
+          var f = w.acc < 0 ? 0 : clamp(w.acc / w.stepMs, 0, 1);
+          w.segs.forEach(function (e) { self.wormPlace(e, f); });
+        });
+        /* a worm that reaches Sol bites */
+        if (!this._finishing) {
+          for (i = 0; i < wm.worms.length; i++) {
+            var w2 = wm.worms[i], bit = false;
+            for (k = 0; k < w2.segs.length && !bit; k++) {
+              var e2 = w2.segs[k];
+              if (e2.x > -20 && dist(e2.x, e2.y, p.x, p.y - 8) < 26) {
+                bit = true;
+                if (this.loseLife("hit", "A WORM BIT YOU")) { this.wormRemoveSeg(w2, k, false); }
+                if (this._finishing) return;
+              }
+            }
+          }
+        }
+        wm.worms = wm.worms.filter(function (w) { return w.segs.length; });
+        if (this.tier >= 1) this.wormSpider(s, ms);
+        if (this.tier >= 3) this.wormFlea(s, ms);
+        if (this.tier >= 5) this.wormWisp(s, ms);
+      }
+      /* realm 2 on: a wolf zig-zags through the clearing and eats mushrooms there (Centipede's spider) */
+      wormSpider(s, ms) {
+        var wm = this.wm, p = this.player, W = this.W, H = this.H, zy = this.wormCellY(wm.zone) - wm.cs / 2;
+        if (!wm.spider) {
+          wm.spiderCd -= ms;
+          if (wm.spiderCd <= 0 && !this._between) {
+            var fromL = Math.random() < 0.5, quick = this.tier >= 6 ? 1.3 : 1;
+            wm.spider = { x: fromL ? -30 : W + 30, y: rnd(zy + 24, H - 44), vx: (fromL ? 1 : -1) * rnd(150, 210) * quick, vy: rnd(120, 180) * (Math.random() < 0.5 ? -1 : 1), t: 0,
+              spr: this.add.image(0, 0, "hati1").setScale(0.5).setDepth(16) };
+            snd("howl");
+          }
+          return;
+        }
+        var sp = wm.spider; sp.t += s; sp.x += sp.vx * s; sp.y += sp.vy * s;
+        if (sp.y < zy + 16) { sp.y = zy + 16; sp.vy = Math.abs(sp.vy); } else if (sp.y > H - 36) { sp.y = H - 36; sp.vy = -Math.abs(sp.vy); }
+        if (Math.random() < s * 1.4) sp.vy = -sp.vy;
+        sp.spr.setPosition(sp.x, sp.y).setTexture("hati" + (1 + Math.floor(sp.t * 9) % 3)).setFlipX(sp.vx < 0);
+        var c = Math.round((sp.x - wm.x0) / wm.cs), r = Math.round((sp.y - wm.y0) / wm.cs), sh = wm.shrooms[this.wormKey(c, r)];
+        if (sh && r >= wm.zone) { this.wormShroomRemove(sh); this.burst(sp.x, sp.y, 0xe8b0a0, 4); }
+        if ((sp.vx > 0 && sp.x > W + 40) || (sp.vx < 0 && sp.x < -40)) { kill(sp); wm.spider = null; wm.spiderCd = rnd(5000, 9000); return; }
+        if (dist(sp.x, sp.y, p.x, p.y - 8) < 32 && this.loseLife("hit", "A WOLF BIT YOU")) { kill(sp); wm.spider = null; wm.spiderCd = 6000; }
+      }
+      /* realm 4 on: a raven drops straight down, planting mushrooms as it falls (Centipede's flea) */
+      wormFlea(s, ms) {
+        var wm = this.wm, p = this.player, H = this.H;
+        if (!wm.flea) {
+          wm.fleaCd -= ms;
+          if (wm.fleaCd <= 0 && !this._between) {
+            var c = Math.floor(rnd(1, wm.cols - 1));
+            wm.flea = { c: c, x: this.wormCellX(c), y: -30, vy: 300 * (this.tier >= 7 ? 1.25 : 1), hp: 2, lastR: -1, t: 0, spr: this.add.image(0, -30, "rf-raven-0").setScale(0.7).setDepth(16).setRotation(0.35) };
+            snd("caw");
+          }
+          return;
+        }
+        var f = wm.flea; f.t += s; f.y += f.vy * s;
+        f.spr.setPosition(f.x, f.y).setTexture("rf-raven-" + (Math.floor(f.t * 6) % 2));
+        var r = Math.round((f.y - wm.y0) / wm.cs);
+        if (r !== f.lastR && r >= 1 && r < wm.rows - 1) { f.lastR = r; if (Math.random() < 0.35) this.wormShroom(f.c, r); }
+        if (f.y > H + 30) { kill(f); wm.flea = null; wm.fleaCd = rnd(9000, 14000); return; }
+        if (dist(f.x, f.y, p.x, p.y - 8) < 30 && this.loseLife("hit", "A RAVEN CRASHED INTO YOU")) { kill(f); wm.flea = null; wm.fleaCd = 8000; }
+      }
+      /* realm 6 on: a wisp crosses the field and poisons the mushrooms it touches (Centipede's scorpion) */
+      wormWisp(s, ms) {
+        var wm = this.wm, W = this.W;
+        if (!wm.wisp) {
+          wm.wispCd -= ms;
+          if (wm.wispCd <= 0 && !this._between) {
+            var fromL = Math.random() < 0.5, r = Math.floor(rnd(1, Math.max(2, wm.zone - 2)));
+            wm.wisp = { r: r, y: this.wormCellY(r), x: fromL ? -30 : W + 30, vx: (fromL ? 1 : -1) * 220, t: 0, spr: this.add.image(0, 0, "md-orb").setScale(0.5).setTint(0xc080ff).setDepth(15) };
+          }
+          return;
+        }
+        var ws = wm.wisp; ws.t += s; ws.x += ws.vx * s;
+        ws.spr.setPosition(ws.x, ws.y + Math.sin(ws.t * 8) * 4).setAlpha(0.7 + 0.3 * Math.sin(ws.t * 12));
+        var c = Math.round((ws.x - wm.x0) / wm.cs), sh = wm.shrooms[this.wormKey(c, ws.r)];
+        if (sh && !sh.poison) {
+          sh.poison = true; sh.spr.setTint(0xb070ff);
+          if (!wm.told.poison) { wm.told.poison = true; this.toast("A wisp is poisoning the mushrooms! A worm that meets a poisoned one plunges straight down.", 3600); }
+        }
+        if ((ws.vx > 0 && ws.x > W + 40) || (ws.vx < 0 && ws.x < -40)) { kill(ws); wm.wisp = null; wm.wispCd = rnd(10000, 16000); }
+      }
+      clear_worms() {
+        var wm = this.wm, self = this;
+        wm.worms.forEach(function (w) { w.segs.forEach(function (e) { if (e.x > -20) self.burst(e.x, e.y, 0x8fd06a, 6); kill(e); }); w.segs.length = 0; });
+        wm.worms = [];
+        wm.arrows.forEach(function (a) { a.spr.destroy(); }); wm.arrows = [];
+      }
     }
 
     return ModeScene;
@@ -1908,6 +2261,6 @@
 
   /* v5.7.9: the maze draws Sol riding this chariot while the CHARIOT power lasts */
   function ensureChariotArt(scene) { canvasTex(scene, "md-team-0", TEAM_W, TEAM_H, drawTeam(0)); canvasTex(scene, "md-team-1", TEAM_W, TEAM_H, drawTeam(1)); }
-  window.SolModes = { MODES: MODES, SLOTS: SLOTS, modeFor: modeFor, install: install, ensureChariotArt: ensureChariotArt,
+  window.SolModes = { MODES: MODES, SLOTS: SLOTS, ORDER: ORDER, modeFor: modeFor, modeInRealm: modeInRealm, install: install, ensureChariotArt: ensureChariotArt, BIRDS: BIRDS, raidKindsFor: raidKindsFor,
     TEAM: { w: TEAM_W, h: TEAM_H, car: TEAM_CAR } };
 })();

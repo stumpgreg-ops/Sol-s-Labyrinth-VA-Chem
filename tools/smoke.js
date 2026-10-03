@@ -544,7 +544,7 @@ var srv = http.createServer(function (req, res) {
 
   /* v5.7: shooter levels on 2, 4, 6 and 8 of each realm, reached through the real Next level button */
   var rot = await page.evaluate(function () { var o = []; for (var n = 1; n <= 20; n++) { var m = SolModes.modeFor(n); o.push(m ? m.id : "-"); } return o.join(","); });
-  check(rot === "-,raid,-,rocks,-,sky,-,ring,-,-,-,raid,-,rocks,-,sky,-,ring,-,-", "shooter rotation: raid, rocks, sky, ring on even levels; maze on odd levels and bosses: " + rot);
+  check(rot === "-,raid,-,rocks,-,sky,-,ring,-,-,-,rocks,-,sky,-,ring,-,worms,-,-", "shooter rotation: five shooters turn through the even levels (raid, rocks, sky, ring in realm 1; rocks, sky, ring, worms in realm 2); maze on odd levels and bosses: " + rot);
   async function gotoLevel(n) {
     await page.evaluate(function (n) { var b = document.getElementById("btn-next"); b.dataset.goto = String(n); b.click(); }, n);
     await page.waitForTimeout(1500);
@@ -622,6 +622,28 @@ var srv = http.createServer(function (req, res) {
   });
   await page.waitForFunction(function () { return SolScene.raid.ravens.some(function (q) { return q.state === "beam" && q.beamMs > 700; }); }, null, { timeout: 20000 }).catch(function () {});
   await shot("16b-eagle-beam");
+  /* v1.3: the rows never refill, and from the second realm each row is a different bird */
+  modeRuns.raidRows = await page.evaluate(async function () {
+    var s = SolScene, R = s.raid, o = {};
+    s.iframeMs = 1e9; s.spareLives = 9;
+    var rows = R.ravens.filter(function (q) { return q.kind === "raven" && !q.guard && q.alive; });
+    o.before = rows.length;
+    rows.slice(0, 5).forEach(function (q) { s.raidHit(q); });
+    o.after0 = R.ravens.filter(function (q) { return q.kind === "raven" && !q.guard && q.alive; }).length;
+    for (var u = 0; u < 160; u++) s.update(0, 50);   /* eight seconds of play, ticked by hand */
+    await new Promise(function (r) { setTimeout(r, 1500); });
+    o.after = R.ravens.filter(function (q) { return q.kind === "raven" && !q.guard && q.alive; }).length;
+    o.kinds1 = R.ravSlots.map(function (q) { return q.bird; }).filter(function (b, i, a) { return a.indexOf(b) === i; }).join("+");
+    var keep = s.tier; s.tier = 6; s.answers_raid();
+    var byRow = {};
+    R.ravSlots.forEach(function (sl) { byRow[sl.row] = byRow[sl.row] || {}; byRow[sl.row][sl.bird] = 1; });
+    o.rowKinds = Object.keys(byRow).map(function (r) { return Object.keys(byRow[r]).join("+"); });
+    o.hawk = R.ravens.some(function (q) { return q.bird === "hawk"; }) && R.ravens.filter(function (q) { return q.bird === "hawk"; }).every(function (q) { return q.hp === 2; });
+    o.falcon = R.ravens.some(function (q) { return q.bird === "falcon"; });
+    var hk = R.ravens.filter(function (q) { return q.bird === "hawk"; })[0]; s.raidHit(hk); o.hawkHurt = hk.alive && hk.hp === 1; s.raidHit(hk); o.hawkDown = !hk.alive;
+    s.tier = keep; s.answers_raid();
+    return o;
+  });
   await page.evaluate(function () { SolScene.iframeMs = 0; });
   await gotoLevel(4);
   /* v5.7.3: the "how to pull a rock in" card comes up once the reading pop-up closes, and pauses the level */
@@ -789,9 +811,51 @@ var srv = http.createServer(function (req, res) {
   var back = await page.evaluate(function () { var s = SolScene; return { key: s.sys.settings.key, night: s.night, slips: (s.slips || []).length, act: document.getElementById("btn-action").textContent, mini: getComputedStyle(document.getElementById("minimap")).display, stage: document.getElementById("stage").className }; });
   console.log("back to maze", JSON.stringify(back));
   check(back.key === "night" && back.night === 9 && back.slips === 4 && back.act === "SPRINT" && back.mini !== "none" && back.stage.indexOf("mode") === -1, "Next level goes from the shooter back to the maze with its own controls");
+  /* v1.3: Root Worms (centipede) is the fifth shooter; it first comes round on level 18 */
+  await gotoLevel(18);
+  var worms = await page.evaluate(async function () {
+    var s = SolScene, M = s.wm, o = { mode: s.mode.id, key: s.sys.settings.key, act: document.getElementById("btn-action").textContent, tier: s.tier, card: (document.getElementById("mode-card") || {}).textContent || "" };
+    s.spareLives = 0; s.perks = {}; s.strikes = 0; s.iframeMs = 0; s.tutLockUntil = 0;
+    o.shrooms = Object.keys(M.shrooms).length; o.worms = M.worms.length;
+    var w = M.worms[0]; o.segs = w.segs.length; o.letters = w.segs.filter(function (q) { return q.letter; }).map(function (q) { return q.letter; }).sort().join("");
+    for (var i = 0; i < 30; i++) s.wormStep(w);
+    w.segs.forEach(function (q) { s.wormPlace(q, 1); });
+    o.onScreen = w.segs.filter(function (q) { return q.c >= 0 && q.c < M.cols; }).length;
+    o.rowsDown = w.segs[0].r;
+    var k = -1; w.segs.forEach(function (q, j) { if (k < 0 && !q.letter && j > 0 && q.c >= 0 && q.c < M.cols) k = j; });
+    var seg = w.segs[k], cell = seg.c + "," + seg.r, before = M.worms.length;
+    s.wormShot(w, k); o.split = M.worms.length === before + 1; o.shroomLeft = !!M.shrooms[cell];
+    var ww = null, wi = -1;
+    M.worms.forEach(function (x) { x.segs.forEach(function (q, j) { if (!ww && q.letter && s.need.indexOf(q.letter) === -1) { ww = x; wi = j; } }); });
+    s.wormShot(ww, wi); o.wrong = s.strikes; s.strikes = 0; s.iframeMs = 0;
+    var key0 = Object.keys(M.shrooms)[0], sh = M.shrooms[key0]; s.wormShroomHit(sh); s.wormShroomHit(sh); o.shroomTwo = !!M.shrooms[key0]; s.wormShroomHit(sh); o.shroomGone = !M.shrooms[key0];
+    var h = M.worms[0].segs[0]; h.c = Math.round((s.player.x - M.x0) / M.cs); h.r = Math.round((s.player.y - 8 - M.y0) / M.cs); h.pc = h.c; h.pr = h.r;
+    for (var u = 0; u < 6; u++) s.update(0, 40);   /* headless Chromium draws no frames without input: tick by hand */
+    o.bitten = s.strikes; s.strikes = 0; s.iframeMs = 0;
+    M.worms.slice().forEach(function (x) { x.segs.slice().forEach(function (q) { if (q.letter && !q.dead && s.need.indexOf(q.letter) !== -1) { var idx = x.segs.indexOf(q); if (idx >= 0) s.wormShot(x, idx); } }); });
+    o.score = s.score; o.coins = s.nightCoins;
+    await new Promise(function (r) { setTimeout(r, 1400); });
+    o.newWave = M.worms.length > 0 && M.worms[0].segs.some(function (q) { return q.letter; });
+    o.spiderOn = s.tier >= 1 && (!!M.spider || M.spiderCd < 4000);
+    return o;
+  });
+  await shot("19b-root-worms");
+  console.log("worms", JSON.stringify(worms));
+  check(worms.mode === "worms" && worms.key === "mode" && worms.act === "FIRE" && worms.tier === 1 && /Root Worms/.test(worms.card), "level 18 is Root Worms (centipede) in the shooter scene with FIRE, and its card is up: " + worms.card.slice(0, 80));
+  check(worms.shrooms > 10 && worms.segs >= 13 && worms.letters.length >= 2 && worms.onScreen > 0 && worms.rowsDown >= 1, "Root Worms: a mushroom field, a worm of 13+ segments carrying the letters that winds in and drops rows: " + JSON.stringify({ shrooms: worms.shrooms, segs: worms.segs, letters: worms.letters, on: worms.onScreen, rows: worms.rowsDown }));
+  check(worms.split && worms.shroomLeft && worms.wrong === 1 && worms.shroomTwo && worms.shroomGone && worms.bitten === 1, "Root Worms: a plain segment shot splits the worm and leaves a mushroom; a wrong letter and a bite cost a life; a mushroom takes three arrows: " + JSON.stringify({ split: worms.split, shroom: worms.shroomLeft, wrong: worms.wrong, two: worms.shroomTwo, gone: worms.shroomGone, bitten: worms.bitten }));
+  check(worms.score === 1 && worms.coins > 0 && worms.newWave && worms.spiderOn, "Root Worms: the right segment answers, pays coins and a new worm comes; the wolf prowls from realm 2: " + JSON.stringify({ score: worms.score, coins: worms.coins, wave: worms.newWave, spider: worms.spiderOn }));
   /* v5.7.9: every time a mode comes round (once a realm) it adds something; the Ragnarok levels have it all */
   var tiers = {};
   await gotoLevel(92);
+  tiers.worms = await page.evaluate(async function () {
+    var s = SolScene, M = s.wm; s.iframeMs = 1e9; s.spareLives = 9; M.spiderCd = 0; M.fleaCd = 0; M.wispCd = 0;
+    for (var u = 0; u < 12; u++) s.update(0, 40);
+    await new Promise(function (r) { setTimeout(r, 1500); });
+    return { tier: s.tier, worms: M.worms.length, helm: M.worms[0] && M.worms[0].segs[0].hp === 2, shroomHp: s.wormShroomHp(), spider: !!M.spider, flea: !!M.flea, wisp: !!M.wisp, card: (document.getElementById("mode-card") || {}).textContent || "" };
+  });
+  await shot("20e-root-worms-ragnarok");
+  await gotoLevel(94);
   tiers.raid = await page.evaluate(async function () {
     var s = SolScene, R = s.raid; s.iframeMs = 1e9; s.spareLives = 9;
     R.ravens.forEach(function (e) { if (e.state === "wait" || e.state === "enter") { e.state = "form"; e.path = null; } });
@@ -801,7 +865,7 @@ var srv = http.createServer(function (req, res) {
       helm: R.ravens.filter(function (o) { return o.kind === "eagle"; }).every(function (o) { return o.hp === 3; }), rows: R.ravSlots.length };
   });
   await shot("20a-eagle-swoop-ragnarok");
-  await gotoLevel(94);
+  await gotoLevel(96);
   tiers.rocks = await page.evaluate(async function () {
     var s = SolScene, R = s.rk; s.iframeMs = 1e9; s.spareLives = 9; s._beamHelpDone = true; s.helpOpen = false; s.hideBeamHelp();
     R.cometCd = 0; R.valkCd = 0; R.showerCd = 0;
@@ -812,14 +876,14 @@ var srv = http.createServer(function (req, res) {
     return o;
   });
   await shot("20b-rune-rocks-ragnarok");
-  await gotoLevel(96);
+  await gotoLevel(98);
   tiers.sky = await page.evaluate(async function () {
     var s = SolScene; s.iframeMs = 1e9; s.spareLives = 9;
     await new Promise(function (r) { setTimeout(r, 2500); });
     return { tier: s.tier, flip: s.sky.P.flip, gap: s.sky.P.gapHalf, orbs: s.sky.orbs.length };
   });
   await shot("20c-sun-chariot-ragnarok");
-  await gotoLevel(98);
+  await gotoLevel(82);   /* Wolf Ring sits out Ragnarok in the five-mode rotation; realm 8 is its last turn */
   tiers.ring = await page.evaluate(async function () {
     var s = SolScene, G = s.rg; s.iframeMs = 1e9; s.spareLives = 9; G.alphaCd = 0; G.ravCd = 0;
     await new Promise(function (r) { setTimeout(r, 2600); });
@@ -830,7 +894,11 @@ var srv = http.createServer(function (req, res) {
   check(tiers.raid.tier === 9 && /New this time/.test(tiers.raid.card) && tiers.raid.clouds >= 1 && tiers.raid.swapped && tiers.raid.helm && tiers.raid.rows > 12, "Eagle Swoop in Ragnarok: storm clouds, eagles trading places, iron helms, three raven rows, and the card says what's new: " + JSON.stringify(tiers.raid).slice(0, 200));
   check(tiers.rocks.tier === 9 && tiers.rocks.comet && tiers.rocks.valk && tiers.rocks.guards >= 2 && tiers.rocks.iron, "Rune Rocks in Ragnarok: comets, a valkyrie, guard stones and iron rocks: " + JSON.stringify(tiers.rocks));
   check(tiers.sky.tier === 9 && tiers.sky.flip && tiers.sky.orbs > 0, "Sun Chariot in Ragnarok runs with reversing shields: " + JSON.stringify(tiers.sky));
-  check(tiers.ring.tier === 9 && tiers.ring.alpha && tiers.ring.raven && tiers.ring.ammo <= 6, "Wolf Ring in Ragnarok: the alpha wolf, poo-dropping ravens and the quiver: " + JSON.stringify(tiers.ring));
+  check(tiers.ring.tier === 8 && tiers.ring.alpha && tiers.ring.raven && tiers.ring.ammo <= 6, "Wolf Ring in realm 8: the alpha wolf, poo-dropping ravens and the quiver: " + JSON.stringify(tiers.ring));
+  check(tiers.worms.tier === 9 && tiers.worms.worms >= 3 && tiers.worms.helm && tiers.worms.shroomHp === 4 && tiers.worms.spider && tiers.worms.flea && tiers.worms.wisp && /New this time/.test(tiers.worms.card), "Root Worms in Ragnarok: three worms, an iron-helmed head, tougher mushrooms, the wolf, a falling raven and a poisoning wisp, and the card says what's new: " + JSON.stringify(tiers.worms).slice(0, 220));
+  var rr = modeRuns.raidRows;
+  check(rr && rr.before - rr.after0 === 5 && rr.after <= rr.after0 && rr.kinds1 === "raven", "Eagle Swoop: five birds shot stay down — the rows do not refill (" + rr.before + " → " + rr.after0 + " → " + rr.after + " after 7 s); realm 1 is all ravens");
+  check(rr && rr.rowKinds.length === 3 && rr.rowKinds.every(function (k) { return k.indexOf("+") === -1; }) && rr.rowKinds.join(",") === "falcon,hawk,raven" && rr.hawk && rr.falcon && rr.hawkHurt && rr.hawkDown, "Eagle Swoop from realm 7: three rows, each one kind of bird (falcon, hawk, raven); a hawk takes two arrows: " + JSON.stringify(rr.rowKinds));
   await gotoLevel(2);
   var retry = await page.evaluate(async function () {
     var s = SolScene; s.spareLives = 0; s.perks = {}; s.strikes = s.needStrikes - 1;

@@ -8,6 +8,14 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## Chemistry 1.3.0 (2026-10-03) — Root Worms, and Eagle Swoop's rows of birds
+
+- **A fifth shooter: Root Worms (centipede style).** Nidhogg's worms wind down a mushroom field from the top, row by row, turning and dropping a row at every mushroom they meet. A few segments glow with a letter; shooting the right one answers. Shooting a plain segment breaks the worm in two and leaves a mushroom where it was; arrows chip away mushrooms (three hits). Sol walks the clearing at the bottom with one arrow in the air at a time. A worm reaching Sol bites. Realm by realm it adds Centipede's cast in Norse dress: a **wolf** that zig-zags through the clearing eating mushrooms (the spider), **ravens** that drop straight down planting mushrooms and take two arrows (the flea), a **wisp** that poisons mushrooms so a worm that meets one plunges straight down (the scorpion), then two and three worms, an iron-helmed lead worm, longer and faster worms, tougher mushrooms.
+- **Five shooters in four slots.** The even levels of a realm (2, 4, 6, 8) still hold the shooters; the order turns one place every realm, so each mode comes round in four realms out of five. Realm 1 keeps the old order (Eagle Swoop, Rune Rocks, Sun Chariot, Wolf Ring); realm 2 runs Rune Rocks, Sun Chariot, Wolf Ring, Root Worms; and so on. When a mode has sat a realm out, its intro card lists what came in while it was away as well as what is new this time.
+- **Eagle Swoop: the rows never refill.** A bird shot down stays down until the next question's wave, so the rows thin out as the student clears them (the two guard ravens under each eagle still fly back, as before).
+- **Eagle Swoop: rows of different birds, Galaga style.** Each row is one kind of bird with its own trick, and the card lists the birds of the wave: **ravens** (plain divers), **magpies** from realm 2 (fast, zig-zag on the dive), **hawks** from realm 3 (two arrows; steer at Sol in mid-dive; no poo), **owls** from realm 5 (drop a spread of three), **falcons** from realm 7 (the fastest; dive straight at Sol and correct their aim). Ragnarok mixes every bird through the rows.
+- `tools/smoke.js`: 117 checks, including the new rotation, the bird rows and no-refill rule, and Root Worms at levels 18 and 92.
+
 ## Engine update to SOL Labyrinth v5.8.0 (Chemistry 1.2.0, 2026-10-02)
 
 The browser (HTML) game is now on the SOL Labyrinth v5.8.0 engine. Everything the SOL Labyrinth session shipped between v5.7.1 and v5.8.0 is in this build, with the Chemistry bank unchanged:
