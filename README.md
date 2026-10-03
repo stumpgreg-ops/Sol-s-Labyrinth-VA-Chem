@@ -33,6 +33,26 @@ Set up once:
 
 Teacher page and classes (v5.8.0): the game link with `?admin=1` on the end opens a PIN-locked teacher page (choose the PIN the first time). There a teacher makes **classes**: pick a unit (or Full review), write the class's own **question sets** (lab notes plus 4-choice questions, each tagged with its CH standard), and **hide or reword** any regular question for that class only. A class's link is the game link with `?class=CODE` on the end; it asks each student once for a nickname and shows the teacher each student's highest level, right and wrong counts and current level. Everything is stored inside the Apps Script project; nothing is written to Google Drive. The plain link always plays the untouched core game.
 
+## Canvas version (nothing hosted outside the school)
+
+For a course in Canvas, where nothing may load from GitHub or any other outside site: `node tools/build-canvas.js` (after `node tools/build-appsscript.js`) writes `dist/canvas/VA-Chem/` and the same files zipped as `dist/canvas/SOLLab-VA-Chem-Canvas.zip` (about 5 MB). It is the SOL Labyrinth v5.8.2 Canvas build for the Chemistry game:
+
+- `SOLLab-VA-Chem.html`: the starter page (3 KB), the loading screen and one `<script src>`. Canvas runs the scripts of a small uploaded page but not of a big one, and a small page can read files next to it in its folder.
+- `SOLLab-VA-Chem-game.js`: the loader, the manifest and the list of data files.
+- `SOLLab-VA-Chem-data-01.js` … `-09.js`: the gzip bundle (no music, 3D castle kept) as base64, 576 KB per file. Each file calls `solPart(i, hash, base64)`, and a file from another version is refused.
+
+In Canvas:
+
+1. Upload the zip to one folder in **Files** and let Canvas expand it (or upload the eleven files into one folder).
+2. Embed the starter page in a Page: `<iframe src="/courses/<course>/files/<file id of SOLLab-VA-Chem.html>/preview" width="100%" height="700" allowfullscreen></iframe>`.
+3. `tools/canvas-check.html` is a tiny page that says whether a given spot in Canvas runs a page's code and can save; upload and embed it the same way if the game sticks on its loading screen.
+
+Saves live with the starter page's address under the prefix `solReading.va-chem:`, so an update that replaces only the `.js` files keeps every student's progress, and the Reading game's Canvas build (`solReading.va:`) on the same Canvas never shares saves with it. A missing or renamed data file is named on screen. Class sessions and the teacher page need the Apps Script server and are not in the Canvas files.
+
+Smaller bundle (both versions, v5.8.1): castle models that differ only by colour are stored as deltas of one model, and PNGs travel as lossless WebP when smaller (`tools/webp-cache.py`, needs Pillow; without it PNGs stay PNG). The Apps Script download went from 8.5 MB to 5.0 MB.
+
+Test: `node tools/smoke-canvas.js` serves the files from a Canvas-like folder path and embeds the starter page in a "course page" on another origin; it checks that the page reads only its own files, that a level starts and the castle draws in 3D, that saves carry the prefix and another game's saves stay untouched, and that a missing data file is named.
+
 Rebuilding after a content or engine change: `node tools/build-appsscript.js` rewrites `appsscript/` (parts, manifest, loader.html, Code.gs) for the current branch; commit and push it, and every deployed script picks up the new version on the next load (nothing to redeploy). `node tools/smoke-appsscript.js` checks the build headlessly through a local stand-in for Apps Script (`appsscript/test.html`).
 
 ## Engine update to SOL Labyrinth v5.7.1 (Chemistry 1.1.0, 2026-09-28)
