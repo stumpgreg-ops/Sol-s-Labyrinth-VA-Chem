@@ -140,14 +140,14 @@ merged("U7-C1L2+3", ["U7-C1L2", "U7-C1L3"], "U7 C1L2+3",
        "Combined: finish reading “The Most Dangerous Game” in two blocks instead of three.")
 
 ASSESS = [  # id, short, title, window start, window end, anchor lesson
-    ("Q1-MQ", "Q1 MQ", "Q1 English 9 Mid-Quarter (MQ)", D(2026, 9, 23), D(2026, 10, 6), "U1-W4L2"),
+    ("Q1-MQ", "Q1 Mid-Quarter", "Q1 English 9 Mid-Quarter (MQ)", D(2026, 9, 23), D(2026, 10, 6), "U1-W4L2"),
     ("Q1-BM", "Q1 Benchmark", "Q1 English 9 Benchmark", D(2026, 10, 28), D(2026, 11, 11), "U2-C3L1"),
-    ("Q2-MQ", "Q2 MQ", "Q2 English 9 Mid-Quarter (MQ)", D(2026, 12, 7), D(2026, 12, 18), "U3-C2L5"),
+    ("Q2-MQ", "Q2 Mid-Quarter", "Q2 English 9 Mid-Quarter (MQ)", D(2026, 12, 7), D(2026, 12, 18), "U3-C2L5"),
     ("Q2-BM", "Q2 Benchmark", "Q2 English 9 Benchmark", D(2027, 1, 19), D(2027, 2, 3), "U4-C2L1"),
     ("LPA", "LPA", "LPA (Grades 9-11)", D(2027, 2, 8), D(2027, 2, 12), None),
-    ("Q3-MQ", "Q3 MQ", "Q3 English 9 Mid-Quarter (MQ)", D(2027, 2, 24), D(2027, 3, 9), "U5-C4L1"),
+    ("Q3-MQ", "Q3 Mid-Quarter", "Q3 English 9 Mid-Quarter (MQ)", D(2027, 2, 24), D(2027, 3, 9), "U5-C4L1"),
     ("Q3-BM", "Q3 Benchmark", "Q3 English 9 Benchmark", D(2027, 3, 29), D(2027, 4, 19), "U5-C5L2"),
-    ("Q4-MQ", "Q4 MQ", "Q4 English 9 Mid-Quarter (MQ)", D(2027, 5, 17), D(2027, 5, 28), "U6-C2L4"),
+    ("Q4-MQ", "Q4 Mid-Quarter", "Q4 English 9 Mid-Quarter (MQ)", D(2027, 5, 17), D(2027, 5, 28), "U6-C2L4"),
     ("Q4-BM", "Q4 Benchmark", "Q4 English 9 Benchmark", D(2027, 6, 3), D(2027, 6, 16), "U7-C2L3"),
 ]
 for aid, short, title, ws, we, _ in ASSESS:
@@ -205,6 +205,7 @@ for track in "PG":
 # ---------------------------------------------------------------- workbook
 FONT = "Arial"
 PURPLE, GOLD, EXAMC, MOD, NOSCH = "5B2A86", "F6C244", "52F2DA", "BDF59A", "F47F6B"
+TESTC = "1F5FD1"
 HDR_FILL = PatternFill("solid", fgColor="4A3F35")
 INPUT_FILL = PatternFill("solid", fgColor="FFF6C8")
 thin = Side(style="thin", color="B8AFA3")
@@ -355,7 +356,7 @@ c = ya.cell(1, 1, "English 9 Purple-Gold Pacing Calendar, August 2026 to June 20
 c.font = Font(name=FONT, bold=True, size=14)
 legend = [("Purple day", PURPLE, "FFFFFF"), ("Gold day", GOLD, "000000"),
           ("Exam day", EXAMC, "000000"), ("Half day", MOD, "000000"),
-          ("No school", NOSCH, "000000")]
+          ("No school", NOSCH, "000000"), ("English test", TESTC, "FFFFFF")]
 for i, (lab, bg, fg) in enumerate(legend):
     cc = ya.cell(2, 1 + i * 3, lab)
     ya.merge_cells(start_row=2, start_column=1 + i * 3, end_row=2, end_column=3 + i * 3)
@@ -368,7 +369,7 @@ ya.cell(3, 1, "Each cell shows the date and the lesson for the classes that meet
 PER_ROW = 3
 BLOCK_W = 8  # 7 days + spacer
 for col in range(1, PER_ROW * BLOCK_W + 1):
-    ya.column_dimensions[get_column_letter(col)].width = 2 if col % BLOCK_W == 0 else 10.5
+    ya.column_dimensions[get_column_letter(col)].width = 2 if col % BLOCK_W == 0 else 15
 top = 5
 import calendar as cal
 for mi, (y, m) in enumerate(months):
@@ -399,22 +400,29 @@ for mi, (y, m) in enumerate(months):
             cell.value = f'="{day}"&CHAR(10)&IFERROR(VLOOKUP({dexpr},{tab}!$A:$J,10,FALSE),"")'
             cell.fill = fill(MOD if d in HALF else (PURPLE if dt_type == "P" else GOLD))
             white = dt_type == "P" and d not in HALF
-            cell.font = Font(name=FONT, size=8, bold=True, color="FFFFFF" if white else "000000")
+            cell.font = Font(name=FONT, size=10, bold=True, color="FFFFFF" if white else "000000")
         elif dt_type == "E":
             cell.value = (f'="{day}"&IFERROR(CHAR(10)&"P: "&VLOOKUP({dexpr},Purple!$A:$J,10,FALSE),"")'
                           f'&IFERROR(CHAR(10)&"G: "&VLOOKUP({dexpr},Gold!$A:$J,10,FALSE),"")'
                           f'&IF(COUNTIF(Purple!$A:$A,{dexpr})+COUNTIF(Gold!$A:$A,{dexpr})=0,'
                           f'CHAR(10)&"Exam day","")')
             cell.fill = fill(EXAMC)
-            cell.font = Font(name=FONT, size=8, bold=True)
+            cell.font = Font(name=FONT, size=10, bold=True)
         else:
             cell.value = str(day)
             cell.fill = fill(NOSCH)
-            cell.font = Font(name=FONT, size=8, color="7A1F12")
+            cell.font = Font(name=FONT, size=10, color="7A1F12")
     for wk in range(6):
-        ya.row_dimensions[r0 + 2 + wk].height = 28
+        ya.row_dimensions[r0 + 2 + wk].height = 46
         for wd in range(7):
             ya.cell(r0 + 2 + wk, c0 + wd).border = BORDER
+
+grid_end = top + ((len(months) - 1) // PER_ROW + 1) * 9
+TEST_RULE = ('OR(ISNUMBER(SEARCH("Mid-Quarter",A{r})),ISNUMBER(SEARCH("Benchmark",A{r})),'
+             'ISNUMBER(SEARCH("LPA",A{r})))').format(r=top)
+ya.conditional_formatting.add(
+    f"A{top}:{get_column_letter(PER_ROW * BLOCK_W)}{grid_end}",
+    FormulaRule(formula=[TEST_RULE], fill=fill(TESTC), font=Font(bold=True, color="FFFFFF")))
 
 # --- Assessments
 asx = wb.create_sheet("Assessments")
