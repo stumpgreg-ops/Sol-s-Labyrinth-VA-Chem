@@ -141,14 +141,14 @@ merged("U7-C1L2+3", ["U7-C1L2", "U7-C1L3"], "U7 C1L2+3",
 
 ASSESS = [  # id, short, title, window start, window end, anchor lesson
     ("Q1-MQ", "Q1 MQ", "Q1 English 9 Mid-Quarter (MQ)", D(2026, 9, 23), D(2026, 10, 6), "U1-W4L2"),
-    ("Q1-BM", "Q1 Bench", "Q1 English 9 Benchmark", D(2026, 10, 28), D(2026, 11, 11), "U2-C3L1"),
+    ("Q1-BM", "Q1 Benchmark", "Q1 English 9 Benchmark", D(2026, 10, 28), D(2026, 11, 11), "U2-C3L1"),
     ("Q2-MQ", "Q2 MQ", "Q2 English 9 Mid-Quarter (MQ)", D(2026, 12, 7), D(2026, 12, 18), "U3-C2L5"),
-    ("Q2-BM", "Q2 Bench", "Q2 English 9 Benchmark", D(2027, 1, 19), D(2027, 2, 3), "U4-C2L1"),
+    ("Q2-BM", "Q2 Benchmark", "Q2 English 9 Benchmark", D(2027, 1, 19), D(2027, 2, 3), "U4-C2L1"),
     ("LPA", "LPA", "LPA (Grades 9-11)", D(2027, 2, 8), D(2027, 2, 12), None),
     ("Q3-MQ", "Q3 MQ", "Q3 English 9 Mid-Quarter (MQ)", D(2027, 2, 24), D(2027, 3, 9), "U5-C4L1"),
-    ("Q3-BM", "Q3 Bench", "Q3 English 9 Benchmark", D(2027, 3, 29), D(2027, 4, 19), "U5-C5L2"),
+    ("Q3-BM", "Q3 Benchmark", "Q3 English 9 Benchmark", D(2027, 3, 29), D(2027, 4, 19), "U5-C5L2"),
     ("Q4-MQ", "Q4 MQ", "Q4 English 9 Mid-Quarter (MQ)", D(2027, 5, 17), D(2027, 5, 28), "U6-C2L4"),
-    ("Q4-BM", "Q4 Bench", "Q4 English 9 Benchmark", D(2027, 6, 3), D(2027, 6, 16), "U7-C2L3"),
+    ("Q4-BM", "Q4 Benchmark", "Q4 English 9 Benchmark", D(2027, 6, 3), D(2027, 6, 16), "U7-C2L3"),
 ]
 for aid, short, title, ws, we, _ in ASSESS:
     bank.append(dict(id=aid, unit="", lesson="Assessment (full block)", short=short,
@@ -249,7 +249,8 @@ lines = [
     ("Lesson Bank: every lesson from the unit documents, plus the assessments and a Flex day. "
      "Add a row here to create a new lesson ID.", False),
     ("Assessments: where each midquarter, benchmark and LPA landed for each track, inside its "
-     "testing window.", False),
+     "testing window. Its yellow Exam table (columns H and I) lists midyear exams, final "
+     "exams and SOL test dates; each one is printed on its day in Year at a Glance.", False),
     ("", False),
     ("How to edit", True),
     ("Change one day: click its Lesson ID cell and pick another ID from the dropdown.", False),
@@ -371,6 +372,7 @@ for col in range(1, PER_ROW * BLOCK_W + 1):
     ya.column_dimensions[get_column_letter(col)].width = 2 if col % BLOCK_W == 0 else 10.5
 top = 5
 import calendar as cal
+EXAM_LOOKUP = 'IFERROR(CHAR(10)&VLOOKUP({d},Assessments!$H:$I,2,FALSE),"")'
 for mi, (y, m) in enumerate(months):
     band, slot = divmod(mi, PER_ROW)
     r0 = top + band * 9
@@ -396,13 +398,16 @@ for mi, (y, m) in enumerate(months):
         dexpr = f"DATE({y},{m},{day})"
         if dt_type in ("P", "G"):
             tab = TRACK_NAME[dt_type]
-            cell.value = f'="{day}"&CHAR(10)&IFERROR(VLOOKUP({dexpr},{tab}!$A:$J,10,FALSE),"")'
+            cell.value = (f'="{day}"&CHAR(10)&IFERROR(VLOOKUP({dexpr},{tab}!$A:$J,10,FALSE),"")'
+                          f'&{EXAM_LOOKUP.format(d=dexpr)}')
             cell.fill = fill(MOD if d in HALF else (PURPLE if dt_type == "P" else GOLD))
             white = dt_type == "P" and d not in HALF
             cell.font = Font(name=FONT, size=8, bold=True, color="FFFFFF" if white else "000000")
         elif dt_type == "E":
-            cell.value = (f'="{day}"&CHAR(10)&IFERROR("P: "&VLOOKUP({dexpr},Purple!$A:$J,10,FALSE),'
-                          f'IFERROR("G: "&VLOOKUP({dexpr},Gold!$A:$J,10,FALSE),"Exam"))')
+            cell.value = (f'="{day}"&IFERROR(CHAR(10)&"P: "&VLOOKUP({dexpr},Purple!$A:$J,10,FALSE),"")'
+                          f'&IFERROR(CHAR(10)&"G: "&VLOOKUP({dexpr},Gold!$A:$J,10,FALSE),"")'
+                          f'&IFERROR(CHAR(10)&VLOOKUP({dexpr},Assessments!$H:$I,2,FALSE),'
+                          f'CHAR(10)&"Exam day")')
             cell.fill = fill(EXAMC)
             cell.font = Font(name=FONT, size=8, bold=True)
         else:
@@ -410,7 +415,7 @@ for mi, (y, m) in enumerate(months):
             cell.fill = fill(NOSCH)
             cell.font = Font(name=FONT, size=8, color="7A1F12")
     for wk in range(6):
-        ya.row_dimensions[r0 + 2 + wk].height = 28
+        ya.row_dimensions[r0 + 2 + wk].height = 40
         for wd in range(7):
             ya.cell(r0 + 2 + wk, c0 + wd).border = BORDER
 
@@ -441,6 +446,40 @@ other = [("LPA (Grade 9 retake)", "11/16/2026", "11/20/2026"),
 for i, (n, a, b2) in enumerate(other, r + 1):
     for ci, v in enumerate([n, a, b2], 1):
         asx.cell(i, ci, v).font = Font(name=FONT, size=10)
+
+EXAMS = [
+    (D(2027, 1, 20), "Midyear exams: Math, Sci, Soc. St."),
+    (D(2027, 1, 21), "Midyear exams: Math, Sci, Soc. St."),
+    (D(2027, 1, 22), "Midyear exams: Math, Sci, Soc. St."),
+    (D(2027, 5, 19), "Reading SOL"),
+    (D(2027, 5, 20), "History SOL"),
+    (D(2027, 5, 25), "Math SOL"),
+    (D(2027, 5, 26), "Science SOL"),
+    (D(2027, 6, 4), "Final exams: Math, Sci, Soc. St."),
+    (D(2027, 6, 7), "Final exams: Math, Sci, Soc. St."),
+    (D(2027, 6, 8), "Final exams: Math, Sci, Soc. St."),
+]
+for ci, (lab, w) in enumerate([("Exam or test date", 14), ("Exam shown on calendar", 44)], 8):
+    c = asx.cell(1, ci, lab)
+    c.font = Font(name=FONT, bold=True, color="FFFFFF")
+    c.fill = HDR_FILL
+    c.alignment = CENTER
+    c.border = BORDER
+    asx.column_dimensions[get_column_letter(ci)].width = w
+asx.column_dimensions["G"].width = 3
+for i, (d, name) in enumerate(EXAMS, 2):
+    for ci, v in enumerate([d, name], 8):
+        c = asx.cell(i, ci, v)
+        c.font = Font(name=FONT, size=10)
+        c.border = BORDER
+        c.fill = INPUT_FILL
+    asx.cell(i, 8).number_format = "m/d/yyyy"
+c = asx.cell(len(EXAMS) + 3, 8, "Edit or add rows here and the Year at a Glance tab updates. "
+             "The testing calendar does not say which subject is on which exam day; "
+             "type the subject once the exam schedule is out.")
+c.font = Font(name=FONT, italic=True, size=9)
+c.alignment = WRAP
+asx.merge_cells(start_row=len(EXAMS) + 3, start_column=8, end_row=len(EXAMS) + 5, end_column=9)
 
 wb.save(sys.argv[2])
 
