@@ -249,8 +249,7 @@ lines = [
     ("Lesson Bank: every lesson from the unit documents, plus the assessments and a Flex day. "
      "Add a row here to create a new lesson ID.", False),
     ("Assessments: where each midquarter, benchmark and LPA landed for each track, inside its "
-     "testing window. Its yellow Exam table (columns H and I) lists midyear exams, final "
-     "exams and SOL test dates; each one is printed on its day in Year at a Glance.", False),
+     "testing window.", False),
     ("", False),
     ("How to edit", True),
     ("Change one day: click its Lesson ID cell and pick another ID from the dropdown.", False),
@@ -372,7 +371,6 @@ for col in range(1, PER_ROW * BLOCK_W + 1):
     ya.column_dimensions[get_column_letter(col)].width = 2 if col % BLOCK_W == 0 else 10.5
 top = 5
 import calendar as cal
-EXAM_LOOKUP = 'IFERROR(CHAR(10)&VLOOKUP({d},Assessments!$H:$I,2,FALSE),"")'
 for mi, (y, m) in enumerate(months):
     band, slot = divmod(mi, PER_ROW)
     r0 = top + band * 9
@@ -398,16 +396,15 @@ for mi, (y, m) in enumerate(months):
         dexpr = f"DATE({y},{m},{day})"
         if dt_type in ("P", "G"):
             tab = TRACK_NAME[dt_type]
-            cell.value = (f'="{day}"&CHAR(10)&IFERROR(VLOOKUP({dexpr},{tab}!$A:$J,10,FALSE),"")'
-                          f'&{EXAM_LOOKUP.format(d=dexpr)}')
+            cell.value = f'="{day}"&CHAR(10)&IFERROR(VLOOKUP({dexpr},{tab}!$A:$J,10,FALSE),"")'
             cell.fill = fill(MOD if d in HALF else (PURPLE if dt_type == "P" else GOLD))
             white = dt_type == "P" and d not in HALF
             cell.font = Font(name=FONT, size=8, bold=True, color="FFFFFF" if white else "000000")
         elif dt_type == "E":
             cell.value = (f'="{day}"&IFERROR(CHAR(10)&"P: "&VLOOKUP({dexpr},Purple!$A:$J,10,FALSE),"")'
                           f'&IFERROR(CHAR(10)&"G: "&VLOOKUP({dexpr},Gold!$A:$J,10,FALSE),"")'
-                          f'&IFERROR(CHAR(10)&VLOOKUP({dexpr},Assessments!$H:$I,2,FALSE),'
-                          f'CHAR(10)&"Exam day")')
+                          f'&IF(COUNTIF(Purple!$A:$A,{dexpr})+COUNTIF(Gold!$A:$A,{dexpr})=0,'
+                          f'CHAR(10)&"Exam day","")')
             cell.fill = fill(EXAMC)
             cell.font = Font(name=FONT, size=8, bold=True)
         else:
@@ -415,7 +412,7 @@ for mi, (y, m) in enumerate(months):
             cell.fill = fill(NOSCH)
             cell.font = Font(name=FONT, size=8, color="7A1F12")
     for wk in range(6):
-        ya.row_dimensions[r0 + 2 + wk].height = 40
+        ya.row_dimensions[r0 + 2 + wk].height = 28
         for wd in range(7):
             ya.cell(r0 + 2 + wk, c0 + wd).border = BORDER
 
@@ -437,49 +434,13 @@ for r, (aid, short, title, ws_, we, anchor) in enumerate(ASSESS, 2):
     asx.cell(r, 4).fill = fill(EXAMC if daytype[pd_] == "E" else "E6DDF2")
     asx.cell(r, 5).fill = fill("FCEFC7")
 r = len(ASSESS) + 3
-asx.cell(r, 1, "Other testing that may pull students (from the NNPS testing calendar)").font = \
+asx.cell(r, 1, "Other English testing (from the NNPS testing calendar)").font = \
     Font(name=FONT, bold=True)
-other = [("LPA (Grade 9 retake)", "11/16/2026", "11/20/2026"),
-         ("Fall SOL non-writing", "11/30/2026", "12/11/2026"),
-         ("WIDA", "1/11/2027", "3/19/2027"),
-         ("Expedited retakes, all content", "6/1/2027", "6/4/2027")]
+other = [("LPA (Grade 9 retake, students who need it)", "11/16/2026", "11/20/2026")]
 for i, (n, a, b2) in enumerate(other, r + 1):
     for ci, v in enumerate([n, a, b2], 1):
         asx.cell(i, ci, v).font = Font(name=FONT, size=10)
 
-EXAMS = [
-    (D(2027, 1, 20), "Midyear exams: Math, Sci, Soc. St."),
-    (D(2027, 1, 21), "Midyear exams: Math, Sci, Soc. St."),
-    (D(2027, 1, 22), "Midyear exams: Math, Sci, Soc. St."),
-    (D(2027, 5, 19), "Reading SOL"),
-    (D(2027, 5, 20), "History SOL"),
-    (D(2027, 5, 25), "Math SOL"),
-    (D(2027, 5, 26), "Science SOL"),
-    (D(2027, 6, 4), "Final exams: Math, Sci, Soc. St."),
-    (D(2027, 6, 7), "Final exams: Math, Sci, Soc. St."),
-    (D(2027, 6, 8), "Final exams: Math, Sci, Soc. St."),
-]
-for ci, (lab, w) in enumerate([("Exam or test date", 14), ("Exam shown on calendar", 44)], 8):
-    c = asx.cell(1, ci, lab)
-    c.font = Font(name=FONT, bold=True, color="FFFFFF")
-    c.fill = HDR_FILL
-    c.alignment = CENTER
-    c.border = BORDER
-    asx.column_dimensions[get_column_letter(ci)].width = w
-asx.column_dimensions["G"].width = 3
-for i, (d, name) in enumerate(EXAMS, 2):
-    for ci, v in enumerate([d, name], 8):
-        c = asx.cell(i, ci, v)
-        c.font = Font(name=FONT, size=10)
-        c.border = BORDER
-        c.fill = INPUT_FILL
-    asx.cell(i, 8).number_format = "m/d/yyyy"
-c = asx.cell(len(EXAMS) + 3, 8, "Edit or add rows here and the Year at a Glance tab updates. "
-             "The testing calendar does not say which subject is on which exam day; "
-             "type the subject once the exam schedule is out.")
-c.font = Font(name=FONT, italic=True, size=9)
-c.alignment = WRAP
-asx.merge_cells(start_row=len(EXAMS) + 3, start_column=8, end_row=len(EXAMS) + 5, end_column=9)
 
 wb.save(sys.argv[2])
 
