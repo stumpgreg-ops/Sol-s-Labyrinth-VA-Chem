@@ -35,6 +35,10 @@ var SKIP_FILES = { "index.html": 1, "admin.html": 1, ".gitignore": 1, ".DS_Store
 
 var html = fs.readFileSync(path.join(src, "index.html"), "utf8");
 var version = (html.match(/\?v=([0-9.]+)/) || [0, "0"])[1];
+/* v5.15 (Chemistry 1.4): the Teacher screen inside the game reads teacher/CHM.html (js/teacher-screen.js); it is
+   rebuilt here from tools/teacher and js/progress-code.js, committed, and travels in the bundle like any other file */
+fs.mkdirSync(path.join(root, "teacher"), { recursive: true });
+fs.writeFileSync(path.join(root, "teacher", "CHM.html"), require("./build-teacher").build("CHM", version));
 
 /* ── the files: everything the built game has except music, docs and the page itself ── */
 var files = [];

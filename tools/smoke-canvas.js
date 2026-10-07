@@ -9,6 +9,7 @@ var path = require("path"), fs = require("fs"), http = require("http"), url = re
 var { chromium } = require("/opt/node22/lib/node_modules/playwright");
 var st = "va", ID = "va-chem";   /* the game is the VA (Chemistry) build; its saves carry the va-chem prefix */
 var dir = path.join(__dirname, "..", "dist", "canvas", "VA-Chem");
+var K = st === "ody" ? "afterHours.ody." : "afterHours.v1.";   /* the game's own save keys (the Odyssey build has its own) */
 var start = "SOLLab-VA-Chem.html", uploaded = fs.readdirSync(dir), hide = null;
 var FOLDER = "/courses/1~2/files/1~3/course files/SOL Test/";
 var shots = path.join(__dirname, "shots");
@@ -67,6 +68,8 @@ var lms = http.createServer(function (req, res) {
 
   var fam = "ALL";   /* Chemistry: Full review */
   await f.click('#title-screen .card[data-family="' + fam + '"]');
+  await f.waitForSelector("#mode-screen:not(.hidden)");   /* v5.8.3: the game mode screen */
+  await f.click('#mode-packs .card[data-gamemode="ALL"]');
   await f.waitForSelector("#skill-screen:not(.hidden)");
   await f.click("#btn-skill-start");
   await page.waitForTimeout(400);
@@ -88,11 +91,11 @@ var lms = http.createServer(function (req, res) {
   await page.screenshot({ path: path.join(shots, "cv-02-maze.png") });
 
   /* the 3D castle */
-  await f.evaluate(function () {
+  await f.evaluate(function (K) {
     var ids = ["keep", "k-stables", "k-church", "k-market", "trophy-midgard", "tower", "wall", "gate"];
     var picks = ids.map(function (id, i) { return { night: 5, piece: id, style: "blue", src: "free", deco: false, ord: i, rot: 0, cx: (i % 4) * 4, cy: Math.floor(i / 4) * 4 }; });
-    localStorage.setItem("afterHours.v1.build", JSON.stringify({ v: 4, theme: "castle", salt: 7, coins: 50, kit: 2, owned: {}, rewards: {}, picks: picks, view: { a: 0, z: 1, px: 0, py: 0 }, code: "" }));
-  });
+    localStorage.setItem(K + "build", JSON.stringify({ v: 4, theme: "castle", salt: 7, coins: 50, kit: 2, owned: {}, rewards: {}, picks: picks, view: { a: 0, z: 1, px: 0, py: 0 }, code: "" }));
+  }, K);
   await page.reload();
   f = await frame();
   await f.waitForSelector("#title-screen:not(.hidden)", { timeout: 60000 });
@@ -113,9 +116,45 @@ var lms = http.createServer(function (req, res) {
   /* saves: every key this game wrote carries its prefix; the other game's keys are untouched */
   var keys = await f.evaluate(function () { return Object.keys(localStorage); });
   var bare = keys.filter(function (k) { return /^afterHours/.test(k) && !/^afterHours\.v1\.(night|nick)$/.test(k); });
-  check(bare.length === 0 && keys.some(function (k) { return k.indexOf("solReading." + ID + ":afterHours.v1.build") === 0; }), "the game's saves carry their own prefix" + (bare.length ? ": bare " + bare.join(",") : ""));
+  check(bare.length === 0 && keys.some(function (k) { return k.indexOf("solReading." + ID + ":" + K + "build") === 0; }), "the game's saves carry their own prefix" + (bare.length ? ": bare " + bare.join(",") : ""));
   var other = await f.evaluate(function () { return localStorage["afterHours.v1.night"]; });
   check(other === "57", "the other game's save is untouched");
+
+  /* v5.14 restore, inside Canvas: the code from this castle brings it back on a cleared Chromebook (the page reloads) */
+  var made = await f.evaluate(function (K) {
+    localStorage.setItem(K + "night", "14");
+    return { code: SolProgress.code(), picks: JSON.parse(localStorage.getItem(K + "build")).picks.length };
+  }, K);
+  await f.evaluate(function (pre) {
+    Object.keys(localStorage).filter(function (k) { return k.indexOf(pre) === 0; }).forEach(function (k) { localStorage.removeItem(k.slice(pre.length)); });
+  }, "solReading." + ID + ":");
+  await page.reload();
+  f = await frame();
+  await f.waitForSelector("#title-screen:not(.hidden)", { timeout: 60000 });
+  var gone = await f.evaluate(function (K) { return localStorage.getItem(K + "build"); }, K);
+  await f.click("#btn-restore");
+  await f.waitForSelector("#restore-overlay:not(.hidden)");
+  await f.fill("#restore-code", made.code);
+  await f.click("#restore-check");
+  await f.waitForSelector("#restore-go:not(.hidden)");
+  await f.click("#restore-go");
+  await page.waitForTimeout(2500);
+  f = await frame();
+  await f.waitForSelector("#title-screen:not(.hidden)", { timeout: 60000 });
+  var back = await f.evaluate(function (K) { var b = JSON.parse(localStorage.getItem(K + "build") || "null"); return { night: localStorage.getItem(K + "night"), picks: b && b.picks.length, theme: b && b.theme }; }, K);
+  check(!gone && back.night === "14" && back.picks === made.picks && back.theme === "castle", "Restore my progress works inside Canvas: level 14 and the " + made.picks + "-piece castle come back after the page reloads (" + JSON.stringify(back) + ")");
+  /* v5.15: the Teacher screen opens inside the Canvas game (its page comes out of the game's own files) */
+  page.on("dialog", function (d) { d.accept(); });
+  check(!(await f.isVisible("#btn-teacher-screen")), "the Teacher link is hidden until a teacher turns it on");
+  await f.fill("#join-nick", "teacher");
+  await f.waitForSelector("#teacher-overlay:not(.hidden) iframe", { timeout: 20000 });
+  var tfr = f.childFrames().pop();
+  await tfr.waitForSelector("h1", { timeout: 20000 });
+  var th1 = await tfr.evaluate(function () { return { h1: document.querySelector("h1").textContent, close: !document.getElementById("close-teacher").hidden }; });
+  check(/teacher progress page/.test(th1.h1) && th1.close, "the Teacher link opens the teacher screen inside the Canvas game: " + th1.h1);
+  await tfr.click("#close-teacher");
+    var other2 = await f.evaluate(function () { return localStorage["afterHours.v1.night"]; });
+  check(other2 === "57", "the restore leaves the other game's save alone");
 
   function own(p) { return p === "/blank" || (p.indexOf(FOLDER) === 0 && uploaded.indexOf(p.slice(FOLDER.length)) >= 0); }
   check(served.every(own), "the page asked its server for nothing but its own files: " + served.filter(function (p) { return !own(p); }).join(", "));

@@ -55,6 +55,8 @@ var srv = http.createServer(function (req, res) {
   /* a level */
   var fam = "ALL";   /* Chemistry: Full review */
   await f.click('#title-screen .card[data-family="' + fam + '"]');
+  await f.waitForSelector("#mode-screen:not(.hidden)");   /* v5.8.3: the game mode screen */
+  await f.click('#mode-packs .card[data-gamemode="ALL"]');
   await f.waitForSelector("#skill-screen:not(.hidden)");
   await f.click("#btn-skill-start");
   await page.waitForTimeout(400);
@@ -143,6 +145,8 @@ var srv = http.createServer(function (req, res) {
   check(cs.cls && cs.sets === 1 && /Nobody/.test(cs.q) && cs.key === "B" && !cs.hidden && cs.inPool && cs.others > 0, "the class link plays the class's question set mixed with the regular questions, minus the hidden one");
   check(/Class: Odyssey Nine/.test(cs.kicker) && cs.nick === "Test S.", "the class link names the class and asks for the student's nickname once");
   await f.click('#title-screen .card[data-family="ALL"]');
+  await f.waitForSelector("#mode-screen:not(.hidden)");   /* v5.8.3: the game mode screen */
+  await f.click('#mode-packs .card[data-gamemode="ALL"]');
   await f.waitForSelector("#skill-screen:not(.hidden)");
   await f.click("#btn-skill-start");
   await page.waitForTimeout(400);
