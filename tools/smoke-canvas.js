@@ -26,7 +26,7 @@ var files = http.createServer(function (req, res) {
 var lms = http.createServer(function (req, res) {
   res.writeHead(200, { "Content-Type": "text/html" });
   res.end('<!DOCTYPE html><html><body style="margin:0;background:#fff"><h1 style="font:20px sans-serif">Course page</h1>' +
-    '<iframe id="app" src="' + lms.gameUrl + '" style="width:100%;height:640px;border:0" allowfullscreen></iframe></body></html>');
+    '<iframe id="app" src="' + lms.gameUrl + '" style="width:100%;height:500px;border:0" allowfullscreen></iframe></body></html>');
 });
 (async function () {
   await new Promise(function (r) { files.listen(0, r); });
@@ -89,6 +89,13 @@ var lms = http.createServer(function (req, res) {
   });
   check(sprites.n > 10 && sprites.bad.length === 0, "the game's images loaded: " + sprites.n + " textures" + (sprites.bad.length ? ", empty: " + sprites.bad.join(",") : ""));
   await page.screenshot({ path: path.join(shots, "cv-02-maze.png") });
+  /* Chemistry 1.5: Menu (top left of the game) pauses the level and asks; Keep playing goes back to it */
+  await f.click("#btn-menu"); await page.waitForTimeout(300);
+  var lv = await f.evaluate(function () { return { open: !document.getElementById("leave-overlay").classList.contains("hidden"), paused: SolScene.scene.isPaused() }; });
+  await page.screenshot({ path: path.join(shots, "cv-02b-leave.png") });
+  await f.click("#btn-leave-stay"); await page.waitForTimeout(300);
+  var lv2 = await f.evaluate(function () { return { open: !document.getElementById("leave-overlay").classList.contains("hidden"), paused: SolScene.scene.isPaused() }; });
+  check(lv.open && lv.paused && !lv2.open && !lv2.paused, "Menu pauses the level and asks Leave this level?; Keep playing goes back to it");
 
   /* the 3D castle */
   await f.evaluate(function (K) {

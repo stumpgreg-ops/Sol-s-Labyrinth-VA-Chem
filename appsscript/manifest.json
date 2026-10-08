@@ -1,12 +1,12 @@
 {
  "state": "VA",
- "version": "1.4.2",
- "hash": "7525a329d4d2",
- "bytes": 5347817,
- "files": 506,
+ "version": "1.5.0",
+ "hash": "3d8edaa2f23f",
+ "bytes": 5405309,
+ "files": 508,
  "parts": [
-  "sol-7525a329d4d2-0.bin",
-  "sol-7525a329d4d2-1.bin"
+  "sol-3d8edaa2f23f-0.bin",
+  "sol-3d8edaa2f23f-1.bin"
  ],
  "body": "",
  "css": [
@@ -82,6 +82,12 @@
   },
   {
    "src": "js/teacher-screen.js"
+  },
+  {
+   "src": "js/acc-chem.js"
+  },
+  {
+   "src": "js/accommodations.js"
   },
   {
    "src": "js/game.js"

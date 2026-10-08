@@ -1045,6 +1045,12 @@
         if (this._tabHidden) return;
         if (!(dt > 0)) return;
         if (dt > 50) dt = 50;
+        /* Chemistry 1.5 (SOL Labyrinth v5.18): the "slower game" accommodation (js/accommodations.js) */
+        var accK = window.SolAcc ? SolAcc.speedK() : 1;
+        /* re-applied when something put the clock back to normal speed (a pop-up closing, the end of a slow-motion beat) */
+        var accReset = accK !== 1 && ((this.time && this.time.timeScale === 1) || (this.physics && this.physics.world && this.physics.world.timeScale === 1));
+        if (this._accK !== accK || accReset) { this._accK = accK; SolAcc.applyScene(this, accK); }
+        dt *= accK;
         if (this.readOpen && !K.readingIsVisible()) this.readOpen = false;
         if (this._readPending && this.claim && !this.ended) {
           this._readPending = false;

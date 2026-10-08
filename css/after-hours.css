@@ -740,3 +740,111 @@ h1.logo img { width: min(300px, 60vw); height: auto; display: block; margin: 0 a
 .fang-row .fang small { font-size: 10px; margin-top: 3px; color: #7a8594; }
 .fang-row .fang.on { color: #fff3c4; text-shadow: 0 0 8px rgba(255, 216, 74, .7); }
 .fang-row .fang.on small { color: var(--gold); }
+
+/* ── Chemistry 1.5 (from SOL Labyrinth v5.17.2): pop-ups that fit a short frame ─────────────────────────── */
+/* the reading pop-up: the whole card scrolls when it is taller than the frame (larger text makes it taller), and
+   "Got it — play" stays pinned at its foot, so it can always be reached */
+.read-card { overflow-y: auto; overscroll-behavior: contain; }
+.read-card > * { flex-shrink: 0; }
+.read-card > .read-scroll { flex-shrink: 1; min-height: 110px; }
+.read-card > .row:last-child {
+  position: sticky; bottom: -14px; z-index: 3; margin: 0 -20px -14px; padding: 8px 20px 14px;
+  background: inherit; border-top: 1px solid rgba(245, 200, 66, .25);
+}
+/* every other pop-up card fits the frame and scrolls inside it */
+.tut-card, .codex-card, .char-panel, #overlay .box { max-height: calc(100vh - 24px); overflow-y: auto; overscroll-behavior: contain; }
+@media (max-height: 640px) {
+  .read-card { padding: 12px 16px 14px; gap: 8px; }
+  .read-card > .row:last-child { margin: 0 -16px -14px; padding: 6px 16px 12px; }
+}
+
+/* ── Chemistry 1.5 (SOL Labyrinth v5.18): accommodations a teacher turns on for one student (js/accommodations.js) ───────────────────── */
+.acc-w { cursor: pointer; border-radius: 3px; }
+.acc-w.acc-def { text-decoration: underline dotted rgba(255, 224, 138, .85); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+.acc-w:hover, .acc-w:focus-visible { background: rgba(255, 224, 138, .18); outline: none; }
+.acc-dict .acc-w.acc-tr:hover { background: rgba(159, 211, 214, .22); }
+#acc-pop {
+  position: fixed; z-index: 9800; display: none; max-width: min(320px, 90vw);
+  background: #141822; color: #f1ede4; border: 2px solid #e8b04a; border-radius: 10px;
+  padding: 8px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.55); font: 15px/1.35 "Trebuchet MS", sans-serif;
+}
+#acc-pop .acc-pop-w { font-weight: 800; color: #ffe08a; font-size: 16px; }
+#acc-pop .acc-pop-def { margin-top: 4px; }
+#acc-pop .acc-pop-tr { margin-top: 6px; font-size: 18px; }
+#acc-pop .acc-pop-l { font-size: 12px; color: #c8c2b4; }
+.acc-say {
+  appearance: none; border: 1px solid #6a5a3a; background: rgba(20, 24, 34, .9); color: #ffe08a;
+  border-radius: 8px; padding: 1px 6px; font-size: 13px; line-height: 1.4; cursor: pointer; min-height: 0; vertical-align: middle;
+}
+.acc-say.on { background: #e8b04a; color: #141822; }
+.acc-say-q { margin-right: 6px; }
+.acc-bar { margin: 0 0 6px; }
+body.acc-audio .choices li { grid-template-columns: 18px 1fr auto; }
+.acc-s.acc-reading { background: rgba(255, 224, 138, .28); box-shadow: 0 0 0 2px rgba(255, 224, 138, .28); border-radius: 3px; }
+body.acc-big .passage { font-size: 17px; line-height: 1.5; }
+body.acc-big .stem { font-size: 17px; }
+body.acc-big .choices li { font-size: 15.5px; line-height: 1.35; }
+body.acc-big .read-scroll .passage { font-size: 19px; }
+body.acc-big .read-scroll .stem { font-size: 19px; }
+body.acc-big .read-scroll .choices li { font-size: 17px; }
+#acc-overlay { position: fixed; inset: 0; z-index: 9750; display: flex; align-items: center; justify-content: center; background: rgba(6, 8, 12, .86); padding: 8px; }
+#acc-overlay.hidden { display: none !important; }
+#acc-overlay .acc-card { max-width: 560px; width: min(560px, 96%); }
+#acc-overlay input[type=password], #acc-overlay input[type=date], #acc-overlay select {
+  min-height: 40px; border-radius: 8px; border: 2px solid #3a4150; background: #141822; color: var(--ink); padding: 6px 8px; font: inherit;
+}
+.acc-opt { border-top: 1px solid rgba(232, 176, 74, .25); padding: 8px 0; }
+.acc-opt label { cursor: pointer; }
+.acc-opt.dis { opacity: .55; }
+.acc-opt input[type=checkbox] { width: 18px; height: 18px; vertical-align: -3px; }
+.acc-row { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; font-size: 13px; color: var(--dim); }
+.acc-small { font-size: 13px; color: var(--dim); margin: 2px 0 6px; }
+.acc-msg { min-height: 1.2em; color: #9aefc0; font-weight: 700; margin: 8px 0 0; }
+#acc-note { margin: 10px 0 0; color: #9fd3d6; font-size: 13px; text-align: center; }
+
+/* ── Chemistry 1.5: a way out of a level, and a one-window how-to-play ─────────── */
+#btn-menu {
+  position: absolute; left: 10px; top: 10px; z-index: 12;
+  min-height: 40px; padding: 8px 12px; font-size: 13px; white-space: nowrap;
+  pointer-events: auto;
+}
+#leave-overlay {
+  position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+  background: rgba(8,10,14,.72); padding: 12px;
+  pointer-events: auto;
+}
+#leave-overlay.hidden { display: none !important; pointer-events: none !important; }
+#leave-overlay .box {
+  background: #141822; border: 2px solid var(--gold); border-radius: 16px;
+  padding: 20px; text-align: center; max-width: 400px; width: 100%;
+  max-height: calc(100vh - 24px); overflow-y: auto;
+}
+#leave-overlay h2 { margin: 0 0 8px; }
+#leave-overlay p { margin: 0; line-height: 1.4; }
+#leave-overlay .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+#leave-overlay .btn { min-height: 44px; }
+.tut-card { max-width: 520px; width: min(520px, 94%); }
+.tut-card #tut-body { margin: 0 0 10px; font-size: 15px; line-height: 1.35; }
+.tut-list { margin: 0; padding-left: 20px; }
+.tut-list li { margin: 0 0 6px; }
+.tut-list li::marker { color: var(--gold); }
+.tut-list b { color: var(--gold); }
+/* Got it stays in view when a short frame makes the card scroll */
+.tut-card #tut-skip { position: sticky; bottom: 0; width: 100%; margin-top: 8px; box-shadow: 0 -10px 14px #141822; }
+@media (max-height: 560px) {
+  .tut-card { padding: 14px 16px 12px; }
+  .tut-card h2 { font-size: 21px; margin-bottom: 6px; }
+  .tut-card #tut-body { font-size: 14px; line-height: 1.3; }
+  .tut-list li { margin-bottom: 4px; }
+  .tut-hint { display: none; }
+}
+@media (max-width: 520px) and (max-height: 560px) {
+  #tut-overlay { padding: 8px; }
+  .tut-card { width: 100%; padding: 12px 12px 10px; }
+  .tut-kicker { margin-bottom: 4px; }
+  .tut-card h2 { font-size: 18px; margin-bottom: 4px; }
+  .tut-card #tut-body { font-size: 13px; line-height: 1.25; margin-bottom: 6px; }
+  .tut-list { padding-left: 16px; }
+  .tut-list li { margin-bottom: 3px; }
+  .tut-card #tut-skip { min-height: 40px; margin-top: 4px; }
+}

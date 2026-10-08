@@ -227,6 +227,11 @@ function S_students() {
     ["In the game, students tap \"Submit my progress\" (on the title screen or after a level) and follow the steps",
      "on screen: Copy code, scroll down to the assignment, Start Assignment (or New Attempt), paste with Ctrl+V,",
      "Submit Assignment. The code gets longer as they play, so they should always use Copy code, not type it."],
+    sub("How to play, and leaving a level"),
+    ["Level 1 opens with one How to play card listing everything a student needs; Got it starts the level. During",
+     "any level, the Menu button at the top left of the game (or the Esc key) pauses it and asks \"Leave this",
+     "level?\": Keep playing goes back to the game, Main menu goes to the title screen. The level they left starts",
+     "over the next time they press Continue."],
     sub("Levels, badges and the leaderboard"),
     ["Each game mode keeps its own level (1 to 100), so a student can be on level 40 in one mode and 12 in another.",
      "Students earn badges for levels in each mode, questions, streaks, perfect levels, skills, standards, days",
@@ -255,6 +260,33 @@ function S_update(update) {
     "progress stay with it."
   ];
 }
+/* Chemistry 1.5 (SOL Labyrinth v5.18): accommodations a teacher turns on for one student's Chromebook */
+function S_acc() {
+  return [].concat(
+    ["Accommodations are NOT on for anyone until you turn them on, one Chromebook at a time. They are for the",
+     "student who uses that Chromebook (that browser profile) and stay until you turn them off or their end date",
+     "passes, so a support meant to fade can be planned (pick an \"Ends after\" date)."],
+    sub("Turn them on for a student"),
+    ["1. On the student's Chromebook, open the game. On the title screen type the word  accommodations  in the",
+     "   nickname box (it is cleared again).",
+     "2. Enter the teacher PIN:  4826   (keep it from students; \"Change the PIN on this Chromebook\" sets",
+     "   another one for that Chromebook).",
+     "3. Tick what the student needs, pick the language or speed, add an end date if you want one, and click Save.",
+     "   The title screen then shows \"Accommodations on: ...\" so you can see at a glance what is on.",
+     "4. To change or stop them later, do the same and untick, or click Turn all off."],
+    sub("What each one does"),
+    ["- Tap a word for its meaning: difficult everyday and academic words in the lab notes, question and answers",
+     "  (like municipal, residual, compliance) are underlined; a click shows a short definition. Chemistry terms,",
+     "  lab equipment, units and measurement words are never defined: they are what the questions test.",
+     "- Word-to-word dictionary (questions and answers only): a click on any word in the question or the answers",
+     "  shows it in Spanish, Arabic, Farsi or Russian. Like the word-to-word dictionaries allowed on the SOL tests,",
+     "  it gives the word, not a definition. Chemical symbols and formulas are not translated.",
+     "- Read aloud: speaker buttons read the lab notes (sentence by sentence, highlighted), the question and each",
+     "  answer, with the Chromebook's own voice (no internet needed). A slower voice can be chosen. Formulas and",
+     "  numbers are read as the voice sees them (\"H2O\" may come out letter by letter).",
+     "- Larger text: bigger text in the side panel and the reading pop-up.",
+     "- Slower game: the whole game runs at 85, 75 or 60 % speed (wolves, birds, rocks, worms, timers)."]);
+}
 function S_trouble() {
   return [
     "- The game says \"Can't find ...\": that file is missing from the folder. Upload it with exactly the same name.",
@@ -269,10 +301,11 @@ function S_trouble() {
 function readme(update) {
   var order = update
     ? [["What's in this zip", S_inZip], ["Update the game already in Canvas", S_update], ["The embed codes (copy and paste)", S_embed],
-       ["Grading with progress codes (easiest: the ZIP download)", S_grading], ["Students: progress codes and Restore", S_students], ["Troubleshooting", S_trouble]]
+       ["Grading with progress codes (easiest: the ZIP download)", S_grading], ["Students: progress codes and Restore", S_students],
+       ["Accommodations for a student (teacher PIN)", S_acc], ["Troubleshooting", S_trouble]]
     : [["What's in this zip", S_inZip], ["Set up the game in Canvas (first time)", S_setup], ["The embed codes (copy and paste)", S_embed],
        ["Grading with progress codes (easiest: the ZIP download)", S_grading], ["Students: progress codes and Restore", S_students],
-       ["Updating to a new version", S_update], ["Troubleshooting", S_trouble]];
+       ["Updating to a new version", S_update], ["Accommodations for a student (teacher PIN)", S_acc], ["Troubleshooting", S_trouble]];
   var L = [gameName + " - version " + man.version + (update ? " - UPDATE" : " - FIRST-TIME SETUP"), RULE, "",
     update ? "This zip UPDATES a game that is already in Canvas." : "This zip SETS UP the game in Canvas for the first time.",
     "Jump to a section with Ctrl+F (Cmd+F on a Mac) and its name, like SECTION 4.", "", "CONTENTS"];

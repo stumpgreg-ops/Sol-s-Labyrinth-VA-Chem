@@ -8,6 +8,20 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## Chemistry 1.5.0 (2026-10-08) — accommodations (SOL Labyrinth v5.18.0), a way out of a level, a one-card how-to-play
+
+- **Accommodations for one student** (`js/accommodations.js`, from SOL Labyrinth v5.18.0). On the student's Chromebook a teacher types `accommodations` in the nickname box, enters the PIN (**4826** to start; change it in the panel), ticks what the student needs and saves. The title screen then says which are on. Each one can have an end date, and nothing is on for anyone else.
+  - **Word meanings:** difficult everyday and academic words in the lab notes, question and answers are underlined; a click shows a short definition (206 words). Chemistry content, lab equipment, units and data words are never defined, because they are what the questions test.
+  - **Word-to-word dictionary:** a click on any word of the question or answers shows it in Spanish, Arabic, Farsi or Russian. All 1,762 question-and-answer words are covered, in the sense the question uses ("solution", "period", "mole", "base" in their chemistry meaning); "—" where a language has no word-to-word equivalent (articles, symbols, formula pieces).
+  - **Read aloud** (the Chromebook's own voice): the lab notes sentence by sentence with the sentence being read highlighted, the question, and each answer with its letter.
+  - **Larger text** in the side panel and the reading pop-up.
+  - **Slower game:** 85, 75 or 60 % speed for everything that moves and every timer. Fixed here (and still open in SOL Labyrinth v5.18.0): the maze's stuck-slow-motion watchdog put the clock back to full speed after 1.2 s, and closing a pop-up did the same; the setting now holds for the whole level.
+  - The word lists are in `tools/acc/chem-def.json` and `tools/acc/chem-tr.json`; `node tools/build-acc-chem.js` builds `js/acc-chem.js` and names any question word that has no translation yet (run it after adding or rewording questions). **The definitions and translations are machine-drafted:** have a bilingual colleague check the translations, and read the definitions like the questions.
+- **A way out of a level.** A **☰ Menu** button sits at the top left of the game in every mode (and Esc does the same when no pop-up is open). It pauses the level and asks "Leave this level?": **Keep playing** (or Esc, or a tap outside the box) goes back to the game; **Main menu** goes to the title screen. The level left starts over the next time the student presses Continue.
+- **The how-to-play is one card.** Level 1 used to show nine cards one at a time, and students pressed Skip intro on the first card and never learned the rules. All eight points now sit on one card, with a single **Got it — play** button (or SPACE). A tap on the card or the dimmed background no longer closes it. The card fits a 500 px Canvas frame without scrolling, down to a 360 px wide page.
+- The Canvas READ ME has a section on the accommodations and a note on How to play and leaving a level.
+- Tests: `node tools/smoke-acc.js` (18 checks: the PIN, each option on a real level, end dates, Turn all off, no chemistry term defined) and `node tools/smoke-menu.js` (30: the how-to card at 1280, 900, 700 and 420 × 500, Menu, Esc, Keep playing and Main menu in the maze, Eagle Swoop and Root Worms) are new. `tools/smoke-canvas.js` now frames the game 500 px tall, like the embed code, and checks Menu inside Canvas.
+
 ## Chemistry 1.4.2 (2026-10-08) — the game fits a Canvas frame 500 px tall
 
 The Canvas embed code is now `width="100%" height="500"`, and the game fits that frame at any width a Canvas page gives it:

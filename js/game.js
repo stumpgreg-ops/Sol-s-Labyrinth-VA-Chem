@@ -3374,47 +3374,36 @@
      rules jammed together, which is unreadable at a glance and taught nothing.
      Traps are deliberately NOT explained here — that is what the TAB field guide
      is for, and the last card teaches TAB instead. */
+  /* Chemistry 1.5 (Greg): the how-to-play is ONE window. Nine cards in a row taught players to press Skip intro
+     on the first one and then not know how to play, so every point now sits on a single card as a short list. */
   function tutorialCards(scene) {
     var need = (scene && scene.needExtracts) || 5;
     var strikes = (scene && scene.needStrikes) || 3;
-    return [
-      {
-        title: "You are Sol",
-        body: "You are in the school after dark. Move with the arrow keys, WASD, or the pad on screen."
-      },
-      {
-        title: "Read the question",
-        body: "The lab notes and the question are in the panel on the left. Read them before you move — the answer is the only thing that gets you out."
-      },
-      {
-        title: "Go get your answer",
-        body: "Letters A, B, C and D are sitting out on the map. Walk onto the one you think is right and press SPACE to pick it up."
-      },
-      {
-        title: "Carry it to the EXIT",
-        body: "Take your letter to the green EXIT · SAFE booth. That banks one extract. You need " + need + " to finish the level."
-      },
-      {
-        title: "Right answer, real reward",
-        body: "A correct letter calls Sol's CHARIOT — for a few seconds you can run straight over the wolves. A wrong letter sets off the alarm and costs you a life, just like a catch."
-      },
-      {
-        title: "The Hati hunt you",
-        body: "Wolves patrol the halls. If one catches you, that is a strike. " + strikes + " strikes and the level is over."
-      },
-      {
-        title: "Two safe booths",
-        body: "START and EXIT are safe. The Hati cannot see you inside either one. Duck in when a chase gets close."
-      },
-      {
-        title: "Sprint is loud",
-        body: "Hold SPRINT to run. You are faster, but the wolves hear you coming — so save it for when you are already caught out."
-      },
-      {
-        title: "Press TAB any time",
-        body: "The halls are full of pads and pickups. Press TAB to open your field guide: it lists everything you have unlocked, what each one does to you, and what is still coming. The game pauses while it is open — check it whenever you see something new."
-      }
-    ];
+    return [{
+      title: "How to play",
+      items: [
+        "<b>Move</b> with the arrow keys, WASD, or the pad on screen.",
+        "<b>Read</b> the lab notes and the question in the side panel first.",
+        "<b>Pick up</b> the letter you think is right: walk onto it and press SPACE.",
+        "<b>Bank it</b> at the green EXIT · SAFE booth. Bank " + need + " to finish the level.",
+        "<b>Right letter:</b> Sol's CHARIOT lets you run over the wolves for a few seconds. <b>Wrong letter:</b> it costs a life, just like a catch.",
+        "<b>The Hati wolves</b> hunt you. " + strikes + " strikes and the level is over. They can't see you inside the START or EXIT booth.",
+        "<b>Hold SPRINT</b> to run faster, but the wolves hear you.",
+        "<b>TAB</b> opens the field guide (the game pauses). <b>Esc</b> or <b>&#9776; Menu</b> takes you back to the main menu."
+      ]
+    }];
+  }
+  function paintTutCard(card) {
+    var title = document.getElementById("tut-title");
+    var body = document.getElementById("tut-body");
+    var skip = document.getElementById("tut-skip");
+    var kicker = document.getElementById("tut-kicker");
+    var hint = document.getElementById("tut-hint");
+    if (kicker) kicker.textContent = "Level 1 · How to play";
+    if (title && card) title.textContent = card.title;
+    if (body && card) body.innerHTML = card.items ? '<ul class="tut-list">' + card.items.map(function (t) { return "<li>" + t + "</li>"; }).join("") + "</ul>" : "<p>" + card.body + "</p>";
+    if (skip) { skip.classList.remove("hidden"); skip.textContent = "Got it — play"; }
+    if (hint) hint.textContent = "Read these, then press Got it (or SPACE).";
   }
 
   /* Preferred security-cam mounts: corridor junctions / pathDots / tunnel mouths /
@@ -25822,24 +25811,10 @@
     }
     showTutCard() {
       if (tutClosed || this.tutDone) { hideTut(); return; }
-      var title = document.getElementById("tut-title");
-      var body = document.getElementById("tut-body");
-      var skip = document.getElementById("tut-skip");
-      var kicker = document.getElementById("tut-kicker");
-      var hint = document.getElementById("tut-hint");
       if (!this.tutList || !this.tutList.length) this.tutList = tutorialCards(this);
       var card = this.tutList[this.tutIndex] || this.tutList[0];
       if (!card) { this.closeTut(); return; }
       revealTutDom(card, this.tutIndex, this.tutList.length, false);
-      var total = (this.tutList && this.tutList.length) || 1;
-      var step = this.tutIndex + 1;
-      if (kicker) kicker.textContent = "How to play · " + step + " of " + total;
-      if (title) title.textContent = card.title;
-      if (body) body.textContent = card.body;
-      if (skip) skip.classList.remove("hidden");
-      /* Show progress so the player knows how much is left — the old single card
-         just said "Tap to play" with no sense of length. */
-      if (hint) hint.textContent = (step >= total) ? "Tap to start Level 1" : "Tap to continue";
     }
     advanceTut() {
       if (tutClosed || this.tutDone) { hideTut(); return; }
@@ -26024,7 +25999,12 @@
        killing the run for a student. */
     update(t, dt) {
       try {
-        this._updateInner(t, dt);
+        /* Chemistry 1.5 (SOL Labyrinth v5.18): the "slower game" accommodation (js/accommodations.js) */
+        var accK = window.SolAcc ? SolAcc.speedK() : 1;
+        /* re-applied when something put the clock back to normal speed (a pop-up closing, the end of a slow-motion beat) */
+        var accReset = accK !== 1 && ((this.time && this.time.timeScale === 1) || (this.physics && this.physics.world && this.physics.world.timeScale === 1));
+        if (this._accK !== accK || accReset) { this._accK = accK; SolAcc.applyScene(this, accK); }
+        this._updateInner(t, dt * accK);
       } catch (err) {
         this._reportCrash(err);
       }
@@ -26132,7 +26112,9 @@
       var ts = (this.time && this.time.timeScale != null) ? this.time.timeScale : 1;
       var pts = (this.physics && this.physics.world && this.physics.world.timeScale != null)
         ? this.physics.world.timeScale : 1;
-      if (ts < 0.95 || pts < 0.95) {
+      /* Chemistry 1.5: the "slower game" accommodation runs the clock below 1 on purpose; it is not stuck slow-mo */
+      var accSlow = (this._accK || 1) < 1 && Math.abs(ts - this._accK) < 0.02;
+      if ((ts < 0.95 || pts < 0.95) && !accSlow) {
         var intentional = (this.planBeatMs || 0) > 0 || (this.caughtSlowMs || 0) > 0 ||
           (this.reflexMs || 0) > 0;
         if (!intentional) {
@@ -26777,7 +26759,7 @@
     if (sc.readOpen || sc.tutOpen || sc.codexOpen || sc.trapOpen || sc.helpOpen || sc._tabHidden) return false;
     var play = document.getElementById("play");
     if (!play || play.classList.contains("hidden")) return false;
-    var cards = ["overlay", "read-overlay", "tut-overlay", "codex-overlay", "trap-overlay", "char-overlay", "build-overlay", "progress-overlay", "restore-overlay", "badge-overlay", "teacher-overlay"];
+    var cards = ["overlay", "leave-overlay", "read-overlay", "tut-overlay", "codex-overlay", "trap-overlay", "char-overlay", "build-overlay", "progress-overlay", "restore-overlay", "badge-overlay", "teacher-overlay"];
     for (var i = 0; i < cards.length; i++) { var c = document.getElementById(cards[i]); if (c && !c.classList.contains("hidden")) return false; }
     try { if (sc.scene && sc.scene.isPaused && sc.scene.isPaused()) return false; } catch (e) {}
     return true;
@@ -27221,16 +27203,8 @@
       card = tmp[index || 0] || tmp[0];
       total = total || tmp.length;
     }
-    var title = document.getElementById("tut-title");
-    var body = document.getElementById("tut-body");
-    var skip = document.getElementById("tut-skip");
-    var kicker = document.getElementById("tut-kicker");
-    var hint = document.getElementById("tut-hint");
-    if (kicker) kicker.textContent = "Level 1 · How to play";
-    if (title && card) title.textContent = card.title;
-    if (body && card) body.textContent = card.body;
-    if (skip) skip.classList.remove("hidden");
-    if (hint) hint.textContent = "Tap to play";
+    paintTutCard(card);
+    try { var sk = document.getElementById("tut-skip"); if (sk) sk.focus({ preventScroll: true }); } catch (eF) {}
   }
   var tutBound = false;
   var codexBound = false;
@@ -27282,7 +27256,8 @@
       if (e && e.target && (e.target.id === "tut-skip" || (e.target.closest && e.target.closest("#tut-skip")))) return;
       if (Date.now() < tutIgnoreUntil) return;
       if (tutClosed) { hideTut(); return; }
-      if (playScene) playScene.advanceTut();
+      /* Chemistry 1.5: one card now, so a tap on the card or the backdrop does nothing; only Got it (or SPACE) starts
+         the level. A stray tap can't close the how-to before it's been read. */
     }
     if (ov) {
       ov.addEventListener("pointerdown", tutGo);
@@ -27677,6 +27652,72 @@
     if (window.SolRealms && SolRealms.stopAmbience) SolRealms.stopAmbience();
     if (gameRef) { gameRef.destroy(true); gameRef = null; }
     refreshSaveLine();
+  });
+  /* Chemistry 1.5 (Greg): a way out of a level once it has started. The Menu button on the stage (or Esc when no
+     pop-up is up) pauses the level and asks first; Main menu then does what the end-of-level Title button does. */
+  var leaveOpen = false, leavePaused = null;
+  function leaveAllowed() {
+    var play = document.getElementById("play");
+    if (!play || play.classList.contains("hidden") || leaveOpen) return false;
+    var sc = playScene;
+    if (sc && (sc.ended || sc._finishing)) return false;   /* the end-of-level box already has Title */
+    return true;
+  }
+  function openLeave() {
+    if (!leaveAllowed()) return;
+    var ov = document.getElementById("leave-overlay");
+    if (!ov) return;
+    leaveOpen = true;
+    leavePaused = null;
+    try {
+      if (playScene && playScene.scene && !(playScene.scene.isPaused && playScene.scene.isPaused())) { playScene.scene.pause(); leavePaused = playScene; }
+    } catch (eP) {}
+    var saved = readSavedNight(), here = (playScene && playScene.night) || cfg.night || saved;
+    var msg = document.getElementById("leave-msg");
+    if (msg) msg.textContent = "The game is paused. If you leave, this level starts over next time" +
+      (saved === here ? ": Continue on the main menu brings you back to Level " + here + "." : ". Continue on the main menu picks up at Level " + saved + ".");
+    ov.classList.remove("hidden");
+    try { document.getElementById("btn-leave-stay").focus({ preventScroll: true }); } catch (eF) {}
+  }
+  function closeLeave() {
+    var ov = document.getElementById("leave-overlay");
+    if (ov) ov.classList.add("hidden");
+    leaveOpen = false;
+    var sc = leavePaused; leavePaused = null;
+    try { if (sc && sc === playScene && sc.scene && sc.scene.isPaused && sc.scene.isPaused()) sc.scene.resume(); } catch (eR) {}
+  }
+  function leaveToMenu() {
+    var ov = document.getElementById("leave-overlay");
+    if (ov) ov.classList.add("hidden");
+    leaveOpen = false; leavePaused = null;
+    try { hideReading(); hideCodex(); hideTrapIntro(); } catch (eH) {}
+    try { if (playScene && playScene.hideBeamHelp) playScene.hideBeamHelp(); } catch (eB) {}
+    document.getElementById("btn-again").click();
+  }
+  bindTap(document.getElementById("btn-menu"), openLeave);
+  bindTap(document.getElementById("btn-leave-stay"), closeLeave);
+  bindTap(document.getElementById("btn-leave-go"), leaveToMenu);
+  (function () {
+    var ov = document.getElementById("leave-overlay");
+    if (!ov) return;
+    /* keep the game's own key and tap handlers out while the box is up; tapping the backdrop keeps playing */
+    ["keydown", "keyup"].forEach(function (t) { ov.addEventListener(t, function (e) {
+      e.stopPropagation();
+      if (t === "keydown" && (e.code === "Escape" || e.key === "Escape")) { e.preventDefault(); closeLeave(); }
+    }); });
+    ov.addEventListener("pointerdown", function (e) { if (e.target === ov) { e.preventDefault(); closeLeave(); } });
+  })();
+  document.addEventListener("keydown", function (e) {
+    if (!(e.code === "Escape" || e.key === "Escape")) return;
+    if (leaveOpen) { e.preventDefault(); closeLeave(); return; }
+    if (e.defaultPrevented || !leaveAllowed()) return;   /* a pop-up (reading card, field guide, new-on-the-map card) took the Esc */
+    var sc = playScene;
+    if (sc && (sc.tutOpen || sc.readOpen || sc.codexOpen || sc.trapOpen || sc.helpOpen)) return;
+    if (readingIsVisible() || codexIsVisible()) return;
+    var busy = ["tut-overlay", "trap-overlay", "char-overlay", "build-overlay", "progress-overlay", "restore-overlay", "badge-overlay", "teacher-overlay", "acc-overlay"];
+    for (var i = 0; i < busy.length; i++) { var c = document.getElementById(busy[i]); if (c && !c.classList.contains("hidden")) return; }
+    e.preventDefault();
+    openLeave();
   });
   document.getElementById("btn-next").addEventListener("click", function () {
     var n = parseInt(document.getElementById("btn-next").dataset.goto || "1", 10);
