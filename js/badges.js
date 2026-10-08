@@ -31,10 +31,24 @@
     if (m) return m[1];
     var mc = /^CH\.(\d)/.exec(c);
     if (mc) return UNITS[mc[1]] || null;
+    /* History 1.0: a history course's standard -> "U<n>", its unit's place in the course (WHI.4.c -> U3) */
+    var hu = histUnit(c);
+    if (hu) return hu;
     if (/^L\./.test(c)) return "RV";
     if (/\.CT\./.test(c)) return "DSR";
     if (/^RL\./.test(c)) return "RL";
     if (/^RI\./.test(c)) return "RI";
+    return null;
+  }
+  /* History 1.0: the units of the history course this page plays (courses/<ID>/course.js), in order */
+  function histUnits() {
+    var H = window.HEIST_COURSE;
+    return H && H.families ? H.families.filter(function (f) { return f.id !== "ALL"; }) : null;
+  }
+  function histUnit(code) {
+    var U = histUnits(), m = /^([A-Z]+\.\d+)/.exec(String(code || ""));
+    if (!U || !m) return null;
+    for (var i = 0; i < U.length; i++) if ((U[i].stds || []).indexOf(m[1]) !== -1) return "U" + (i + 1);
     return null;
   }
   /* everything a badge looks at */
@@ -42,7 +56,7 @@
     var rec = null, st = "VA";
     try { st = P().state(); rec = P().record(st); } catch (e) { rec = null; }
     rec = rec || { levels: {}, q: {}, std: {}, camp: {}, badges: [] };
-    var f = { rec: rec, right: { RL: 0, RI: 0, RV: 0, DSR: 0, INV: 0, ATOM: 0, RXN: 0, MOLE: 0, KMT: 0 }, stds: 0, camp: {}, fangs: 0, pieces: 0, coins: 0, ody: st === "ODY", chem: st === "CHM" };
+    var f = { rec: rec, right: { RL: 0, RI: 0, RV: 0, DSR: 0, INV: 0, ATOM: 0, RXN: 0, MOLE: 0, KMT: 0, U1: 0, U2: 0, U3: 0, U4: 0, U5: 0, U6: 0, U7: 0 }, stds: 0, camp: {}, fangs: 0, pieces: 0, coins: 0, ody: st === "ODY", chem: st === "CHM", st: st };
     Object.keys(rec.std || {}).forEach(function (k) {
       var s = rec.std[k]; if (!s || !s.a) return;
       f.stds++;
@@ -60,13 +74,15 @@
   }
   /* the badges this game shows: every general badge, and the mode badges of this game's modes */
   function relevant() {
-    var here = modesHere(), chem = false;
+    var here = modesHere(), chem = false, units = histUnits();
     try { chem = P().state() === "CHM"; } catch (e) {}
     return C.BADGES.filter(function (id) {
       var m = /^m-([A-Za-z]+)-/.exec(id);
       if (m) return here.indexOf(m[1]) !== -1;
       /* the Reading game's strand badges and the Chemistry game's unit badges each show in their own game */
-      if (/^(rl|ri|rv|dsr)\d+$/.test(id)) return !chem;
+      var u = /^u(\d)-\d+$/.exec(id);
+      if (u) return !!units && +u[1] <= units.length;   /* History 1.0: one pair per unit of the course */
+      if (/^(rl|ri|rv|dsr)\d+$/.test(id)) return !chem && !units;
       if (/^(inv|atom|rxn|mole|kmt)\d+$/.test(id)) return chem;
       return true;
     });
@@ -78,6 +94,7 @@
     if ((m = /^streak(\d+)$/.exec(id))) return num(r.bestStreak) >= +m[1];
     if ((m = /^perfect(\d+)$/.exec(id))) return num(r.perfect) >= +m[1];
     if ((m = /^(rl|ri|rv|dsr|inv|atom|rxn|mole|kmt)(\d+)$/.exec(id))) return f.right[m[1].toUpperCase()] >= +m[2];
+    if ((m = /^u(\d)-(\d+)$/.exec(id))) return (f.right["U" + m[1]] || 0) >= +m[2];
     if ((m = /^std(\d+)$/.exec(id))) return f.stds >= +m[1];
     if ((m = /^days(\d+)$/.exec(id))) return num(r.dayCount) >= +m[1];
     if ((m = /^min(\d+)$/.exec(id))) return num(r.activeMs) / 60000 >= +m[1];
@@ -92,7 +109,9 @@
     return false;
   }
   function info(id, f) {
-    var b = C.badgeInfo(id), m = /^m-([A-Za-z]+)-(\d+)$/.exec(id);
+    var st = null;
+    try { st = P().state(); } catch (e) {}
+    var b = C.badgeInfo(id, st), m = /^m-([A-Za-z]+)-(\d+)$/.exec(id);
     if (m) { var nm = modeName(m[1]); b.name = nm + " " + b.name.split(" ").pop(); b.desc = "Win level " + m[2] + " in " + nm + "."; }
     if (f && f.ody && /^fang/.test(id)) {
       b.name = { fang1: "Fleece Finder", fang5: "Fleece Hunter", fang10: "Golden Voyager" }[id] || b.name;
@@ -182,7 +201,7 @@
   var GROUPS = [
     ["Questions", /^(q\d+|std\d+)$/],
     ["Skills", /^(rl|ri|rv|dsr)\d+$/],
-    ["Units", /^(inv|atom|rxn|mole|kmt)\d+$/],   /* Chemistry 1.4 */
+    ["Units", /^(inv|atom|rxn|mole|kmt|u\d-)\d+$/],   /* Chemistry 1.4; History 1.0 (u1-25 …) */
     ["Accuracy", /^(streak\d+|perfect\d+|comeback)$/],
     ["Adventure", /^(first-win|fang\d+|explorer|grandtour|legend)$/],
     ["Time", /^(days\d+|min\d+)$/],

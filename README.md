@@ -8,6 +8,39 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## History 1.0.0 (2026-10-08) — four Virginia history and government games
+
+The same engine, maze, shooters, town builder, progress codes, badges and teacher screen, rebuilt for the four
+secondary history courses of the **2023 Virginia History and Social Science Standards of Learning**. Each course is
+its own game with its own page, saves, progress-code tag and Canvas zip; the Chemistry game is unchanged.
+
+| page | course | grade | units (title-screen cards, plus Full review) | code |
+|---|---|---|---|---|
+| `WHI.html` | World History & Geography to 1500 A.D. (WHI.1–WHI.13) | 9 | Early Humans & the Fertile Crescent · Ancient India & China · Persia, Greece & Rome · Islamic Civilization & West Africa · Medieval China & Japan · Medieval Europe & the Renaissance · Maya, Aztec & Inca | `SOL3-WHI-…` |
+| `WHII.html` | World History & Geography: 1500 A.D. to the Present (WHII.1–WHII.12) | 10 | The World in 1500, Renaissance & Reformation · Exploration & Colonization · Age of Revolutions · Asia & Africa, 1500–1800 · Industry, Imperialism & Nationalism · World Wars & Depression · Cold War & the Modern World | `SOL3-WHII-…` |
+| `VUS.html` | Virginia & United States History (VUS.1–VUS.17) | 11 | Early America & the Colonies · Revolution & the Constitution · Expansion, Civil War & Reconstruction · Industry, Reform & World War I · The 1920s, Depression & World War II · The Civil Rights Movement · Cold War & Modern America | `SOL3-VUS-…` |
+| `GOVT.html` | Virginia & United States Government (GOVT.1–GOVT.14) | 12 | Foundations of Government · The Constitution & American Values · Citizenship & Elections · The Federal Government · Virginia & Local Government · Civil Liberties & Civil Rights · Foreign Policy & the Economy | `SOL3-GOVT-…` |
+
+- **Content.** `courses/<ID>/course.js` holds the units, the standards map (every lettered key concept of the 2023
+  standards), the skill cards and the code tag; `courses/<ID>/units.json` lists one pack file per unit. Every pack is a
+  stimulus ("sources" in the game, in place of "lab notes": an original reading, a public-domain primary-source
+  excerpt, a timeline, a table, or a map or cartoon described in words) with 4–6 test-style questions keyed to a key
+  concept (`WHI.4.c`). The history skills (sequencing, cause and effect, primary-source analysis, geography, economic
+  decision-making) are built into the questions. Writing rules: `tools/HISTORY-CONTENT-GUIDE.md`.
+- **Pages.** `node tools/make-course-pages.js` writes `WHI.html` … `GOVT.html` from `index.html` (title, unit cards,
+  scripts) and `teacher/<ID>.html`. Each page gives its saves their own prefix (`solLab.whi:` …), so on one site a
+  student's World History level and town never mix with Chemistry's or another course's.
+- **Canvas.** `node tools/build-appsscript.js WHI` (bundle into `dist/appsscript-WHI/`) then `node tools/build-canvas.js WHI`
+  writes `dist/canvas/SOL Lab VA WHI.zip` (first-time setup) and `SOL Lab VA WHI update.zip`, with the READ ME and
+  `SOLLab-VA-WHI-Teacher.html`, exactly like the Chemistry and Reading zips. Saves in Canvas carry `solReading.va-whi:`.
+  Same for WHII, VUS and GOVT. (The Apps Script build of a history course is not committed; Chemistry's still is.)
+- **Progress codes and badges.** Four new games in `js/progress-code.js` (ids 5–8, own secrets); the standards report
+  lists every key concept; one badge pair per unit (`u1-25` … `u7-100`, named after the course's units).
+- **Review.** `node tools/validate-content.js WHI` checks a course (and warns about any key concept without an item);
+  `node tools/export-questions.js WHI > whi.html` exports its bank for teacher review.
+- **Tests.** `node tools/smoke-history.js` (every course: title, pools, a won level, the code, badges, the teacher
+  page, saves kept apart) and `node tools/smoke-canvas.js WHI` (the Canvas build of one course).
+
 ## Chemistry 1.4.0 (2026-10-07) — engine update to SOL Labyrinth v5.16.0
 
 The browser game, the Apps Script build and the Canvas build are on the SOL Labyrinth v5.16.0 engine (everything the SOL Labyrinth session shipped from v5.8.2 to v5.16.0 that is not Odyssey-only). The question bank is unchanged.

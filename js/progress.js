@@ -111,13 +111,22 @@
     }
   }
   /* Chemistry 1.4: one game (BUILDS.CHM); a question's skill is its unit (CH.1 -> INV ... CH.5 -> KMT) */
-  function stateOfFamily(f) { return C && C.BUILDS.CHM ? "CHM" : (f === "NJ5" ? "NJ" : f === "ODY" ? "ODY" : f ? "VA" : null); }
+  /* History 1.0: a history course (courses/<ID>/course.js) is its own game: WHI, WHII, VUS or GOVT */
+  function courseTag() { var t = window.HEIST_COURSE_TAG || (window.HEIST_COURSE && window.HEIST_COURSE.tag); return t && C && C.BUILDS[t] ? t : null; }
+  function stateOfFamily(f) { return courseTag() || (C && C.BUILDS.CHM ? "CHM" : (f === "NJ5" ? "NJ" : f === "ODY" ? "ODY" : f ? "VA" : null)); }
   function skillOf(claim) {
     if (!claim) return null;
     if (claim.episode) return String(claim.episode).toUpperCase();
     var s = claim.strand || (window.heistStrandOf ? window.heistStrandOf(claim) : null);
     if (!s) return null;
     s = String(s).toUpperCase();
+    /* History 1.0: the unit whose standards hold the question's standard (WHI.4.C -> CLASS) */
+    var hm = window.HEIST_COURSE && /^([A-Z]+\.\d+)/.exec(s);
+    if (hm) {
+      var hf = window.HEIST_COURSE.families || [];
+      for (var h = 0; h < hf.length; h++) if (hf[h].id !== "ALL" && (hf[h].stds || []).indexOf(hm[1]) !== -1) return hf[h].id;
+      return null;
+    }
     var m = /^CH\.(\d)/.exec(s);
     if (m) {
       var fams = window.HEIST_FAMILIES || [], i;

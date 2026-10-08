@@ -327,6 +327,7 @@
   /* Canvas serves every uploaded HTML file from one shared domain, so other games built on this engine (an
      Algebra or Biology version, say) would read and overwrite these saves. Each Canvas build keeps its own. */
   function canvasStorage(prefix) {
+    window.__solStorePrefix = prefix;   /* History 1.0: a course page's own prefix shim (tools/make-course-pages.js) stands down */
     var S = Storage.prototype, get = S.getItem, set = S.setItem, rem = S.removeItem, keyAt = S.key;
     function mine(st) { try { return st === window.localStorage; } catch (e) { return false; } }
     S.getItem = function (k) { return get.call(this, mine(this) ? prefix + k : k); };

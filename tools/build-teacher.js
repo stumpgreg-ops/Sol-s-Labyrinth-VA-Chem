@@ -32,9 +32,16 @@ var LOOK = {
   NJ: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
   /* the Odyssey's black glaze, wine and ochre (css/odyssey.css) */
   ODY: { BG: "#140c0a", PANEL: "#22130f", PANEL2: "#2e1a14", LINE: "#6a4430", GOLD: "#e8b04a" },
-  CHM: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" }
+  CHM: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  /* History 1.0 */
+  WHI: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  WHII: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  VUS: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  GOVT: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" }
 };
-function fileName(st) { return (st === "ODY" ? "SOLLabyrinth-Odyssey" : st === "CHM" ? "SOLLab-VA-Chem" : "SOLLabyrinth-" + st) + "-Teacher.html"; }
+/* History 1.0: the four history games' files are SOLLab-VA-<course> (SOLLab-VA-WHI-Teacher.html …) */
+var HIST = { WHI: 1, WHII: 1, VUS: 1, GOVT: 1 };
+function fileName(st) { return (st === "ODY" ? "SOLLabyrinth-Odyssey" : st === "CHM" ? "SOLLab-VA-Chem" : HIST[st] ? "SOLLab-VA-" + st : "SOLLabyrinth-" + st) + "-Teacher.html"; }
 function build(st, version) {
   st = String(st || "VA").toUpperCase();
   var B = C.BUILDS[st];

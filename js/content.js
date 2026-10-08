@@ -4,12 +4,18 @@
    skill screen, the strand filter, the adaptive level estimate and the stamina schedule. */
 (function (global) {
   var PACKS = [];
+  /* History 1.0: a course file loaded before this one (courses/<ID>/course.js, e.g. World History I) sets
+     HEIST_COURSE with its own units, standards, skill cards and code prefix; without one this is the Chemistry game. */
+  var COURSE = global.HEIST_COURSE || null;
+  var PREFIX = COURSE ? COURSE.prefix : "CH";
+  var CODE_RE = new RegExp("^" + PREFIX.replace(/\./g, "\\.") + "\\.\\d");
+  var STD_RE = new RegExp("^(" + PREFIX.replace(/\./g, "\\.") + "\\.\\d+)");
 
   /* Units. `id` is the pack family; the title screen shows one card per unit plus Full review.
      The five units are the five reporting categories of the EOC Chemistry SOL test blueprint,
      one per standard CH.1–CH.5 (CH.6, organic chemistry and biochemistry, is not tested).
      `stds` lists the standard prefixes a pack in that unit may use (checked by the validator). */
-  var FAMILIES = [
+  var FAMILIES = COURSE ? COURSE.families : [
     { id: "ALL", label: "Full review", short: "Full review", kind: "All units", meta: "Every reporting category mixed, leaning toward the standards you miss most. Best in the last weeks before the test.", stds: ["CH.1", "CH.2", "CH.3", "CH.4", "CH.5"] },
     { id: "INV", label: "Scientific Investigation", short: "Investigation", kind: "CH.1", meta: "Lab technique and safety, variables and trials, data and error analysis, SI units, significant digits and dimensional analysis.", stds: ["CH.1"] },
     { id: "ATOM", label: "Atomic Structure & Periodic Relationships", short: "Atoms & Periodic Table", kind: "CH.2", meta: "Atomic number and mass, isotopes and half-life, groups and periods, periodic trends, electron configurations and atomic models.", stds: ["CH.2"] },
@@ -24,7 +30,7 @@
   /* Standards map: the Virginia Chemistry Standards of Learning CH.1–CH.5 with their lettered key
      concepts, as the EOC Chemistry test blueprint cites them. The skill screen shows these as
      cards; `strand` is the prefix a claim's `sol` code must start with. */
-  var STANDARDS = {
+  var STANDARDS = COURSE ? COURSE.standards : {
     "CH.1": { name: "Scientific investigation", keys: {
       a: "designated laboratory techniques",
       b: "safe use of chemicals and equipment",
@@ -70,7 +76,7 @@
 
   /* Skill cards per unit (strand = the sol-code prefix the filter keeps; STRAND_ALIASES below
      lets one card cover neighbouring key concepts). */
-  var SKILLS = {
+  var SKILLS = COURSE ? COURSE.skills : {
     INV: [
       { strand: "CH.1.A", kind: "CH.1 a · b · c · h", name: "Lab technique & safety", meta: "Glassware, balances, probes and pH meters; handling chemicals, reading labels, responding to spills, burns and fires." },
       { strand: "CH.1.D", kind: "CH.1 d · e", name: "Design, trials & data", meta: "Independent, dependent and controlled variables, repeated trials, recording and organizing data, reading tables and graphs." },
@@ -114,7 +120,7 @@
     SKILLS[fam].push({ strand: "ALL", kind: "All skills", name: "All", meta: fam === "ALL" ? "Every standard mixed, leaning toward the ones you miss most." : "Everything in this unit mixed, leaning toward the skills you miss most." });
   });
   /* Skill cards that cover several key concepts: extra prefixes the card also keeps. */
-  var STRAND_ALIASES = {
+  var STRAND_ALIASES = COURSE ? (COURSE.aliases || {}) : {
     "CH.1.A": ["CH.1.B", "CH.1.C", "CH.1.H"],
     "CH.1.D": ["CH.1.E"],
     "CH.1.I": ["CH.1.J"],
@@ -158,11 +164,11 @@
   function strandOf(claim) {
     if (claim && claim.strand) return String(claim.strand).toUpperCase();
     var sol = String((claim && claim.sol) || "").toUpperCase().replace(/\s+/g, "");
-    return /^CH\.\d/.test(sol) ? sol : "CH.1";
+    return CODE_RE.test(sol) ? sol : PREFIX + ".1";
   }
   function standardOf(claim) {
-    var m = /^(CH\.\d)/.exec(strandOf(claim));
-    return m ? m[1] : "CH.1";
+    var m = STD_RE.exec(strandOf(claim));
+    return m ? m[1] : PREFIX + ".1";
   }
   function prefixMatch(code, prefix) {
     return code === prefix || code.indexOf(prefix + ".") === 0;
@@ -170,7 +176,7 @@
   function strandMatch(claim, strand) {
     strand = String(strand || "ALL").toUpperCase();
     if (!strand || strand === "ALL" || strand === "NULL") return true;
-    if (!/^CH\.\d/.test(strand)) return true;
+    if (!CODE_RE.test(strand)) return true;
     var code = strandOf(claim);
     if (prefixMatch(code, strand)) return true;
     var extra = STRAND_ALIASES[strand] || [];
@@ -283,6 +289,8 @@
   }
 
   global.HEIST_PACKS = PACKS;
+  global.HEIST_PREFIX = PREFIX;
+  global.HEIST_COURSE_TAG = COURSE ? COURSE.tag : "CHM";
   global.HEIST_FAMILIES = FAMILIES;
   global.HEIST_FAMILY_POOL = FAMILY_POOL;
   global.HEIST_STANDARDS = STANDARDS;
