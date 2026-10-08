@@ -247,7 +247,7 @@
         {
           id: "chart-read",
           sol: "GOVT.7.a",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about Congress is best supported by the table?",
           choices: [
             { letter: "A", text: "A large state and a small state have equal numbers of senators." },
             { letter: "B", text: "Senators must be younger than members of the House of Representatives." },
@@ -909,7 +909,7 @@
         {
           id: "commerce",
           sol: "GOVT.7.b",
-          stem: "Which conclusion is best supported by the timeline?",
+          stem: "Which conclusion about the commerce power is best supported by the timeline?",
           choices: [
             { letter: "A", text: "Congress's power over commerce has narrowed steadily since 1824." },
             { letter: "B", text: "Most growth in Congress's power came through executive orders." },

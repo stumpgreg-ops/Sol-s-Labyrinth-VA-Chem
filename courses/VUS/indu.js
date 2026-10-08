@@ -25,7 +25,7 @@
         "<li><strong>1887</strong> Dawes Act divides reservation land into individual plots</li>" +
         "<li><strong>1890</strong> U.S. soldiers kill hundreds of Lakota men, women and children at Wounded Knee</li></ul>",
       claims: [
-        Q("first", "VUS.10.a", "Which event on the timeline happened FIRST?", [
+        Q("first", "VUS.10.a", "Which of these events in the West came first?", [
           "the Battle of the Little Bighorn",
           "the passage of the Dawes Act",
           "the first transcontinental railroad",
@@ -232,7 +232,7 @@
           "a biography of Harry Byrd's early life in Winchester",
           "a map of Virginia's counties and their courthouses",
           "voter turnout figures for Virginia elections, 1925–1965"], "D"),
-        Q("conclusion", "VUS.10.f", "Which conclusion is best supported by the passage?", [
+        Q("conclusion", "VUS.10.f", "Which conclusion about the Byrd organization is best supported by the passage?", [
           "The organization's power depended partly on keeping the number of voters small.",
           "The Byrd organization supported large state spending on public schools.",
           "Byrd's influence ended when he left the governor's office in 1930.",
@@ -254,7 +254,7 @@
         "<li><strong>Mar. 1917</strong> The Zimmermann Telegram, a German offer of alliance to Mexico, is published</li>" +
         "<li><strong>Apr. 1917</strong> Congress declares war on Germany</li></ul>",
       claims: [
-        Q("first", "VUS.11.c", "Which event happened FIRST?", [
+        Q("first", "VUS.11.c", "Which of these steps toward war came first?", [
           "Germany announced unrestricted submarine warfare.",
           "The Zimmermann Telegram was published.",
           "Wilson was reelected president.",
@@ -339,7 +339,7 @@
         "<p class=\"src\">— U.S. Census Bureau (rounded)</p>" +
         "<p>" + N(1) + "Many city families crowded into <strong>tenements</strong>, cheap apartment buildings with little light or fresh air. " + N(2) + "Workers, including children, often labored ten to twelve hours a day, six days a week. " + N(3) + "In 1911 a fire at the Triangle Shirtwaist Factory in New York killed 146 workers, most of them young immigrant women trapped behind locked doors. " + N(4) + "Workers formed unions such as the American Federation of Labor, led by Samuel Gompers, to bargain for better wages, hours and safety. " + N(5) + "Over time, shorter hours gave many city dwellers leisure time for baseball, amusement parks and vaudeville shows.</p>",
       claims: [
-        Q("table", "VUS.10.d", "Which conclusion is best supported by the table?", [
+        Q("table", "VUS.10.d", "Which conclusion about urban growth is best supported by the census table?", [
           "The share of urban Americans fell between 1870 and 1920.",
           "Most Americans already lived in cities by 1870.",
           "By 1920, a majority of Americans lived in urban areas.",

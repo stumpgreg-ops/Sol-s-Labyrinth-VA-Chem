@@ -136,7 +136,7 @@
         {
           id: "pattern",
           sol: "GOVT.6.a",
-          stem: "Which conclusion is best supported by the timeline?",
+          stem: "Which pattern in voting rights does the timeline show?",
           choices: [
             { letter: "A", text: "Most changes to voting rights came from Supreme Court rulings." },
             { letter: "B", text: "Over time, amendments protected the votes of more groups." },
@@ -680,7 +680,7 @@
         {
           id: "trend",
           sol: "GOVT.6.e",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about population change is best supported by the table?",
           choices: [
             { letter: "A", text: "California lost population between 2010 and 2020." },
             { letter: "B", text: "Texas and Florida grew faster than New York and California." },

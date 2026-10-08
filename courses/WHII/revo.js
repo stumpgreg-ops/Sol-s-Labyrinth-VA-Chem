@@ -68,10 +68,10 @@
           sol: "WHII.4.a",
           stem: "The Thirty Years' War left the Holy Roman Empire —",
           choices: [
-            { letter: "A", text: "united under a strong emperor" },
-            { letter: "B", text: "divided, weakened and with far fewer people" },
+            { letter: "A", text: "united under a single, strong emperor" },
+            { letter: "B", text: "divided, weakened and far less populous" },
             { letter: "C", text: "a Protestant kingdom ruled by Sweden" },
-            { letter: "D", text: "the richest power in all of Europe" }
+            { letter: "D", text: "the richest and strongest power in Europe" }
           ],
           correct: "B"
         }
@@ -91,8 +91,8 @@
           sol: "WHII.4.d",
           stem: "In sentence 2, divine right means that a king —",
           choices: [
-            { letter: "A", text: "is chosen by a vote of the nobles" },
-            { letter: "B", text: "receives his power from God, not the people" },
+            { letter: "A", text: "is chosen by a vote of the great nobles" },
+            { letter: "B", text: "gets his power from God, not the people" },
             { letter: "C", text: "shares power with an elected assembly" },
             { letter: "D", text: "must obey laws passed by the church" }
           ],
@@ -127,7 +127,7 @@
           sol: "WHII.4.d",
           stem: "Which detail from the passage best shows that Louis XIV avoided any check on his power?",
           choices: [
-            { letter: "A", text: "He chose the sun as his symbol." },
+            { letter: "A", text: "He chose the rising sun as his symbol." },
             { letter: "B", text: "He ruled from 1643 to 1715." },
             { letter: "C", text: "He never called the Estates-General." },
             { letter: "D", text: "He held court at Versailles." }
@@ -189,7 +189,7 @@
             { letter: "A", text: "He refused to pay the taxes owed to the Church." },
             { letter: "B", text: "He led a revolt against the Hapsburg emperor." },
             { letter: "C", text: "He wrote his books in a language the Church banned." },
-            { letter: "D", text: "His findings challenged Church teaching about the heavens." }
+            { letter: "D", text: "His findings went against Church teaching." }
           ],
           correct: "D"
         },
@@ -213,7 +213,7 @@
             { letter: "A", text: "natural laws can be discovered by reason" },
             { letter: "B", text: "kings rule by the will of God" },
             { letter: "C", text: "the heavens cannot be studied" },
-            { letter: "D", text: "only the Church may explain nature" }
+            { letter: "D", text: "only the Church may explain the natural world" }
           ],
           correct: "A"
         }
@@ -270,10 +270,10 @@
           sol: "WHII.4.a",
           stem: "The Pilgrimage of Grace was a protest against Henry VIII's —",
           choices: [
-            { letter: "A", text: "marriage to Catherine of Aragon" },
+            { letter: "A", text: "decision to marry Catherine of Aragon" },
             { letter: "B", text: "break with Rome and closing of the monasteries" },
-            { letter: "C", text: "alliance with Philip II of Spain" },
-            { letter: "D", text: "plan to invade the Netherlands" }
+            { letter: "C", text: "alliance with Philip II of Spain against France" },
+            { letter: "D", text: "plan to invade the Netherlands with a fleet" }
           ],
           correct: "B"
         },
@@ -283,7 +283,7 @@
           stem: "Which conclusion is best supported by the table?",
           choices: [
             { letter: "A", text: "Most of these wars were settled within a single year." },
-            { letter: "B", text: "Religious conflict troubled Europe for more than a century." },
+            { letter: "B", text: "Religious conflict lasted in Europe for over a century." },
             { letter: "C", text: "Spain fought on the Protestant side in each war." },
             { letter: "D", text: "Peasants won most of the conflicts in the table." }
           ],
@@ -471,8 +471,8 @@
           sol: "WHII.4.c",
           stem: "Which clause was later copied almost word for word into Virginia's Declaration of Rights and the Eighth Amendment?",
           choices: [
-            { letter: "A", text: "the clause on free elections" },
-            { letter: "B", text: "the clause on taxes" },
+            { letter: "A", text: "the clause on free elections to Parliament" },
+            { letter: "B", text: "the clause on taxes without Parliament's grant" },
             { letter: "C", text: "the clause naming William and Mary" },
             { letter: "D", text: "the clause on bail, fines and punishments" }
           ],
@@ -543,8 +543,8 @@
           sol: "WHII.4.e",
           stem: "Which was a main cause of the English Civil War?",
           choices: [
-            { letter: "A", text: "disputes between the king and Parliament over power" },
-            { letter: "B", text: "an invasion of England by Spain" },
+            { letter: "A", text: "quarrels between king and Parliament over power" },
+            { letter: "B", text: "a Spanish invasion of southern England" },
             { letter: "C", text: "the spread of the Thirty Years' War to Britain" },
             { letter: "D", text: "a peasant revolt over the price of bread" }
           ],
@@ -555,7 +555,7 @@
           sol: "WHII.4.c",
           stem: "The Habeas Corpus Act protected which right that later appears in the U.S. Constitution?",
           choices: [
-            { letter: "A", text: "the right to keep and bear arms" },
+            { letter: "A", text: "the right of citizens to keep and bear arms" },
             { letter: "B", text: "the right to trial by a jury" },
             { letter: "C", text: "the right of all adults to vote" },
             { letter: "D", text: "the right not to be jailed without cause" }
@@ -567,7 +567,7 @@
           sol: "WHII.4.e",
           stem: "Which conclusion is best supported by the timeline as a whole?",
           choices: [
-            { letter: "A", text: "Over the century, Parliament gained power at the crown's expense." },
+            { letter: "A", text: "Parliament gained power at the crown's expense." },
             { letter: "B", text: "English kings grew more absolute after 1660." },
             { letter: "C", text: "Cromwell restored the Stuart family to the throne." },
             { letter: "D", text: "England ended its monarchy for good in 1649." }
@@ -580,7 +580,7 @@
           stem: "Unlike Louis XIV of France, English monarchs after 1689 —",
           choices: [
             { letter: "A", text: "ruled without any council or advisers" },
-            { letter: "B", text: "had to share power with an elected Parliament" },
+            { letter: "B", text: "shared power with an elected Parliament" },
             { letter: "C", text: "were chosen by the pope" },
             { letter: "D", text: "also governed the Holy Roman Empire" }
           ],
@@ -615,7 +615,7 @@
           stem: "In the first excerpt, the word inherent most nearly means —",
           choices: [
             { letter: "A", text: "granted by the king" },
-            { letter: "B", text: "earned through hard labor" },
+            { letter: "B", text: "earned through a lifetime of hard labor" },
             { letter: "C", text: "belonging to a person by nature" },
             { letter: "D", text: "handed down in a will" }
           ],
@@ -626,8 +626,8 @@
           sol: "WHII.4.c",
           stem: "Which idea appears in the Virginia excerpt but NOT in the Declaration of Independence excerpt?",
           choices: [
-            { letter: "A", text: "People have rights." },
-            { letter: "B", text: "People are equal." },
+            { letter: "A", text: "All people have certain rights." },
+            { letter: "B", text: "All people are created equal." },
             { letter: "C", text: "Liberty is a right." },
             { letter: "D", text: "Owning property is a right." }
           ],
@@ -638,8 +638,8 @@
           sol: "WHII.4.c",
           stem: "Which conclusion is best supported by the dates and wording of the two documents?",
           choices: [
-            { letter: "A", text: "Jefferson's July words echoed ideas Mason stated in June." },
-            { letter: "B", text: "Mason copied the Declaration of Independence." },
+            { letter: "A", text: "Jefferson's words echoed Mason's from weeks before." },
+            { letter: "B", text: "Mason copied his ideas from the Declaration of Independence." },
             { letter: "C", text: "Both documents were written in London." },
             { letter: "D", text: "Neither shows any Enlightenment influence." }
           ],
@@ -650,10 +650,10 @@
           sol: "WHII.4.b",
           stem: "The Declaration of Independence goes on to say that governments derive \"their just powers from the consent of the governed.\" This idea is called —",
           choices: [
-            { letter: "A", text: "divine right" },
-            { letter: "B", text: "absolutism" },
+            { letter: "A", text: "the divine right of kings" },
+            { letter: "B", text: "absolute monarchy" },
             { letter: "C", text: "government by consent" },
-            { letter: "D", text: "mercantilism" }
+            { letter: "D", text: "mercantilist trade policy" }
           ],
           correct: "C"
         },
@@ -678,16 +678,16 @@
       kind: "Age of Revolutions · WHII.4",
       blurb: "Three estates, one tax burden and a government out of money.",
       level: 2,
-      passage: "<p>" + N(1) + "In 1789 French society was still divided into three <strong>estates</strong>, or legal classes. " + N(2) + "The table shows each estate's approximate share of the population and of the direct tax burden.</p><table><tr><th>Estate</th><th>Members</th><th>Share of population</th><th>Direct taxes paid</th></tr><tr><td>First</td><td>Clergy</td><td>under 1%</td><td>very little</td></tr><tr><td>Second</td><td>Nobles</td><td>about 2%</td><td>very little</td></tr><tr><td>Third</td><td>Peasants, workers and the middle class</td><td>about 97%</td><td>nearly all</td></tr></table><p>" + N(3) + "The royal government was deeply in debt, partly from helping the Americans win their war for independence. " + N(4) + "When Louis XVI called the Estates-General in 1789, each estate traditionally had one vote, so the Third Estate could be outvoted two to one.</p>",
+      passage: "<p>" + N(1) + "In 1789 French society was still divided into three <strong>estates</strong>, or legal classes. " + N(2) + "The table shows each estate's approximate share of the population and of the direct tax burden.</p><table><tr><th>Estate</th><th>Members</th><th>Share of population</th><th>Direct taxes paid</th></tr><tr><td>First</td><td>Clergy</td><td>under 1%</td><td>very little</td></tr><tr><td>Second</td><td>Nobles</td><td>about 2%</td><td>very little</td></tr><tr><td>Third</td><td>Peasants, workers and the middle class</td><td>about 97%</td><td>nearly all</td></tr></table><p>" + N(3) + "Poor harvests had sent the price of bread soaring. " + N(4) + "The royal government was also deeply in debt, partly from helping the Americans win their war for independence. " + N(5) + "When Louis XVI called the Estates-General in 1789, each estate traditionally had one vote, so the Third Estate could be outvoted two to one.</p>",
       claims: [
         {
           id: "table",
           sol: "WHII.4.f",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about taxes is best supported by the table?",
           choices: [
             { letter: "A", text: "The largest group carried nearly all the direct taxes." },
-            { letter: "B", text: "The nobles paid most of France's taxes." },
-            { letter: "C", text: "The clergy made up a majority of the people." },
+            { letter: "B", text: "The nobles paid most of the kingdom's direct taxes." },
+            { letter: "C", text: "The clergy made up a majority of the population." },
             { letter: "D", text: "Taxes were shared equally among the estates." }
           ],
           correct: "A"
@@ -707,7 +707,7 @@
         {
           id: "debt",
           sol: "WHII.4.f",
-          stem: "According to sentence 3, how did the American Revolution help cause the French Revolution?",
+          stem: "According to sentence 4, how did the American Revolution help cause the French Revolution?",
           choices: [
             { letter: "A", text: "American soldiers invaded France in 1789." },
             { letter: "B", text: "Britain forced France to pay for the war." },
@@ -719,9 +719,9 @@
         {
           id: "vote",
           sol: "WHII.4.f",
-          stem: "Why did the Third Estate object to the voting rule described in sentence 4?",
+          stem: "Why did the Third Estate object to the voting rule described in sentence 5?",
           choices: [
-            { letter: "A", text: "The king alone could break a tie." },
+            { letter: "A", text: "The king alone could break a tie between estates." },
             { letter: "B", text: "Only the clergy could propose new taxes." },
             { letter: "C", text: "The two smallest estates could outvote the largest." },
             { letter: "D", text: "Peasants had more votes than the middle class." }
@@ -745,10 +745,10 @@
           sol: "WHII.4.b",
           stem: "Which document, adopted in August 1789, drew on Enlightenment ideas and the American Declaration of Independence?",
           choices: [
-            { letter: "A", text: "the Napoleonic Code" },
-            { letter: "B", text: "the Petition of Right" },
-            { letter: "C", text: "the Declaration of the Rights of Man and of the Citizen" },
-            { letter: "D", text: "the Edict of Nantes" }
+            { letter: "A", text: "the Napoleonic Code of 1804" },
+            { letter: "B", text: "the English Bill of Rights of 1689" },
+            { letter: "C", text: "the Declaration of the Rights of Man" },
+            { letter: "D", text: "the Edict of Nantes of 1598" }
           ],
           correct: "C"
         }
@@ -768,7 +768,7 @@
           sol: "WHII.4.f",
           stem: "Which event in the passage happened FIRST?",
           choices: [
-            { letter: "A", text: "Haiti declares independence." },
+            { letter: "A", text: "Haiti declares its independence from France." },
             { letter: "B", text: "Hidalgo calls for revolt." },
             { letter: "C", text: "Napoleon invades Spain." },
             { letter: "D", text: "Enslaved people rise up in Saint-Domingue." }
@@ -780,7 +780,7 @@
           sol: "WHII.4.f",
           stem: "In sentence 3, creoles were —",
           choices: [
-            { letter: "A", text: "officials sent from Spain to govern" },
+            { letter: "A", text: "officials sent from Spain to govern the colonies" },
             { letter: "B", text: "colonists of European descent born in America" },
             { letter: "C", text: "enslaved Africans on sugar plantations" },
             { letter: "D", text: "Native Americans who lived in the Andes" }
@@ -792,7 +792,7 @@
           sol: "WHII.4.g",
           stem: "According to the passage, why did 1808 give Spanish colonists an opening to revolt?",
           choices: [
-            { letter: "A", text: "Napoleon's invasion weakened Spain's hold on its colonies." },
+            { letter: "A", text: "Napoleon's invasion weakened Spain's control." },
             { letter: "B", text: "Spain had freed all enslaved people in its colonies." },
             { letter: "C", text: "Britain had invaded and occupied Mexico." },
             { letter: "D", text: "The pope had declared the colonies free." }
@@ -865,7 +865,7 @@
           stem: "Colbert's policies in sentence 3 were designed mainly to —",
           choices: [
             { letter: "A", text: "lower taxes on goods from other countries" },
-            { letter: "B", text: "build French industry and wealth while limiting imports" },
+            { letter: "B", text: "build French industry and limit imports" },
             { letter: "C", text: "give land to peasants who had none" },
             { letter: "D", text: "end France's trade with its colonies" }
           ],
@@ -900,7 +900,7 @@
           sol: "WHII.4.b",
           stem: "Which statement best describes the difference between the two excerpts?",
           choices: [
-            { letter: "A", text: "Bossuet sees power coming from God; Locke, from the people." },
+            { letter: "A", text: "Bossuet traces power to God; Locke, to the people." },
             { letter: "B", text: "Both argue that rebellion is always wrong." },
             { letter: "C", text: "Bossuet favors a parliament; Locke favors a king." },
             { letter: "D", text: "Both reject every form of monarchy." }
@@ -928,7 +928,7 @@
       kind: "Age of Revolutions · WHII.4",
       blurb: "From a coup in 1799 to exile on Saint Helena.",
       level: 2,
-      passage: "<p>" + N(1) + "Napoleon Bonaparte, an army officer from Corsica, rose to power in the disorder that followed the French Revolution. " + N(2) + "He seized control in 1799 and crowned himself emperor in 1804. " + N(3) + "His <strong>Napoleonic Code</strong> made male citizens equal before the law, protected property and ended privileges based on birth, though it limited the rights of women. " + N(4) + "His armies spread these reforms across Europe, but they also stirred <strong>nationalism</strong>, a strong pride in one's own nation, among the peoples he conquered.</p><ul><li><strong>1799</strong> Napoleon takes power in a coup</li><li><strong>1803</strong> France sells the Louisiana Territory to the United States</li><li><strong>1804</strong> Napoleon crowns himself emperor</li><li><strong>1806</strong> He ends the Holy Roman Empire and blocks British trade with the Continental System</li><li><strong>1812</strong> His invasion of Russia ends in disaster as most of his army is lost</li><li><strong>1814</strong> He is defeated and exiled to the island of Elba</li><li><strong>1815</strong> He returns, is defeated at Waterloo and is exiled to Saint Helena</li></ul>",
+      passage: "<p>" + N(1) + "Napoleon Bonaparte, an army officer from Corsica, rose to power in the disorder that followed the French Revolution. " + N(2) + "He seized control in 1799 and crowned himself emperor in 1804. " + N(3) + "His <strong>Napoleonic Code</strong> made male citizens equal before the law, protected property and ended privileges based on birth, though it limited the rights of women. " + N(4) + "His armies spread these reforms across Europe, but they also stirred <strong>nationalism</strong>, a strong pride in one's own nation, among the peoples he conquered. " + N(5) + "At its height, his power stretched from Spain to the borders of Russia.</p><ul><li><strong>1799</strong> Napoleon takes power in a coup</li><li><strong>1803</strong> France sells the Louisiana Territory to the United States</li><li><strong>1804</strong> Napoleon crowns himself emperor</li><li><strong>1806</strong> He ends the Holy Roman Empire and blocks British trade with the Continental System</li><li><strong>1812</strong> His invasion of Russia ends in disaster as most of his army is lost</li><li><strong>1814</strong> He is defeated and exiled to the island of Elba</li><li><strong>1815</strong> He returns, is defeated at Waterloo and is exiled to Saint Helena</li></ul>",
       claims: [
         {
           id: "rise",
@@ -936,7 +936,7 @@
           stem: "According to sentence 1, Napoleon's rise to power was made possible by —",
           choices: [
             { letter: "A", text: "his victory at Waterloo" },
-            { letter: "B", text: "a vote of the Congress of Vienna" },
+            { letter: "B", text: "a vote taken at the Congress of Vienna in 1815" },
             { letter: "C", text: "the disorder after the French Revolution" },
             { letter: "D", text: "the support of the Hapsburg emperor" }
           ],
@@ -959,9 +959,9 @@
           sol: "WHII.4.b",
           stem: "The Napoleonic Code's equality before the law and end of privileges of birth reflected the ideas of —",
           choices: [
-            { letter: "A", text: "divine right monarchy" },
-            { letter: "B", text: "the Congress of Vienna" },
-            { letter: "C", text: "the Catholic Reformation" },
+            { letter: "A", text: "the divine right of kings to rule" },
+            { letter: "B", text: "the conservative Congress of Vienna" },
+            { letter: "C", text: "the Catholic Reformation's councils" },
             { letter: "D", text: "the Enlightenment and the Revolution" }
           ],
           correct: "D"
@@ -971,7 +971,7 @@
           sol: "WHII.4.g",
           stem: "Why did the nationalism stirred by Napoleon's conquests help lead to his defeat?",
           choices: [
-            { letter: "A", text: "Conquered peoples rose up and joined alliances against France." },
+            { letter: "A", text: "Conquered peoples rose up and allied against France." },
             { letter: "B", text: "It made the French army refuse to fight." },
             { letter: "C", text: "It persuaded Britain to join the Continental System." },
             { letter: "D", text: "It caused Russia to become a loyal French ally." }
@@ -1019,7 +1019,7 @@
           stem: "In sentence 5, legitimate rulers were —",
           choices: [
             { letter: "A", text: "leaders elected by the people after 1789" },
-            { letter: "B", text: "royal families who ruled before the revolution" },
+            { letter: "B", text: "royal families who reigned before 1789" },
             { letter: "C", text: "generals who had served under Napoleon" },
             { letter: "D", text: "officials appointed by the Congress" }
           ],
@@ -1056,7 +1056,7 @@
           choices: [
             { letter: "A", text: "The Congress wiped out revolutionary ideas in Europe." },
             { letter: "B", text: "The Congress led directly to a world war in 1830." },
-            { letter: "C", text: "Peace among the powers held, but revolutionary ideas survived." },
+            { letter: "C", text: "The peace held, but revolutionary ideas survived." },
             { letter: "D", text: "Nationalism faded away soon after 1815." }
           ],
           correct: "C"

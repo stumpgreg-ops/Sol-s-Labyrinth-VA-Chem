@@ -22,7 +22,7 @@ var src = path.join(root, "appsscript"), outAll = path.join(dist, "canvas"), out
    history game: dist/canvas/VA-WHI/, "SOL Lab VA WHI.zip" and "SOL Lab VA WHI update.zip", files SOLLab-VA-WHI*,
    saves under solReading.va-whi: (so no two of the games on one Canvas share a save) */
 var COURSE = (process.argv[2] || "").toUpperCase();
-var HIST_LABEL = { WHI: "World History I", WHII: "World History II", VUS: "VA & US History", GOVT: "VA & US Government" };
+var HIST_LABEL = { WHI: "World History I", WHII: "World History II", VUS: "US History", GOVT: "US Government" };
 if (COURSE && COURSE !== "CHM") {
   if (!HIST_LABEL[COURSE]) throw new Error("tools/build-canvas.js: no course " + COURSE + " (WHI, WHII, VUS, GOVT, or nothing for Chemistry)");
   st = COURSE; lo = "va-" + COURSE.toLowerCase(); LABEL = "SOL Lab · VA " + HIST_LABEL[COURSE];

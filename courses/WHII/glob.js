@@ -171,7 +171,7 @@
         {
           id: "first",
           sol: "WHII.5.d",
-          stem: "Which event on the timeline happened FIRST?",
+          stem: "Which of these events in Tokugawa Japan happened FIRST?",
           choices: [
             { letter: "A", text: "Christianity is banned in Japan." },
             { letter: "B", text: "Portuguese traders are expelled." },
@@ -207,7 +207,7 @@
         {
           id: "conclude",
           sol: "WHII.5.d",
-          stem: "Which conclusion is best supported by the timeline?",
+          stem: "Which conclusion about Japan's foreign trade is best supported by the timeline?",
           choices: [
             { letter: "A", text: "Japan ended all contact with every foreign country." },
             { letter: "B", text: "Christianity spread quickly in Japan after 1614." },
@@ -849,7 +849,7 @@
         {
           id: "territory",
           sol: "WHII.5.c",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about the two dynasties is best supported by the table?",
           choices: [
             { letter: "A", text: "The Ming ruled more land than the Qing did." },
             { letter: "B", text: "The Qing expanded China's borders beyond Ming lands." },

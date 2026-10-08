@@ -758,7 +758,7 @@
         {
           id: "first",
           sol: "WHI.2.c",
-          stem: "Which event happened FIRST?",
+          stem: "Which of these events in Israelite history happened FIRST?",
           choices: [
             { letter: "A", text: "The Assyrians conquer the kingdom of Israel." },
             { letter: "B", text: "Cyrus allows the exiles to return." },

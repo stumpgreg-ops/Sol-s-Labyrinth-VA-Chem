@@ -30,7 +30,7 @@
         {
           id: "conclusion",
           sol: "VUS.1.a",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about Indigenous nations is best supported by the table?",
           choices: [
             { letter: "A", text: "Each people adapted to the resources of its region." },
             { letter: "B", text: "Most peoples depended on hunting buffalo on the plains." },

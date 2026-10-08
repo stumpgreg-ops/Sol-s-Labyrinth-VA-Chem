@@ -313,7 +313,7 @@
         {
           id: "first",
           sol: "GOVT.1.b",
-          stem: "Which event on the timeline happened FIRST?",
+          stem: "Which event in the history of the charters happened FIRST?",
           choices: [
             { letter: "A", text: "colonists found Jamestown" },
             { letter: "B", text: "the Company receives its first charter" },
@@ -408,7 +408,7 @@
         {
           id: "compare",
           sol: "GOVT.2.b",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about the two systems is best supported by the table?",
           choices: [
             { letter: "A", text: "A prime minister can lose office sooner than a president." },
             { letter: "B", text: "A president can dissolve the legislature at any time he or she chooses." },
@@ -813,7 +813,7 @@
           sol: "GOVT.2.c",
           stem: "Which later amendment did the most to establish equality of all citizens under the law?",
           choices: [
-            { letter: "A", text: "the Tenth Amendment, reserving powers to the states" },
+            { letter: "A", text: "the Tenth Amendment, reserving undelegated powers to the states or the people" },
             { letter: "B", text: "the Second Amendment, protecting the right to keep and bear arms" },
             { letter: "C", text: "the Twenty-second Amendment, limiting presidents to two terms" },
             { letter: "D", text: "the Fourteenth Amendment, guaranteeing equal protection of the laws" }
@@ -918,7 +918,7 @@
         {
           id: "compromise",
           sol: "GOVT.2.e",
-          stem: "Which conclusion is best supported by the passage?",
+          stem: "Which conclusion about the Bill of Rights is best supported by the passage?",
           choices: [
             { letter: "A", text: "The Bill of Rights helped bridge the divide over ratification." },
             { letter: "B", text: "Anti-Federalists wrote the Bill of Rights without any help from Federalists." },

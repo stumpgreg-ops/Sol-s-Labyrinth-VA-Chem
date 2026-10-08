@@ -220,7 +220,7 @@
         {
           id: "conclude",
           sol: "WHI.4.c",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about Sparta is best supported by the table?",
           choices: [
             { letter: "A", text: "Sparta built its society around military strength." },
             { letter: "B", text: "Athens trained its boys only for war." },
@@ -279,7 +279,7 @@
         {
           id: "first",
           sol: "WHI.4.d",
-          stem: "Which event happened FIRST?",
+          stem: "Which event in the Persian Wars timeline happened FIRST?",
           choices: [
             { letter: "A", text: "Xerxes invades Greece" },
             { letter: "B", text: "the Battle of Marathon" },
@@ -588,7 +588,7 @@
         {
           id: "first",
           sol: "WHI.5.d",
-          stem: "Which event on the timeline happened FIRST?",
+          stem: "Which event in early Christian history happened FIRST?",
           choices: [
             { letter: "A", text: "the Edict of Milan" },
             { letter: "B", text: "Nero's persecution of Christians" },
@@ -600,7 +600,7 @@
         {
           id: "trend",
           sol: "WHI.5.d",
-          stem: "Which conclusion is best supported by the timeline?",
+          stem: "Which conclusion about early Christianity is best supported by the timeline?",
           choices: [
             { letter: "A", text: "Christianity went from persecuted to official in about 300 years." },
             { letter: "B", text: "Christianity began in Rome and only later spread to Judea." },
@@ -779,7 +779,7 @@
         {
           id: "last",
           sol: "WHI.5.b",
-          stem: "Which event happened LAST?",
+          stem: "Which event in Roman history happened LAST?",
           choices: [
             { letter: "A", text: "Romans expel their last king." },
             { letter: "B", text: "Plebeians win the right to elect tribunes." },
