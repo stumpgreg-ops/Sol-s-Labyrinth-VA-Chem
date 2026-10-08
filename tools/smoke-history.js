@@ -141,13 +141,15 @@ function course(id) { var w = {}; vm.runInNewContext(fs.readFileSync(path.join(r
     check(iso.mine > 0 && iso.histRec === null && iso.chemRec === null && iso.state === "CHM", id + ": the course's saves carry solLab." + id.toLowerCase() + ": and the Chemistry page doesn't see them: " + JSON.stringify(iso));
     await chem.close();
 
+    check(errors.length === 0, id + ": no page errors" + (errors.length ? ": " + errors.slice(0, 5).join(" | ") : ""));
+    await ctx.close();
     /* the Canvas embed (width 100%, height 500): every screen fits without the page scrolling, and the Menu leaves a level */
-    var small = await ctx.newPage();
+    var sctx = await browser.newContext({ viewport: { width: 984, height: 500 } }), small = await sctx.newPage();
     small.on("pageerror", function (e) { errors.push("pageerror (500 high): " + e.message); });
-    await small.setViewportSize({ width: 984, height: 500 });
+    small.on("dialog", function (d) { console.log("dialog: " + d.message()); d.dismiss().catch(function () {}); });
     await small.goto(base + id + ".html", { waitUntil: "load" });
     await small.waitForTimeout(600);
-    await small.evaluate(function () { localStorage.clear(); Element.prototype.requestFullscreen = function () { return Promise.reject(new Error("no")); }; });
+    await small.evaluate(function () { Element.prototype.requestFullscreen = function () { return Promise.reject(new Error("no")); }; });
     var fits = [];
     async function fit(name) {
       fits.push(name + ":" + (await small.evaluate(function () {
@@ -171,10 +173,9 @@ function course(id) { var w = {}; vm.runInNewContext(fs.readFileSync(path.join(r
     await small.click("#btn-leave-go"); await small.waitForTimeout(1000);
     var back = await small.evaluate(function (st) { var r = SolProgress.record(st); return { title: !document.getElementById("title-screen").classList.contains("hidden"), log: (r.log || []).slice(-1)[0] }; }, id);
     check(lv.open && lv.paused && back.title && back.log && back.log.res === "left", id + ": Menu pauses the level and Leave goes back to the title screen (logged as left): " + JSON.stringify(back.log));
-    await small.close();
+    await sctx.close();
+    check(errors.length === 0, id + ": no page errors at 500 high" + (errors.length ? ": " + errors.slice(0, 5).join(" | ") : ""));
 
-    check(errors.length === 0, id + ": no page errors" + (errors.length ? ": " + errors.slice(0, 5).join(" | ") : ""));
-    await ctx.close();
   }
   await browser.close(); srv.close();
   console.log(fails.length ? fails.length + " FAILED" : "all history checks passed");
