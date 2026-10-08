@@ -716,3 +716,105 @@ h1.logo img { width: min(300px, 60vw); height: auto; display: block; margin: 0 a
 .fang-row .fang small { font-size: 10px; margin-top: 3px; color: #7a8594; }
 .fang-row .fang.on { color: #fff3c4; text-shadow: 0 0 8px rgba(255, 216, 74, .7); }
 .fang-row .fang.on small { color: var(--gold); }
+
+/* ── History 1.0: the Menu button on the play screen and its "Leave this level?" card ─────────────── */
+#btn-leave {
+  position: absolute; left: 10px; top: 10px; z-index: 12;
+  min-height: 40px; padding: 8px 12px; font-size: 13px; font-weight: 700;
+  pointer-events: auto;
+}
+#leave-overlay {
+  position: fixed; inset: 0; z-index: 95; display: flex; align-items: center; justify-content: center;
+  background: rgba(8,10,14,.72); padding: 12px;
+}
+#leave-overlay .box {
+  background: #141822; border: 2px solid var(--gold); border-radius: 16px;
+  padding: 20px; text-align: center; max-width: 440px; max-height: 96vh; overflow: auto;
+}
+#leave-overlay h2 { margin: 0 0 8px; font-size: 22px; }
+#leave-overlay p { color: var(--dim); margin: 0; }
+#leave-overlay .row { margin-top: 14px; }
+
+/* ── History 1.0: a short window (Canvas embed height="500"). Everything fits in the frame without the page
+   scrolling: the start screens drop the long text, the cards get compact, and in a level the question panel
+   stays on the left at full height (a 28vh strip across the top is too short to show the answers). ── */
+@media (max-height: 600px) {
+  .screen { justify-content: flex-start; padding: 8px 12px; }
+  .screen > *:first-child { margin-top: auto; }
+  .screen > *:last-child { margin-bottom: auto; }
+  .kicker { margin: 0 0 2px; font-size: 11px; }
+  h1 { font-size: 24px; }
+  h1.logo img { width: 84px; }
+  .ver { margin: 0 0 2px; font-size: 11px; }
+  .tag, .howto, .music-pick { display: none; }
+  .save-line { font-size: 12.5px; margin: 2px 0 6px; }
+  .packs { gap: 6px; margin-bottom: 6px; }
+  .card { padding: 6px 10px; min-height: 0; border-radius: 10px; }
+  .card .kind { font-size: 11px; }
+  .card .name { font-size: 15px; line-height: 1.2; }
+  .card .meta { font-size: 12px; line-height: 1.3; margin-top: 2px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .unit-packs, #skill-packs { width: 100%; max-width: 940px; }
+  .unit-packs .card { width: calc(25% - 6px); min-width: 120px; max-width: 220px; }
+  .unit-packs .card .meta { display: none; }
+  #mode-screen .card { width: 218px; }
+  #skill-screen .card { width: calc(25% - 6px); min-width: 140px; max-width: 230px; }
+  #skill-packs:has(.card:nth-child(9)) .card .meta { display: none; }   /* Full review: a card per standard */
+  #skill-packs:has(.card:nth-child(15)) .card { padding: 4px 8px; }
+  #skill-packs:has(.card:nth-child(15)) .card .name { font-size: 13px; }
+  #mode-screen .card .name, #skill-screen .card .name { font-size: 15px; }
+  #skill-screen .card .meta { -webkit-line-clamp: 1; }
+  .btn { min-height: 36px; padding: 6px 12px; }
+  .row { margin: 4px 0; }
+  .title-tools { gap: 6px; margin: 0 0 4px; }
+  .title-tools .btn { font-size: 13px; }
+  .join-row { margin: 2px 0 4px; gap: 10px; }
+  .join-row label { flex-direction: row; align-items: center; gap: 6px; font-size: 12px; }
+  .join-row input { min-height: 34px; min-width: 130px; padding: 4px 8px; }
+  .teacher-link { margin-top: 2px; }
+  .teacher-link a, #btn-teacher { min-height: 28px; padding: 2px 8px; }
+  /* the play-screen buttons: Menu top left; Look and music under the minimap (the volume slider goes: the music
+     button and the title screen still turn music off) */
+  #music-vol-hud { display: none; }
+  #btn-char { right: 12px; top: 128px; }
+  #btn-music-hud { right: 72px; top: 128px; }
+  #btn-fs { right: 12px; top: 172px; }
+  /* the level: the question panel on the left, full height */
+  #play { flex-direction: row; }
+  #hud {
+    flex: 0 0 clamp(270px, 36vw, 380px); width: clamp(270px, 36vw, 380px); height: 100%; max-height: none;
+    border-right: 2px solid #c9b48a; border-bottom: none; padding: 4px;
+  }
+  .eoc { padding: 5px; }
+  .eoc-bar { gap: 4px; margin-bottom: 4px; }
+  .eoc .scores { gap: 3px; }
+  .pip { font-size: 11px; padding: 1px 6px; margin-right: 2px; }
+  #token-pip { display: none; }
+  .eoc-body { display: flex; flex-direction: column; gap: 5px; }
+  #eoc-passage-wrap { min-height: 60px; }
+  .stem { font-size: 13px; margin: 0 0 4px; }
+  .choices { grid-template-columns: 1fr; gap: 3px; }
+  .choices li { font-size: 12px; padding: 3px 6px; }
+  .carry-flag { font-size: 11px; margin: 2px 0 0; }
+  /* the reading card and the other cards fit the frame */
+  .read-card, .tut-card, .codex-card { max-height: 96vh; }
+  .read-card { padding: 10px 14px; gap: 6px; }
+  .read-head h2 { font-size: 18px; }
+  .read-hint { display: none; }
+  .realm-card { padding: 5px 10px !important; margin: 0 !important; font-size: 12px; }
+  .realm-card h3, .realm-card .rn { font-size: 15px !important; margin: 0 !important; }
+  .realm-card p { margin: 1px 0 !important; }
+  .read-scroll .passage { font-size: 14.5px; line-height: 1.45; }
+  .read-scroll .stem { margin-top: 8px; font-size: 14.5px; }
+  #overlay .box { max-height: 96vh; overflow: auto; padding: 14px; }
+}
+@media (max-height: 600px) and (max-width: 700px) {
+  h1.logo, .ver { display: none; }
+  .card .name, #skill-screen .card .name, #mode-screen .card .name { font-size: 13.5px; }
+  .card .kind { font-size: 10px; }
+  #skill-screen .card { min-width: 120px; padding: 5px 8px; }
+  #skill-screen h1 { font-size: 20px; }
+  #skill-screen .card .meta { display: none; }
+  .screen { padding: 4px 8px; }
+  #skill-screen .save-line { font-size: 11.5px; margin: 0 0 4px; }
+}

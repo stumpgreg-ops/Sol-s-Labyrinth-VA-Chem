@@ -152,6 +152,7 @@
       <div id="stage">
         <div id="game-root"></div>
         <div id="flash"></div>
+        <button type="button" id="btn-leave" class="btn" title="Leave this level and go back to the title screen (Esc)">☰ Menu</button>
         <button type="button" id="btn-char" class="btn">Look</button>
         <button type="button" id="btn-music-hud" class="btn" aria-pressed="true" title="Background music on/off">♪</button>
         <input type="range" id="music-vol-hud" class="music-vol" min="0" max="100" step="5" value="55" title="Music volume" aria-label="Music volume" />
@@ -187,6 +188,18 @@
     </div>
   </div>
 
+
+  <!-- History 1.0: leave a level from its Menu button (or Esc) and go back to the title screen -->
+  <div id="leave-overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="leave-title">
+    <div class="box">
+      <h2 id="leave-title">Leave this level?</h2>
+      <p id="leave-msg">The game is paused. If you leave, this level starts over next time. Your saved level, coins and town stay.</p>
+      <div class="row">
+        <button type="button" class="btn primary" id="btn-leave-stay">Keep playing</button>
+        <button type="button" class="btn" id="btn-leave-go">Leave to the title screen</button>
+      </div>
+    </div>
+  </div>
 
   <div id="char-overlay" class="hidden" aria-hidden="true">
     <div class="char-panel" id="char-panel">

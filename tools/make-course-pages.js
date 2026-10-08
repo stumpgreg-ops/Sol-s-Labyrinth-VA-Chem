@@ -11,7 +11,7 @@
    course.js, and commit the pages: they are what GitHub Pages serves. */
 var fs = require("fs"), path = require("path"), vm = require("vm");
 var root = path.join(__dirname, "..");
-var VERSION = "1.0.0";
+var VERSION = "1.1.0";
 var COURSES = ["WHI", "WHII", "VUS", "GOVT"];
 
 function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }

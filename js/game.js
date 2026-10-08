@@ -26778,7 +26778,7 @@
     if (sc.readOpen || sc.tutOpen || sc.codexOpen || sc.trapOpen || sc.helpOpen || sc._tabHidden) return false;
     var play = document.getElementById("play");
     if (!play || play.classList.contains("hidden")) return false;
-    var cards = ["overlay", "read-overlay", "tut-overlay", "codex-overlay", "trap-overlay", "char-overlay", "build-overlay", "progress-overlay", "restore-overlay", "badge-overlay", "teacher-overlay"];
+    var cards = ["overlay", "read-overlay", "tut-overlay", "codex-overlay", "trap-overlay", "char-overlay", "build-overlay", "progress-overlay", "restore-overlay", "badge-overlay", "teacher-overlay", "leave-overlay"];
     for (var i = 0; i < cards.length; i++) { var c = document.getElementById(cards[i]); if (c && !c.classList.contains("hidden")) return false; }
     try { if (sc.scene && sc.scene.isPaused && sc.scene.isPaused()) return false; } catch (e) {}
     return true;
@@ -27670,6 +27670,66 @@
       window.location.href = "admin.html";
     });
   }
+  /* History 1.0: leave a level in the middle. The Menu button (or Esc, when no card is open) pauses the level and asks;
+     "Leave to the title screen" ends it as "left" in the progress record (no win, no loss, no strike) and goes back to
+     the title screen, the same way the Title button does after a level. The saved level is untouched. */
+  var leavePaused = null;
+  function leaveIsOpen() { var ov = document.getElementById("leave-overlay"); return !!(ov && !ov.classList.contains("hidden")); }
+  function openLeave() {
+    var play = document.getElementById("play");
+    if (!play || play.classList.contains("hidden") || leaveIsOpen()) return;
+    var ov = document.getElementById("leave-overlay");
+    if (!ov) return;
+    leavePaused = null;
+    var sc = playScene;
+    if (sc && !sc.ended) {
+      try { if (sc.scene && !sc.scene.isPaused()) { sc.scene.pause(); leavePaused = sc; } } catch (e) {}
+    }
+    var n = 0;
+    try { n = readSavedNight(); } catch (e) {}
+    var msg = document.getElementById("leave-msg");
+    if (msg) msg.textContent = (sc && sc.ended ? "" : "The game is paused. If you leave, this level starts over next time. ") +
+      "Your saved level" + (n ? " (Level " + n + ")" : "") + ", coins and town stay.";
+    ov.classList.remove("hidden");
+    try { document.getElementById("btn-leave-stay").focus(); } catch (e) {}
+  }
+  function closeLeave() {
+    var ov = document.getElementById("leave-overlay");
+    if (ov) ov.classList.add("hidden");
+    if (leavePaused) { try { leavePaused.scene.resume(); } catch (e) {} }
+    leavePaused = null;
+  }
+  function leaveLevel() {
+    var ov = document.getElementById("leave-overlay");
+    if (ov) ov.classList.add("hidden");
+    leavePaused = null;
+    if (window.SolProgress && SolProgress.levelLeft) { try { SolProgress.levelLeft(); } catch (e) {} }
+    try { if (window.SolAcc && SolAcc.stop) SolAcc.stop(); } catch (e) {}
+    try { hideReading(); } catch (e) {}
+    try { hideCodex(); } catch (e) {}
+    try { hideTrapIntro(); } catch (e) {}
+    var endOv = document.getElementById("overlay");
+    if (endOv) endOv.classList.add("hidden");
+    if (isFullscreen()) exitFullscreen();
+    document.getElementById("btn-again").click();
+  }
+  bindTap(document.getElementById("btn-leave"), openLeave);
+  bindTap(document.getElementById("btn-leave-stay"), closeLeave);
+  bindTap(document.getElementById("btn-leave-go"), leaveLevel);
+  /* Esc: closes the Menu card if it is open; opens it during play when no other card is up (window, capture: before the
+     reading card, the field guide and the trap card look at the key, so Esc on one of those still only closes it) */
+  window.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape" && e.code !== "Escape") return;
+    if (leaveIsOpen()) { e.preventDefault(); e.stopPropagation(); closeLeave(); return; }
+    var play = document.getElementById("play");
+    if (!play || play.classList.contains("hidden") || !playScene) return;
+    if (readingIsVisible() || codexIsVisible()) return;
+    var busy = ["overlay", "tut-overlay", "trap-overlay", "char-overlay", "build-overlay", "progress-overlay", "restore-overlay", "badge-overlay", "teacher-overlay"];
+    for (var i = 0; i < busy.length; i++) { var c = document.getElementById(busy[i]); if (c && !c.classList.contains("hidden")) return; }
+    e.preventDefault(); e.stopPropagation();
+    openLeave();
+  }, true);
+
   document.getElementById("btn-again").addEventListener("click", function () {
     showPlayUi(false);
     wantNight1Tut = false;

@@ -141,6 +141,38 @@ function course(id) { var w = {}; vm.runInNewContext(fs.readFileSync(path.join(r
     check(iso.mine > 0 && iso.histRec === null && iso.chemRec === null && iso.state === "CHM", id + ": the course's saves carry solLab." + id.toLowerCase() + ": and the Chemistry page doesn't see them: " + JSON.stringify(iso));
     await chem.close();
 
+    /* the Canvas embed (width 100%, height 500): every screen fits without the page scrolling, and the Menu leaves a level */
+    var small = await ctx.newPage();
+    small.on("pageerror", function (e) { errors.push("pageerror (500 high): " + e.message); });
+    await small.setViewportSize({ width: 984, height: 500 });
+    await small.goto(base + id + ".html", { waitUntil: "load" });
+    await small.waitForTimeout(600);
+    await small.evaluate(function () { localStorage.clear(); Element.prototype.requestFullscreen = function () { return Promise.reject(new Error("no")); }; });
+    var fits = [];
+    async function fit(name) {
+      fits.push(name + ":" + (await small.evaluate(function () {
+        var s = document.querySelector("section.screen:not(.hidden)") || document.getElementById("play"), d = document.scrollingElement;
+        return Math.max(s.scrollHeight - s.clientHeight, d.scrollHeight - innerHeight);
+      })));
+    }
+    await fit("title");
+    await small.click('#title-screen .card[data-family="ALL"]'); await small.waitForSelector("#mode-screen:not(.hidden)"); await fit("modes");
+    await small.click('#mode-packs .card[data-gamemode="maze"]'); await small.waitForSelector("#skill-screen:not(.hidden)"); await fit("skills");
+    await small.waitForTimeout(500); await small.click("#btn-skill-start"); await small.waitForTimeout(400);
+    if (await small.isVisible("#btn-char-confirm")) await small.click("#btn-char-confirm");
+    await small.waitForTimeout(2500);
+    for (var j = 0; j < 12; j++) { if (await small.isVisible("#tut-skip")) { await small.click("#tut-skip"); break; } await small.waitForTimeout(250); }
+    for (var j2 = 0; j2 < 10; j2++) { if (await small.isVisible("#read-go")) { await small.click("#read-go"); break; } await small.waitForTimeout(200); }
+    await small.waitForTimeout(800); await fit("level");
+    var hudOk = await small.evaluate(function () { var li = document.querySelectorAll("#eoc-choices li"), last = li[li.length - 1]; return !!last && last.getBoundingClientRect().bottom <= innerHeight; });
+    check(fits.every(function (x) { return /:(0|-\d+)$/.test(x); }) && hudOk, id + ": in a 500-pixel-high window every screen fits without scrolling and the answers show: " + fits.join(" "));
+    await small.click("#btn-leave"); await small.waitForTimeout(400);
+    var lv = await small.evaluate(function () { return { open: !document.getElementById("leave-overlay").classList.contains("hidden"), paused: SolScene.scene.isPaused() }; });
+    await small.click("#btn-leave-go"); await small.waitForTimeout(1000);
+    var back = await small.evaluate(function (st) { var r = SolProgress.record(st); return { title: !document.getElementById("title-screen").classList.contains("hidden"), log: (r.log || []).slice(-1)[0] }; }, id);
+    check(lv.open && lv.paused && back.title && back.log && back.log.res === "left", id + ": Menu pauses the level and Leave goes back to the title screen (logged as left): " + JSON.stringify(back.log));
+    await small.close();
+
     check(errors.length === 0, id + ": no page errors" + (errors.length ? ": " + errors.slice(0, 5).join(" | ") : ""));
     await ctx.close();
   }

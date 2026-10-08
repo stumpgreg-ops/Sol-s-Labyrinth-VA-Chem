@@ -34,6 +34,13 @@ its own game with its own page, saves, progress-code tag and Canvas zip; the Che
   writes `dist/canvas/SOL Lab VA WHI.zip` (first-time setup) and `SOL Lab VA WHI update.zip`, with the READ ME and
   `SOLLab-VA-WHI-Teacher.html`, exactly like the Chemistry and Reading zips. Saves in Canvas carry `solReading.va-whi:`.
   Same for WHII, VUS and GOVT. (The Apps Script build of a history course is not committed; Chemistry's still is.)
+- **Fits the Canvas embed** (`width="100%" height="500"`, the code in the history READ MEs): when the window is 600
+  pixels high or less, the start screens drop the long text and use compact cards, and in a level the question panel
+  stays on the left at full height, so nothing on the page scrolls (a long passage scrolls inside its own box).
+  `tools/smoke-history.js` checks every screen at 984 × 500. The full-size layout is unchanged.
+- **Menu: leave a level.** The ☰ Menu button (top left of the play screen) or Esc pauses the level and asks "Leave
+  this level?"; Leave goes back to the title screen and records the level as left (no win, no loss), Keep playing (or
+  Esc) resumes. In every game, Chemistry included.
 - **Progress codes and badges.** Four new games in `js/progress-code.js` (ids 5–8, own secrets); the standards report
   lists every key concept; one badge pair per unit (`u1-25` … `u7-100`, named after the course's units).
 - **Review.** `node tools/validate-content.js WHI` checks a course (and warns about any key concept without an item);

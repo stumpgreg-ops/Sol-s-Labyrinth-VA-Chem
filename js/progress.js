@@ -249,6 +249,18 @@
       badgesSoon();
     } catch (e) {}
   }
+  /* History 1.0: the student left the level from its Menu (neither won nor lost): logged as "left", play time kept */
+  function levelLeft() {
+    try {
+      if (!cur || cur.ended) return;
+      flush();
+      var rec = load(cur.st);
+      logLevel(rec, cur, "left");
+      touchDay(rec);
+      save(cur.st, rec);
+      cur.ended = true;
+    } catch (e) {}
+  }
   /* js/badges.js looks at the record after an answer or a level (a moment later, so a level's own screen comes first) */
   var badgeTimer = null;
   function badgesSoon() {
@@ -615,7 +627,7 @@
 
   window.SolProgress = {
     hook: function (h) { if (h) Object.keys(h).forEach(function (k) { hooks[k] = h[k]; }); },
-    levelStart: levelStart, answer: answer, levelEnd: levelEnd,
+    levelStart: levelStart, answer: answer, levelEnd: levelEnd, levelLeft: levelLeft,
     record: function (st) { flush(); return JSON.parse(JSON.stringify(load(st || stateNow()))); },
     summary: function (st) { flush(); return summary(st || stateNow()); },
     code: makeCode, show: show, hide: hide, isOpen: isOpen,
