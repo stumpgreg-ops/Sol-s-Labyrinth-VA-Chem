@@ -155,7 +155,7 @@
       kind: "Medieval China & Japan · WHI.9",
       blurb: "Who served whom in a society ruled by warriors.",
       level: 1,
-      passage: "<p>" + N(1) + "A diagram shows Japanese society after 1200 as a pyramid. " + N(2) + "At the top sits the emperor, honored but with little real power. " + N(3) + "Below him is the <strong>shogun</strong>, the supreme military ruler. " + N(4) + "Next come the <strong>daimyo</strong>, great landowning lords, and under them the <strong>samurai</strong>, warriors sworn to serve their lord. " + N(5) + "Peasants, artisans and merchants form the wide base.</p>",
+      passage: "<p>" + N(1) + "A diagram shows the society of feudal Japan as a pyramid. " + N(2) + "At the top sits the emperor, honored but with little real power. " + N(3) + "Below him is the <strong>shogun</strong>, the supreme military ruler. " + N(4) + "Next come the <strong>daimyo</strong>, great landowning lords, and under them the <strong>samurai</strong>, warriors sworn to serve their lord. " + N(5) + "Peasants, artisans and merchants form the wide base.</p>",
       claims: [
         {
           id: "power",
@@ -351,7 +351,7 @@
         },
         {
           id: "missions",
-          sol: "WHI.9.a",
+          sol: "WHI.9.b",
           stem: "Sentence 5 best supports which conclusion?",
           choices: [
             { letter: "A", text: "Japan tried to conquer China." },
@@ -609,7 +609,7 @@
       kind: "Medieval China & Japan · WHI.9",
       blurb: "Poetry, painting and the Tale of Genji in Japan's golden age.",
       level: 2,
-      passage: "<p>" + N(1) + "In 794 Japan's emperor moved the capital to Heian, later called Kyoto. " + N(2) + "For the next three centuries the court enjoyed a <strong>golden age</strong> of art and literature. " + N(3) + "Nobles prized beauty and elegant manners; they wrote poems to one another, judged good handwriting and arranged their clothing in careful layers of color. " + N(4) + "Japanese writers had long used Chinese characters, but now a simpler phonetic script, <strong>kana</strong>, let them write Japanese words as they were spoken. " + N(5) + "Court women used kana to write some of the era's greatest works. " + N(6) + "Around the year 1000, the lady-in-waiting Murasaki Shikibu wrote <strong>The Tale of Genji</strong>, a long story about the life and loves of a prince, often called the world's first novel. " + N(7) + "It is still read, studied and retold in films and comics today. " + N(8) + "The golden age faded in the late 1100s, when warrior clans began fighting for control of the country.</p>",
+      passage: "<p>" + N(1) + "In 794 Japan's emperor moved the capital to Heian, later called Kyoto. " + N(2) + "During the Heian period that followed, the court enjoyed a <strong>golden age</strong> of art and literature. " + N(3) + "Nobles prized beauty and elegant manners; they wrote poems to one another, judged good handwriting and arranged their clothing in careful layers of color. " + N(4) + "Japanese writers had long used Chinese characters, but now a simpler phonetic script, <strong>kana</strong>, let them write Japanese words as they were spoken. " + N(5) + "Court women used kana to write some of the era's greatest works. " + N(6) + "Around the year 1000, the lady-in-waiting Murasaki Shikibu wrote <strong>The Tale of Genji</strong>, a long story about the life and loves of a prince, often called the world's first novel. " + N(7) + "It is still read, studied and retold in films and comics today. " + N(8) + "The golden age faded in the late 1100s, when warrior clans began fighting for control of the country.</p>",
       claims: [
         {
           id: "end",
@@ -694,7 +694,7 @@
       kind: "Medieval China & Japan · WHI.7",
       blurb: "The Yuan dynasty opens the roads, sidelines scholars and fails against Japan.",
       level: 3,
-      passage: "<ul><li><strong>1206</strong> Genghis Khan unites the Mongol tribes</li><li><strong>1271</strong> His grandson Kublai Khan founds the Yuan dynasty</li><li><strong>1274, 1281</strong> Two Mongol invasions of Japan fail</li><li><strong>1279</strong> The Yuan complete the conquest of the Song</li><li><strong>1368</strong> A rebellion drives out the Mongols; the Ming dynasty begins</li></ul><p>" + N(1) + "The Mongol empire stretched from Korea to Eastern Europe, and its rulers protected merchants on the overland Silk Road. " + N(2) + "Historians call this period of safer travel the <strong>Pax Mongolica</strong>. " + N(3) + "Relay stations with fresh horses carried messages across the empire, and travelers such as the Venetian Marco Polo reached Kublai's court. " + N(4) + "Inside China, the Mongols relied on foreigners and Mongols for high offices and stopped holding the civil service examination for decades. " + N(5) + "Many Confucian scholars turned to teaching, painting and writing plays. " + N(6) + "When the exams returned in 1315, they were based on Zhu Xi's Neo-Confucian readings of the classics. " + N(7) + "Meanwhile, in Japan, samurai defended the coast, and storms that the Japanese called <strong>kamikaze</strong>, or divine winds, wrecked the Mongol fleets.</p>",
+      passage: "<ul><li><strong>1206</strong> Genghis Khan unites the Mongol tribes</li><li><strong>1271</strong> His grandson Kublai Khan founds the Yuan dynasty</li><li><strong>1274</strong> The first Mongol invasion of Japan fails</li><li><strong>1279</strong> The Yuan complete the conquest of the Song</li><li><strong>1281</strong> A second, larger invasion of Japan fails</li><li><strong>1368</strong> A rebellion drives out the Mongols; the Ming dynasty begins</li></ul><p>" + N(1) + "The Mongol empire stretched from Korea to Eastern Europe, and its rulers protected merchants on the overland Silk Road. " + N(2) + "Historians call this period of safer travel the <strong>Pax Mongolica</strong>. " + N(3) + "Relay stations with fresh horses carried messages across the empire, and travelers such as the Venetian Marco Polo reached Kublai's court. " + N(4) + "Inside China, the Mongols relied on foreigners and Mongols for high offices and stopped holding the civil service examination for decades. " + N(5) + "Many Confucian scholars turned to teaching, painting and writing plays. " + N(6) + "When the exams returned in 1315, they were based on Zhu Xi's Neo-Confucian readings of the classics. " + N(7) + "Meanwhile, in Japan, samurai defended the coast, and storms that the Japanese called <strong>kamikaze</strong>, or divine winds, wrecked the Mongol fleets.</p>",
       claims: [
         {
           id: "order",
@@ -762,7 +762,7 @@
           stem: "Which was a result of the failed Mongol invasions for Japan?",
           choices: [
             { letter: "A", text: "Japan became part of the Yuan Empire." },
-            { letter: "B", text: "Japan's emperor took back power from the warriors." },
+            { letter: "B", text: "Japan's samurai class was abolished by the shogun." },
             { letter: "C", text: "Japan adopted the civil service examination." },
             { letter: "D", text: "Japan stayed independent, and samurai gained prestige as defenders." }
           ],
@@ -882,7 +882,7 @@
             { letter: "A", text: "the Gempei War between the Taira and Minamoto" },
             { letter: "B", text: "Yoritomo receives the title of shogun" },
             { letter: "C", text: "the abolition of the samurai class" },
-            { letter: "D", text: "the founding of the government at Kamakura" }
+            { letter: "D", text: "the first Mongol invasion of Japan" }
           ],
           correct: "A"
         },
