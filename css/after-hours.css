@@ -33,6 +33,10 @@ html, body {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 16px; overflow: auto; touch-action: pan-y;
 }
+/* 1.4.2: a screen taller than the frame (a 500 px wide Canvas frame stacks the cards) scrolls from its top instead
+   of cutting the logo and the first cards off above the frame */
+.screen { justify-content: safe center; }
+.screen > * { flex-shrink: 0; }
 #title-screen { z-index: 20; }
 #state-screen { z-index: 22; }
 
@@ -300,7 +304,9 @@ h1.logo img { width: min(300px, 60vw); height: auto; display: block; margin: 0 a
 }
 #overlay h2 { margin: 0 0 8px; }
 
-@media (max-width: 1099px) {
+/* 1.4.2: the lab notes stack above the stage only when the frame is narrow, or wide-ish but tall enough for a 28vh panel
+   to hold the question. A short frame (a Canvas embed 500 px tall) keeps the side panel at any width over 760 px. */
+@media (max-width: 759px), (max-width: 1099px) and (min-height: 640px) {
   #play { flex-direction: column; }
   #hud {
     flex: 0 0 28vh;
@@ -319,6 +325,24 @@ h1.logo img { width: min(300px, 60vw); height: auto; display: block; margin: 0 a
   .choices { grid-template-columns: 1fr 1fr; }
 }
 
+/* 1.4.2: a short frame (500 px): a smaller logo and tighter title screens, so the unit cards start in view */
+@media (max-height: 560px) {
+  .screen { padding: 8px 16px; }
+  h1.logo img { width: min(150px, 30vw); }
+  .kicker { margin: 0 0 2px; }
+  .tag { margin: 4px 0 8px; font-size: 14px; }
+  .save-line { margin: 0 0 8px; }
+  .howto { display: none; }
+}
+/* 1.4.2: a short frame on a narrow-ish page (760-1000 px wide keeps the side panel, so the stage is 420-660 px wide):
+   a smaller minimap and no volume slider, so the stage's top row never crowds the minimap */
+@media (max-width: 1000px) and (max-height: 639px) {
+  #minimap { width: 140px; height: 78px; }
+  #music-vol-hud { display: none; }
+  #stage #btn-char { right: 164px; }
+  #stage #btn-music-hud { right: 230px; }
+  #stage #btn-fs { right: 300px; font-size: 12px; }
+}
 .save-line { color: var(--gold); font-size: 14px; margin: 0 0 12px; text-align: center; }
 .teacher-link { margin-top: 16px; }
 .teacher-link a, #btn-teacher {

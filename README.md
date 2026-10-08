@@ -8,6 +8,15 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## Chemistry 1.4.2 (2026-10-08) — the game fits a Canvas frame 500 px tall
+
+The Canvas embed code is now `width="100%" height="500"`, and the game fits that frame at any width a Canvas page gives it:
+
+- **The side panel stays beside the stage in a short frame.** The lab notes used to stack above the stage on every page narrower than 1100 px, which in a 500 px frame left a 140 px panel that hid the answer choices. Stacking now happens only on a narrow page (under 760 px) or a wide-ish page that is also tall enough (under 1100 px wide and at least 640 px tall); a 500 px frame keeps the full side panel with the whole question and all four choices in view.
+- **Short frames:** a smaller logo and tighter title, mode and skill screens, and a screen taller than the frame scrolls from its top instead of cutting the logo off above it.
+- **Narrow stages** (a page 760–1000 px wide): a smaller minimap, no volume slider, and the Look, music and full-screen buttons move in so nothing hangs over the side panel. The Wolf Ring's arena sits below the stage buttons in a short frame.
+- Checked at 900 × 500 and 780 × 500 on the title, mode and skill screens, the maze and all five shooters; all four test suites still pass.
+
 ## Chemistry 1.4.1 (2026-10-08) — teacher screen update (SOL Labyrinth v5.16.1–v5.17.1)
 
 - **Standards report, Class total first.** The report opens on a Class total page: every student's answers added together, standard by standard, with the class's % right and a bar, how many students are at 80%+, 60–79% and below 60% on it, the units in total, and the weakest key concepts to reteach first (ordered by standard or weakest first). Student by student is the second page. The standards CSV starts with the class total.
@@ -74,7 +83,7 @@ For a course in Canvas, where nothing may load from GitHub or any other outside 
 In Canvas:
 
 1. Upload the zip to one folder in **Files** and let Canvas expand it (or upload the eleven files into one folder).
-2. Embed the starter page in a Page: `<iframe src="/courses/<course>/files/<file id of SOLLab-VA-Chem.html>/preview" width="500" height="100%" allowfullscreen="allowfullscreen"></iframe>`.
+2. Embed the starter page in a Page: `<iframe src="/courses/<course>/files/<file id of SOLLab-VA-Chem.html>/preview" width="100%" height="500" allowfullscreen="allowfullscreen"></iframe>`.
 3. `tools/canvas-check.html` is a tiny page that says whether a given spot in Canvas runs a page's code and can save; upload and embed it the same way if the game sticks on its loading screen.
 
 Saves live with the starter page's address under the prefix `solReading.va-chem:`, so an update that replaces only the `.js` files keeps every student's progress, and the Reading game's Canvas build (`solReading.va:`) on the same Canvas never shares saves with it. A missing or renamed data file is named on screen. Class sessions (the Apps Script teacher page) need the Apps Script server and are not in the Canvas files; the progress-code Teacher screen (1.4.0) is.

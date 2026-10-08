@@ -2606,7 +2606,9 @@
       }
       ringLayout() {
         var W = this.W, H = this.H, rg = this.rg, pal = this.pal;
-        rg.cx = W / 2; rg.cy = H / 2; rg.R = Math.min(W, H) * 0.45;
+        /* 1.4.2: in a short frame (a 500 px Canvas embed) the ring sits under the stage buttons: push it down and shrink it */
+    var topPad = H < 600 ? 56 : 0;
+    rg.cx = W / 2; rg.cy = (H + topPad) / 2; rg.R = Math.min(W, H - topPad) * 0.45;
         if (this.bgG) this.bgG.destroy();
         var g = this.bgG = this.add.graphics().setDepth(0), i;
         g.fillStyle(mix(pal.void, 0x000000, 0.1), 1); g.fillRect(0, 0, W, H);

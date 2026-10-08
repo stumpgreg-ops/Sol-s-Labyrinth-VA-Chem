@@ -1,12 +1,12 @@
 {
  "state": "VA",
- "version": "1.4.1",
- "hash": "27de4092e915",
- "bytes": 5347252,
+ "version": "1.4.2",
+ "hash": "7525a329d4d2",
+ "bytes": 5347817,
  "files": 506,
  "parts": [
-  "sol-27de4092e915-0.bin",
-  "sol-27de4092e915-1.bin"
+  "sol-7525a329d4d2-0.bin",
+  "sol-7525a329d4d2-1.bin"
  ],
  "body": "",
  "css": [

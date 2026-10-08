@@ -81,7 +81,7 @@ var gameName = GAME_NAMES[st] || ("Sol's Labyrinth (" + st + ")");
 var teacherBuild = require("./build-teacher"), PB = require("../js/progress-code.js").BUILDS[st];
 var teacherName = teacherBuild.fileName(st), teacherPath = path.join(outAll, teacherName);
 fs.writeFileSync(teacherPath, teacherBuild.build(st, man.version));
-var EMBED = '<iframe src="/courses/COURSE/files/NUMBER/preview" width="500" height="100%" allowfullscreen="allowfullscreen"></iframe>';
+var EMBED = '<iframe src="/courses/COURSE/files/NUMBER/preview" width="100%" height="500" allowfullscreen="allowfullscreen"></iframe>';
 /* v5.15: the READ ME is in numbered SECTIONS with a contents list, so a teacher can jump (Ctrl+F "SECTION 4") to
    what they need instead of reading it all. The full zip and the update zip share the sections; only the order
    and the first steps differ. */
@@ -147,7 +147,7 @@ function S_embed() {
     "   With the example numbers it would be:",
     "   " + EMBED.replace("COURSE", "152432").replace("NUMBER", "60512345"),
     "",
-    "Too narrow or too wide? Change width=\"500\" (try 600, 800 or 100%). height=\"100%\" fills the space Canvas gives the frame.",
+    "Too short or too tall? Change height=\"500\" (try 600 or 700). The game fits itself to the frame.",
     "",
     "There is no separate embed code for the teacher screen: it is inside the game (the hidden Teacher link,",
     "SECTION 4.0)."
@@ -258,7 +258,7 @@ function S_update(update) {
 function S_trouble() {
   return [
     "- The game says \"Can't find ...\": that file is missing from the folder. Upload it with exactly the same name.",
-    "- The game is too narrow or too wide: change width=\"500\" in the embed code (try 600, 800 or 100%).",
+    "- The game is too short or too tall: change height=\"500\" in the embed code (try 600 or 700).",
     "- Students want it bigger: the game has its own full-screen button.",
     "- Download CSV or the import file doesn't download inside Canvas: open " + teacherName + " from this zip on your",
     "  computer (double-click it) and drop the files there. It is the same teacher screen.",
