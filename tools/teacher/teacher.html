@@ -108,6 +108,17 @@ table.std th.l { z-index: 3; background: var(--panel2); }
 table.std td.c-hi { background: rgba(63,168,100,.35); } table.std td.c-mid { background: rgba(201,162,39,.32); } table.std td.c-lo { background: rgba(196,85,63,.38); }
 table.std tr.cls td { font-weight: 700; border-bottom: 2px solid var(--gold); }
 .std-key { font-size: 14px; color: var(--dim); margin: 8px 0; }
+.sbar { display: inline-block; width: 70px; height: 8px; background: rgba(255,255,255,.1); border-radius: 5px; vertical-align: middle; overflow: hidden; margin-left: 6px; }
+.sbar i { display: block; height: 100%; }
+.sbar i.c-hi { background: #3fa864; } .sbar i.c-mid { background: #c9a227; } .sbar i.c-lo { background: #c4553f; }
+.c-hi-t { color: var(--ok) !important; } .c-mid-t { color: var(--warn) !important; } .c-lo-t { color: var(--bad) !important; }
+table.std tr.sk td.l { padding-left: 26px; font-weight: 400; color: var(--dim); }
+table.std tr.sd td { font-weight: 700; background: var(--panel2); }
+.lv { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 4px; padding: 1px 5px; margin-right: 6px; vertical-align: 1px; }
+.lv-L { background: #2f5d8a; color: #fff; } .lv-H { background: #7a3f8f; color: #fff; }
+table.std td.skl, table.std th.skl { text-align: left; white-space: normal; min-width: 220px; max-width: 360px; }
+.focus { background: var(--panel2); border-left: 4px solid var(--bad); border-radius: 8px; padding: 8px 12px; margin: 8px 0; }
+.sortby { margin-left: auto; align-self: center; font-size: 15px; }
 
 @media print {
   @page { size: landscape; margin: 10mm; }
@@ -144,22 +155,38 @@ table.std tr.cls td { font-weight: 700; border-bottom: 2px solid var(--gold); }
       <ol>
         <li><b>Students</b> tap <b>Submit my progress</b> in the game, tap <b>Copy code</b>, and turn the code in to your Canvas assignment
           <b>“{{ASSIGNMENT}}”</b> (Online, <b>Text Entry</b>). Putting the game in that assignment puts both on one page.</li>
-        <li><b>The easiest way to grade:</b> on the assignment's page click <b>Download Submissions</b>, then drop that .zip file in box 1 below.
+        <li><b>The easiest way to grade:</b> on the assignment's page click <b>Download Submissions</b>, then drop that .zip file in box 2 below.
           Nothing to unzip or type.</li>
         <li><b>Real names (once a term):</b> in Canvas open <b>Grades</b>, click <b>Export</b> → <b>Export Entire Gradebook</b>, and drop that .csv file
-          in box 1 too. The page then shows names like <b>Ann S.</b>, lists who hasn't turned in, and can make a file that puts every grade into the
+          in box 2 too. The page then shows names like <b>Ann S.</b>, lists who hasn't turned in, and can make a file that puts every grade into the
           Canvas gradebook at once (<b>Grades → Import</b>). The class list is kept on this computer only (<b>Forget the class list</b> removes it).</li>
-        <li>Set your goals in box 2: every suggested grade updates. Then look at the students, the leaderboard or the standards report.</li>
-        <li><b>Grading rounds:</b> the page always grades the work since last time. After you enter a round's grades, click <b>Finish this grading round</b>;
-          next round, drop the new .zip and only the new work counts (put each round's grades in a new assignment column). The first round counts everything.</li>
+        <li>Set your scoring criteria in box 1: every suggested grade updates. Then look at the students, the leaderboard or the standards report.</li>
+        <li><b>Only the new work counts:</b> after you enter the grades, click <b>Submit codes</b>. Next time, drop the new .zip and the page counts only the work
+          students did after those codes (put each round's grades in a new assignment column). Before you first submit codes, everything counts.</li>
       </ol>
       <p class="hint">Each code holds everything a student has done on one Chromebook up to the moment it was made (a running total); the page subtracts
-        the code from the last round, so a student never gets credit twice. Codes from before version 5.15 have no standards detail.</p>
+        the codes you submitted last, so a student never gets credit twice. Codes from before version 5.15 have no standards detail.</p>
     </details>
   </section>
 
+  <section class="panel" id="goals-panel">
+    <details id="goals-box" open>
+      <summary>1. Scoring criteria</summary>
+      <table class="goals">
+        <thead><tr><th>Goal</th><th>Full credit at</th><th>How much it counts</th></tr></thead>
+        <tbody id="goal-rows"></tbody>
+      </table>
+      <div class="row">
+        <label>Points possible <input type="number" id="points" min="1" max="1000" step="1" /></label>
+        <button type="button" class="btn noprint" id="goals-reset">Back to the usual goals</button>
+      </div>
+      <p class="hint" id="goal-explain">Each goal gives full credit when the student reaches it, and part credit on the way. “How much it counts” weighs the goals against each other (0 leaves a goal out). Remembered on this computer.</p>
+    </details>
+    <p class="goal-line" id="goal-line"></p>
+  </section>
+
   <section class="panel noprint">
-    <h2>1. Add the codes (and your class list)</h2>
+    <h2>2. Add the codes (and your class list)</h2>
     <div class="drop" id="drop">
       <p><b>Drop the Canvas “Download Submissions” .zip here</b><br><span class="hint">and, for real names, your gradebook export (.csv)</span></p>
       <button type="button" class="btn" id="choose">Choose files…</button>
@@ -178,35 +205,19 @@ table.std tr.cls td { font-weight: 700; border-bottom: 2px solid var(--gold); }
       <button type="button" class="btn" id="forget">Forget the class list</button>
     </div>
     <p id="msg" aria-live="polite"></p>
-  </section>
-
-  <section class="panel" id="goals-panel">
-    <details id="goals-box">
-      <summary>2. Your goals for full participation credit</summary>
-      <table class="goals">
-        <thead><tr><th>Goal</th><th>Full credit at</th><th>How much it counts</th></tr></thead>
-        <tbody id="goal-rows"></tbody>
-      </table>
-      <div class="row">
-        <label>Points possible <input type="number" id="points" min="1" max="1000" step="1" /></label>
-        <button type="button" class="btn noprint" id="goals-reset">Back to the usual goals</button>
-      </div>
-      <p class="hint" id="goal-explain">Each goal gives full credit when the student reaches it, and part credit on the way. “How much it counts” weighs the goals against each other (0 leaves a goal out). Remembered on this computer.</p>
-    </details>
-    <p class="goal-line" id="goal-line"></p>
-  </section>
-
-  <section class="panel" id="results">
-    <h2>3. Your class</h2>
-    <div class="round">
+    <div class="round noprint">
       <p id="round-line"></p>
       <div class="row noprint">
-        <button type="button" class="btn primary" id="finish-round">Finish this grading round</button>
-        <button type="button" class="btn" id="undo-round" hidden>Undo: back to the round before</button>
+        <button type="button" class="btn primary" id="finish-round">Submit codes</button>
+        <button type="button" class="btn" id="undo-round" hidden>Undo: return to the previous codes</button>
         <button type="button" class="btn" id="base-choose" title="Grading on a different computer? Choose the Download Submissions .zip you graded last time">Use an earlier .zip as the starting point…</button>
         <input type="file" id="base-file" multiple accept=".zip,.txt,.html,.htm,text/plain,text/html,application/zip" hidden />
       </div>
     </div>
+  </section>
+
+  <section class="panel" id="results">
+    <h2>3. Your class</h2>
     <div class="summary" id="summary"></div>
     <div class="tabs noprint" role="tablist">
       <button type="button" class="tab on" data-view="cards" role="tab">Students</button>
@@ -249,6 +260,9 @@ table.std tr.cls td { font-weight: 700; border-bottom: 2px solid var(--gold); }
   </section>
 </main>
 <script>window.TEACHER_STATE = "{{ST}}";</script>
+<script>
+{{STD_JS}}
+</script>
 <script>
 {{CODE_JS}}
 </script>

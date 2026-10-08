@@ -527,9 +527,46 @@ function makeZip(files) {
   await page.keyboard.press("Escape");
   await page.click('.tab[data-view="std"]');
   var sd = await page.evaluate(function () { return { text: document.getElementById("std").innerText, rows: document.querySelectorAll("#std table.std").length, csv: TeacherPage.stdCsv() }; });
-  check(sd.rows === 2 && /CH\.\d\.[a-j]/.test(sd.text) && /Class/.test(sd.text) && /Ann Smith/.test(sd.text) && /from before version 5\.15/.test(sd.text) && /^\ufeff?Student,Nickname,CH\./.test(sd.csv.replace(/^\ufeff/, "")),
-    "the standards report: each standard for the class and student by student, older codes noted, and a CSV");
+  check(sd.rows === 1 && /Class total/.test(sd.text) && /CH\.\d\.[a-j]/.test(sd.text) && /Students 80%\+/.test(sd.text) && /Below 60%/.test(sd.text) && /from before version 5\.15/.test(sd.text) && /(Scientific Investigation|Atomic Structure & Periodic Table|Formulas & Reactions|Molar Relationships|Phases of Matter & KMT) \(\d+ questions\)/.test(sd.text),
+    "the standards report opens on the Class total page: every standard with the class's %, the students at 80%+ / 60-79% / below 60%, and the skill areas");
+  await page.click('#std .tab[data-sp="students"]');
+  var sd2 = await page.evaluate(function () { return document.getElementById("std").innerText; });
+  check(/Ann Smith/.test(sd2) && /Class total/.test(sd2), "Student by student shows each student and the class total row");
+  check(/^CLASS TOTAL/.test(sd.csv.replace(/^\ufeff/, "")) && /STUDENT BY STUDENT/.test(sd.csv) && /\nStudent,Nickname,(LOTS answered|CH\.)/.test(sd.csv), "the standards CSV has the class total, then student by student");
+  await page.click('#std .tab[data-sp="class"]');
   await page.screenshot({ path: path.join(shots, "pg-12-standards.png"), fullPage: true });
+  /* v5.17 (Chemistry): the key concepts nest under their standard in the report; the Chemistry SOL has no LOTS/HOTS split,
+     so no level badges or totals appear. Its own page, so the rest of this page's checks stay as they were */
+  var skPage = await browser.newPage({ viewport: { width: 1366, height: 900 } });
+  watch(skPage);
+  await skPage.goto("http://127.0.0.1:" + tsrv.address().port + "/" + tfile, { waitUntil: "load" });
+  await openPaste(skPage);
+  function skCode(nick, std) {
+    return C.encode("CHM", { first: "2026-10-01", last: "2026-10-05", days: 3, minutes: 40, started: 6, won: 5, lost: 1, hiReached: 6, hiWon: 5, answered: 40, right: 30, wrong: 8, modes: 1,
+      skills: { RXN: { a: 40, r: 30 } }, std: std }, { nick: nick, version: "1.4.1", save: { night: 6 } });
+  }
+  await skPage.fill("#paste", "Ann Smith: " + skCode("Ann", { "CH.3.a": { a: 10, r: 9 }, "CH.3.b": { a: 10, r: 4 }, "CH.1.a": { a: 5, r: 5 } }) +
+    "\nBob Jones: " + skCode("Bob", { "CH.3.a": { a: 10, r: 10 }, "CH.3.b": { a: 10, r: 5 }, "CH.5.g": { a: 4, r: 1 } }));
+  await skPage.click("#read");
+  await skPage.waitForTimeout(200);
+  await skPage.click('.tab[data-view="std"]');
+  var sk = await skPage.evaluate(function () {
+    var rows = Array.prototype.map.call(document.querySelectorAll("#std table.std tbody tr"), function (tr) { return tr.className + "|" + tr.children[0].textContent + "|" + tr.children[2].textContent + "|" + tr.children[6].textContent.trim(); });
+    return { rows: rows, text: document.getElementById("std").innerText, csv: TeacherPage.stdCsv() };
+  });
+  check(sk.rows.some(function (r) { return /^sd\|CH\.3\|Nomenclature, chemical formulas, and reactions: .*\|70%$/.test(r); }), "a standard shows its own total (CH.3: 28/40 = 70%): " + sk.rows.join(" / "));
+  check(sk.rows.some(function (r) { return /^sk\|CH\.3\.a\|nomenclature\|95%$/.test(r); }) && sk.rows.some(function (r) { return /^sk\|CH\.3\.b\|balancing chemical equations\|45%$/.test(r); }),
+    "and its key concepts under it: nomenclature (95%) and balancing equations (45%)");
+  check(/Formulas & Reactions \(40 questions\)/.test(sk.text) && /Reteach first:.*CH\.3\.b balancing chemical equations \(45%\)/.test(sk.text) && !/LOTS|HOTS/.test(sk.text), "the class total shows the units and the weakest key concept to reteach, with no LOTS/HOTS (the Chemistry SOL has none)");
+  check(sk.rows.some(function (r) { return /^sd\|CH\.1\|.*\|100%$/.test(r); }) && sk.rows.some(function (r) { return /^sk\|CH\.1\.a\|designated laboratory techniques\|100%$/.test(r); }), "a key concept answered by one student still shows under its standard");
+  await skPage.click('#std .tab[data-sp="students"]');
+  var skc = await skPage.evaluate(function () { return Array.prototype.map.call(document.querySelectorAll("#std table.std thead th"), function (t) { return t.textContent; }); });
+  check(skc.indexOf("LOTS") === -1 && skc.indexOf("CH.3.a") !== -1 && skc.indexOf("CH.3.b") !== -1 && skc.indexOf("CH.5.g") !== -1, "Student by student: a column per key concept, no LOTS/HOTS columns: " + skc.join(", "));
+  check(/^\ufeff?CLASS TOTAL/.test(sk.csv) && /\nCH\.3,CH\.3\.b,,Formulas & Reactions,balancing chemical equations,2,20,9,45/.test(sk.csv) && !/All LOTS skills/.test(sk.csv) && /CH\.3\.a answered/.test(sk.csv), "the standards CSV lists each standard and key concept with its unit, and no LOTS/HOTS rows");
+  await skPage.click('#std .tab[data-sp="class"]');
+  await skPage.screenshot({ path: path.join(shots, "pg-12b-skills.png"), fullPage: true });
+  await skPage.close();
+
   await page.click('.tab[data-view="table"]');
   /* more students for the picture, then CSV and Copy */
   var demo = [["Maria Lopez", 95, 14, 88, 70], ["Tyler Brooks", 22, 3, 18, 55], ["Priya Natarajan", 64, 10, 52, 81]].map(function (s, i) {
@@ -554,7 +591,7 @@ function makeZip(files) {
   /* v5.15.1: grading rounds — only the work since last time counts */
   page.on("dialog", function (d) { d.accept(); });
   var r0 = await page.evaluate(function () { var a = TeacherPage.rows().filter(function (r) { return r.userId === "123456"; })[0]; return { won: a.data.won, ans: a.data.answered, line: document.getElementById("round-line").innerText }; });
-  check(/First grading round/.test(r0.line), "the first grading round counts everything: " + r0.line.slice(0, 60));
+  check(/No codes submitted yet/.test(r0.line), "the first grading round counts everything: " + r0.line.slice(0, 60));
   await page.click("#finish-round");
   await page.waitForTimeout(200);
   var newer = C.encode("CHM", { first: "2026-09-01", last: "2026-10-09", days: 4, minutes: 80, started: 20, won: 17, lost: 3, hiReached: 18, hiWon: 17, answered: r0.ans + 40, right: 30 + 8, wrong: 20, modes: 3,
@@ -572,7 +609,7 @@ function makeZip(files) {
     var a = TeacherPage.rows().filter(function (r) { return r.userId === "123456"; })[0], b = TeacherPage.rows().filter(function (r) { return r.userId === "234567"; })[0];
     return { a: a.data, b: b.data, bReset: b.reset, line: document.getElementById("round-line").innerText, notes: document.getElementById("notes").innerText, imp: TeacherPage.importCsv(), undo: !document.getElementById("undo-round").hidden };
   });
-  check(/This grading round: since/.test(r1.line) && r1.undo, "after Finish this grading round, the page says the round runs since then, with Undo");
+  check(/Counting the work since/.test(r1.line) && r1.undo, "after Submit codes, the page counts the work since then, with Undo: return to the previous codes");
   check(r1.a.won === 15 && r1.a.answered === 40 && r1.a.minutes === 80 && r1.a.hiReached === 18 && r1.a.badges.join() === "q25",
     "the next round counts only the new work: 15 levels won, 40 questions, 80 minutes, 1 new badge (highest level stays 18): " + JSON.stringify({ won: r1.a.won, ans: r1.a.answered, min: r1.a.minutes, b: r1.a.badges }));
   check(r1.bReset && r1.b.won === 1 && /totals went down since last round/.test(r1.notes), "a student whose totals went down (new Chromebook) is counted from the new code alone, and noted");
@@ -581,7 +618,7 @@ function makeZip(files) {
   await page.click("#undo-round");
   await page.waitForTimeout(200);
   var r2 = await page.evaluate(function () { var a = TeacherPage.rows().filter(function (r) { return r.userId === "123456"; })[0]; return { won: a.data.won, line: document.getElementById("round-line").innerText }; });
-  check(r2.won === 17 && /First grading round/.test(r2.line), "Undo goes back to the round before (everything counts again)");
+  check(r2.won === 17 && /No codes submitted yet/.test(r2.line), "Undo goes back to the round before (everything counts again)");
   await page.evaluate(function () { document.getElementById("copybox").hidden = true; window.scrollTo(0, 0); });
   await page.screenshot({ path: path.join(shots, "pg-04-teacher-va.png"), fullPage: true });
   await page.emulateMedia({ media: "print" });

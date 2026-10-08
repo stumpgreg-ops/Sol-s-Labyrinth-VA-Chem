@@ -8,6 +8,14 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## Chemistry 1.4.1 (2026-10-08) — teacher screen update (SOL Labyrinth v5.16.1–v5.17.1)
+
+- **Standards report, Class total first.** The report opens on a Class total page: every student's answers added together, standard by standard, with the class's % right and a bar, how many students are at 80%+, 60–79% and below 60% on it, the units in total, and the weakest key concepts to reteach first (ordered by standard or weakest first). Student by student is the second page. The standards CSV starts with the class total.
+- **Key concepts nested under their standard.** `js/standards-chm.js` holds the five Chemistry standards and their 36 lettered key concepts (the same shape as SOL Labyrinth's `standards-va.js`), so the report shows CH.4 with CH.4.a–d under it, each with its wording. The Chemistry SOL has no lower-/higher-order (LOTS/HOTS) split, so no level badges or totals appear. The standard statements are paraphrased from the 2010 Chemistry SOL and belong with the rest of the standards text to be checked against the VDOE document.
+- **Teacher screen order:** box 1 Scoring criteria (open by default), box 2 Add the codes, box 3 Your class. "Finish this grading round" is now **Submit codes** and the undo is "Undo: return to the previous codes"; the READ ME in the Canvas zips follows.
+- The progress record takes a question's skill tag when one exists (`claim.sub`) and otherwise its standard (`claim.sol`); Chemistry questions name the key concept in `sol`, so nothing changes in the codes.
+- Not carried over: the Reading game's 2024 standards table, the skill tags on its 10,562 questions and the validator rule that requires them.
+
 ## Chemistry 1.4.0 (2026-10-07) — engine update to SOL Labyrinth v5.16.0
 
 The browser game, the Apps Script build and the Canvas build are on the SOL Labyrinth v5.16.0 engine (everything the SOL Labyrinth session shipped from v5.8.2 to v5.16.0 that is not Odyssey-only). The question bank is unchanged.

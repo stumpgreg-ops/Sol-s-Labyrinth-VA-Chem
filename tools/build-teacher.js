@@ -42,13 +42,15 @@ function build(st, version) {
   var tpl = fs.readFileSync(path.join(__dirname, "teacher", "teacher.html"), "utf8");
   var code = fs.readFileSync(path.join(root, "js", "progress-code.js"), "utf8");
   var app = fs.readFileSync(path.join(__dirname, "teacher", "teacher.js"), "utf8");
-  [code, app].forEach(function (js) { if (/<\/script/i.test(js)) throw new Error("tools/build-teacher.js: a script holds </script"); });
+  /* v5.17: the standards and their skills for the standards report (Chemistry: js/standards-chm.js, the CH key concepts) */
+  var stds = st === "CHM" ? fs.readFileSync(path.join(root, "js", "standards-chm.js"), "utf8") : "";
+  [code, app, stds].forEach(function (js) { if (/<\/script/i.test(js)) throw new Error("tools/build-teacher.js: a script holds </script"); });
   var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); };
   var vals = Object.assign({
     TITLE: esc(B.short + " · teacher progress page"),
     HEADING: esc(B.name) + " · teacher progress page",
     VERSION: esc(version || "?"), ASSIGNMENT: esc(B.assignment), ST: st,
-    CODE_JS: minifyJs(code), APP_JS: minifyJs(app)
+    CODE_JS: minifyJs(code), APP_JS: minifyJs(app), STD_JS: stds ? minifyJs(stds) : ""
   }, LOOK[st]);
   var html = tpl.replace(/\{\{([A-Z0-9_]+)\}\}/g, function (m, k) {
     if (!(k in vals)) throw new Error("tools/build-teacher.js: no value for " + m);
