@@ -120,7 +120,7 @@
         {
           id: "first",
           sol: "WHII.10.a",
-          stem: "Which event on the timeline happened FIRST?",
+          stem: "Which event in the Berlin timeline happened FIRST?",
           choices: [
             { letter: "A", text: "NATO is formed" },
             { letter: "B", text: "the blockade is lifted" },
@@ -226,7 +226,7 @@
         "<li><strong>1988</strong> A bomb downs Pan Am Flight 103 over Lockerbie, Scotland; a Libyan agent is convicted.</li>" +
         "<li><strong>1998</strong> Al-Qaeda bombs U.S. embassies in Nairobi, Kenya, and Dar es Salaam, Tanzania.</li>" +
         "<li><strong>2001</strong> Al-Qaeda hijackers attack the United States.</li>" +
-        "<li><strong>2011</strong> Norwegian extremist Anders Breivik kills 77 people in two attacks in Norway.</li></ul>",
+        "<li><strong>2011</strong> Norwegian extremist Anders Breivik kills 77 people in Norway.</li></ul>",
       claims: [
         {
           id: "define",
@@ -267,7 +267,7 @@
         {
           id: "conclude",
           sol: "WHII.12.d",
-          stem: "Which conclusion is best supported by the timeline?",
+          stem: "Which conclusion about terrorism is best supported by the timeline?",
           choices: [
             { letter: "A", text: "Terrorism ended when the Cold War ended in 1991." },
             { letter: "B", text: "Terrorist attacks have struck several continents." },
@@ -475,7 +475,7 @@
         {
           id: "methods",
           sol: "WHII.11.d",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about African independence is best supported by the table?",
           choices: [
             { letter: "A", text: "Every African colony won freedom in the same year." },
             { letter: "B", text: "France gave up its colonies before Britain did." },
