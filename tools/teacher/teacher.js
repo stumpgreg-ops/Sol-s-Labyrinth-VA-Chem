@@ -79,7 +79,7 @@
   });
   function goalLine() {
     var on = GOALS.filter(function (x) { return goals[x.k].w > 0; });
-    return "Full credit (" + goals.points + " points) at: " + on.map(function (x) { return goals[x.k].t + (x.k === "acc" ? "%" : " " + x.unit) + (x.k === "acc" ? " right on the first try" : ""); }).join(", ") + ". Change the goals in box 2.";
+    return "Full credit (" + goals.points + " points) at: " + on.map(function (x) { return goals[x.k].t + (x.k === "acc" ? "%" : " " + x.unit) + (x.k === "acc" ? " right on the first try" : ""); }).join(", ") + ". Open box 1 to change the scoring criteria.";
   }
   function goalVal(x, d) { return x.k === "acc" ? (d.answered ? 100 * d.right / d.answered : 0) : d[x.k]; }
   function grade(r) {
@@ -358,28 +358,28 @@
   function applyRounds() { rows.forEach(function (r) { r.data = r.ok && r.build === ST ? roundOf(r) : r.full; }); }
   function finishRound() {
     var mineRows = rows.filter(function (r) { return r.ok && r.build === ST; });
-    if (!mineRows.length) { msg("Add this round's codes first: the round ends with the codes you have graded.", true); return; }
-    if (!window.confirm("Finish this grading round? The next round counts only the work students do after the codes on this page (" + mineRows.length +
-      " student" + (mineRows.length === 1 ? "" : "s") + "). Do this after you have entered this round's grades.")) return;
+    if (!mineRows.length) { msg("Add the codes first: Submit codes keeps the codes on this page as the new starting point.", true); return; }
+    if (!window.confirm("Submit these codes? From now on the page counts only the work students do after these codes (" + mineRows.length +
+      " student" + (mineRows.length === 1 ? "" : "s") + "). Do this after you have entered these grades in Canvas.")) return;
     var base = {}, k;
     for (k in rounds.base) base[k] = rounds.base[k];
     mineRows.forEach(function (r) { baseKeys(r).forEach(function (key) { base[key] = r.raw; }); });
     rounds = { since: Date.now(), base: base, prev: { since: rounds.since, base: rounds.base } };
     saveRounds();
     paint(); paintRounds();
-    msg("Round finished. Next time, drop the new Download Submissions .zip: the grades will count only what students do from now on.");
+    msg("Codes submitted. Next time, drop the new Download Submissions .zip: the grades will count only what students do from now on.");
   }
   function undoRound() {
     if (!rounds.prev) return;
-    if (!window.confirm("Go back to the round before? The starting point you saved last is forgotten.")) return;
+    if (!window.confirm("Return to the previous codes? The codes you submitted last are forgotten.")) return;
     rounds = { since: rounds.prev.since, base: rounds.prev.base || {}, prev: null };
-    saveRounds(); paint(); paintRounds(); msg("Back to the round before.");
+    saveRounds(); paint(); paintRounds(); msg("Back to the previous codes.");
   }
   function paintRounds() {
     var el = $("round-line");
-    if (rounds.since) el.innerHTML = "<b>This grading round: since " + esc(new Date(rounds.since).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })) + "</b>. " +
-      "Every number below counts only the work students did after the codes you graded then. Put each round's grades in a new assignment column.";
-    else el.innerHTML = "<b>First grading round:</b> everything students have done so far counts. When you have entered this round's grades, click <b>Finish this grading round</b>: next time, only the new work counts.";
+    if (rounds.since) el.innerHTML = "<b>Counting the work since " + esc(new Date(rounds.since).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })) + "</b> (the codes you submitted then). " +
+      "Every number on this page counts only the work students did after them. Put each round's grades in a new assignment column.";
+    else el.innerHTML = "<b>No codes submitted yet:</b> everything students have done so far counts. When you have entered these grades in Canvas, click <b>Submit codes</b>: next time, only the new work counts.";
     $("undo-round").hidden = !rounds.prev;
   }
   function D(r) { return r && r.ok ? r.data : null; }
@@ -444,7 +444,7 @@
   function head(c) { return c.h.replace("{P}", goals.points); }
   function paintTable() {
     var t = $("table");
-    if (!rows.length) { t.innerHTML = '<tbody><tr><td class="empty">No codes yet. Add them in box 1.</td></tr></tbody>'; return; }
+    if (!rows.length) { t.innerHTML = '<tbody><tr><td class="empty">No codes yet. Add them in box 2.</td></tr></tbody>'; return; }
     var h = "<thead><tr>" + COLS.map(function (c) {
       return '<th class="' + (c.cls || "") + '" data-k="' + c.k + '" title="Sort by ' + esc(head(c)) + '">' + esc(head(c)) +
         (sortBy.k === c.k ? ' <span class="arr">' + (sortBy.dir > 0 ? "▲" : "▼") + "</span>" : "") + "</th>";
@@ -501,7 +501,7 @@
   /* ── student cards ── */
   function paintCards() {
     var el = $("cards"), list = sortedRows(), miss = missing();
-    if (!list.length && !miss.length) { el.innerHTML = '<p class="empty">No codes yet. Drop the Download Submissions .zip in box 1.</p>'; return; }
+    if (!list.length && !miss.length) { el.innerHTML = '<p class="empty">No codes yet. Drop the Download Submissions .zip in box 2.</p>'; return; }
     var on = GOALS.filter(function (x) { return goals[x.k].w > 0; });
     var h = list.map(function (r) {
       var d = D(r), g = grade(r), b = mine(r) ? band(g) : "none", p = person(r);
@@ -571,62 +571,171 @@
   var STRAND = { RL: "Literary", RI: "Informational", RV: "Vocabulary", DSR: "Paired texts",
     INV: "Scientific Investigation", ATOM: "Atomic Structure & Periodic Table", RXN: "Formulas & Reactions", MOLE: "Molar Relationships", KMT: "Phases of Matter & KMT" };
   var UNITS = { 1: "INV", 2: "ATOM", 3: "RXN", 4: "MOLE", 5: "KMT" };   /* Chemistry: CH.3.b -> RXN */
+  if (window.SolStandards && window.SolStandards.UNIT_NAMES) Object.keys(window.SolStandards.UNIT_NAMES).forEach(function (k) { STRAND[k] = window.SolStandards.UNIT_NAMES[k]; });
   function strandOf(code) {
     var m = /^\d+\.(RL|RI|RV|DSR)\./.exec(code + ".");
     if (m) return m[1];
     var mc = /^CH\.(\d)/.exec(code);
     if (mc) return UNITS[mc[1]] || "";
+    /* History 1.0: a history course's page carries its units (tools/build-teacher.js): WHI.4.c -> CLASS */
+    var mh = /^([A-Z]+\.\d+)/.exec(code), SU = window.SolStandards && window.SolStandards.UNIT;
+    if (mh && SU) return SU[mh[1]] || "";
     if (/^L\./.test(code)) return "RV";
     if (/\.CT\./.test(code)) return "DSR";
     return /^RI\./.test(code) ? "RI" : /^RL\./.test(code) ? "RL" : "";
   }
   function stdOrder(a, b) {
     var pa = a.split("."), pb = b.split("."), ga = parseInt(pa[0], 10), gb = parseInt(pb[0], 10);
-    if (ga !== gb) return (isNaN(ga) ? 99 : ga) - (isNaN(gb) ? 99 : gb);
-    var so = ["RL", "RI", "RV", "DSR", "INV", "ATOM", "RXN", "MOLE", "KMT"], sa = so.indexOf(strandOf(a)), sb = so.indexOf(strandOf(b));
+    if (ga !== gb && !(isNaN(ga) && isNaN(gb))) return (isNaN(ga) ? 99 : ga) - (isNaN(gb) ? 99 : gb);
+    var so = ["RL", "RI", "RV", "DSR", "INV", "ATOM", "RXN", "MOLE", "KMT"].concat((window.SolStandards && window.SolStandards.UNIT_ORDER) || []), sa = so.indexOf(strandOf(a)), sb = so.indexOf(strandOf(b));
     return sa !== sb ? sa - sb : a.localeCompare(b, undefined, { numeric: true });
   }
+  /* v5.17: Virginia's standards are split into SKILLS (js/standards-va.js, inlined in the Virginia page): one skill
+     per action verb, each LOTS (lower-order: identify, explain ...) or HOTS (higher-order: analyze, evaluate ...).
+     A question names its skill (9.RL.2.A.2) or, in older codes, only its standard (9.RL.2.A). The report shows each
+     standard with its skills under it, and LOTS and HOTS in total, for the class and for each student. */
+  var SS = window.SolStandards || null;
+  function info(c) {
+    if (SS && SS.SKILL[c]) return { std: SS.SKILL[c].code, skill: c, text: SS.SKILL[c].text, level: SS.SKILL[c].level };
+    if (SS && SS.STANDARDS[c]) return { std: c, skill: null, text: SS.STANDARDS[c].text, level: "" };
+    return { std: c, skill: null, text: "", level: "" };
+  }
+  function skillText(c) { return info(c).text; }
+  function lvBadge(l) { return l ? '<span class="lv lv-' + l.charAt(0) + '" title="' + (l === "LOTS" ? "Lower-order thinking skill" : "Higher-order thinking skill") + '">' + l + "</span>" : ""; }
+  /* the keys each answer adds to: a skill, its standard and its level (LOTS/HOTS); an answer tagged only to a
+     standard adds to the standard and to "<standard>*" (questions on the whole standard) */
+  function keysOf(c) {
+    var i = info(c);
+    return i.skill ? [i.skill, i.std, i.level] : [c, c + "*"];
+  }
   function stdData() {
-    var v = rows.filter(mine), codes = {}, per = [], old = 0;
+    var v = rows.filter(mine), tot = {}, kids = {}, stds = {}, per = [], old = 0;
+    function add(m, k, s) { var t = m[k] || (m[k] = { a: 0, r: 0 }); t.a += s.a; t.r += s.r; }
     v.forEach(function (r) {
       var m = {};
       if (!r.data.std) { old++; return; }
-      r.data.std.forEach(function (s) { m[s.code] = s; var c = codes[s.code] || (codes[s.code] = { a: 0, r: 0, n: 0 }); c.a += s.a; c.r += s.r; c.n++; });
+      r.data.std.forEach(function (s) {
+        var i = info(s.code);
+        stds[i.std] = 1;
+        if (i.skill) (kids[i.std] || (kids[i.std] = {}))[i.skill] = 1;
+        keysOf(s.code).forEach(function (k) { if (k) add(m, k, s); });
+      });
+      Object.keys(m).forEach(function (k) { var t = tot[k] || (tot[k] = { a: 0, r: 0, n: 0 }); t.a += m[k].a; t.r += m[k].r; if (m[k].a) t.n++; });
       per.push({ r: r, m: m });
     });
-    return { codes: Object.keys(codes).sort(stdOrder), tot: codes, per: per.sort(function (a, b) { return fullName(a.r).localeCompare(fullName(b.r)); }), old: old };
-  }
-  function cellCls(p) { return p == null ? "" : p >= 80 ? "c-hi" : p >= 60 ? "c-mid" : "c-lo"; }
-  function paintStd() {
-    var s = stdData(), el = $("std");
-    if (!s.codes.length) {
-      el.innerHTML = '<p class="empty">No standards detail yet. ' + (s.old ? s.old + " code" + (s.old === 1 ? " is" : "s are") + " from before version 5.15, which didn't record standards: ask for new codes." : "Add codes in box 1.") + "</p>";
-      return;
-    }
-    var h = '<p class="std-key">Each cell: % right on the first try (questions answered). Green 80%+, yellow 60–79%, red below 60%. Sorted by grade and skill.' +
-      (s.old ? " " + s.old + " student" + (s.old === 1 ? "'s code is" : "s' codes are") + " from before version 5.15 and not included." : "") + "</p>";
-    h += '<div class="std-wrap"><table class="std"><thead><tr><th class="l">Standard</th><th>Skill</th><th>Students</th><th>Questions</th><th>Class % right</th></tr></thead><tbody>';
-    s.codes.forEach(function (c) {
-      var t = s.tot[c], p = pct(t.r, t.a);
-      h += '<tr><td class="l">' + esc(c) + "</td><td>" + esc(STRAND[strandOf(c)] || "") + "</td><td>" + t.n + "</td><td>" + t.a + '</td><td class="' + cellCls(p) + '">' + p + "%</td></tr>";
+    var codes = Object.keys(stds).sort(stdOrder), leaves = [];
+    var kidList = {};
+    codes.forEach(function (c) {
+      var k = Object.keys(kids[c] || {}).sort(stdOrder);
+      if (k.length && tot[c + "*"]) k.push(c + "*");
+      kidList[c] = k;
+      leaves = leaves.concat(k.length ? k : [c]);
     });
-    h += "</tbody></table></div>";
-    h += '<h3 style="margin:16px 0 4px">Student by student</h3><div class="std-wrap"><table class="std"><thead><tr><th class="l">Student</th>' +
-      s.codes.map(function (c) { return "<th>" + esc(c) + "</th>"; }).join("") + "</tr></thead><tbody>";
-    h += '<tr class="cls"><td class="l">Class</td>' + s.codes.map(function (c) { var t = s.tot[c], p = pct(t.r, t.a); return '<td class="' + cellCls(p) + '">' + p + "% (" + t.a + ")</td>"; }).join("") + "</tr>";
+    return { codes: codes, kids: kidList, leaves: leaves, tot: tot, per: per.sort(function (a, b) { return fullName(a.r).localeCompare(fullName(b.r)); }), old: old };
+  }
+  function leafText(c) { return /\*$/.test(c) ? "Questions on the whole standard (from codes made before v5.17)" : skillText(c); }
+  function leafCode(c) { return /\*$/.test(c) ? c.slice(0, -1) : c; }
+  function cellCls(p) { return p == null ? "" : p >= 80 ? "c-hi" : p >= 60 ? "c-mid" : "c-lo"; }
+  var stdPage = "class", stdSort = "std", stdCols = "skills";
+  function bar(p) { return '<span class="sbar"><i class="' + cellCls(p) + '" style="width:' + (p == null ? 0 : p) + '%"></i></span>'; }
+  /* v5.16.2: the CLASS TOTAL page: every student's answers added together, standard by standard, with how many
+     students are at 80%+, 60-79% and below 60% on it, the skill areas in total, and the weakest standards first.
+     v5.17: LOTS and HOTS in total, and each standard's skills under it. */
+  function paintStdClass(s) {
+    var areas = {}, h = "";
+    s.codes.forEach(function (c) { var sd = strandOf(c) || "?", a = areas[sd] || (areas[sd] = { a: 0, r: 0 }); a.a += s.tot[c].a; a.r += s.tot[c].r; });
+    var all = s.codes.reduce(function (m, c) { m.a += s.tot[c].a; m.r += s.tot[c].r; return m; }, { a: 0, r: 0 });
+    function card(p, label, n) { return '<div class="st"><b class="' + cellCls(p) + '-t">' + p + "%</b><span>" + label + " (" + n + " questions)</span></div>"; }
+    h += '<div class="summary">' + ['<div class="st"><b>' + pct(all.r, all.a) + '%</b><span>the class, all standards (' + all.a + ' questions)</span></div>']
+      .concat(["LOTS", "HOTS"].filter(function (k) { return s.tot[k]; }).map(function (k) {
+        return card(pct(s.tot[k].r, s.tot[k].a), lvBadge(k) + (k === "LOTS" ? "lower-order skills" : "higher-order skills"), s.tot[k].a);
+      }))
+      .concat(["RL", "RI", "RV", "DSR", "INV", "ATOM", "RXN", "MOLE", "KMT"].filter(function (k) { return areas[k]; }).map(function (k) {
+        return card(pct(areas[k].r, areas[k].a), esc(STRAND[k]), areas[k].a);
+      })).join("") + "</div>";
+    if (s.tot.LOTS && s.tot.HOTS) {
+      var gap = pct(s.tot.LOTS.r, s.tot.LOTS.a) - pct(s.tot.HOTS.r, s.tot.HOTS.a);
+      if (gap >= 10) h += '<p class="focus"><b>LOTS vs HOTS:</b> the class is ' + gap + " points lower on higher-order skills (analyze, evaluate, compare) than on lower-order ones (identify, explain). Reteach the HOTS skills below.</p>";
+    }
+    var buckets = {};
+    s.per.forEach(function (x) { Object.keys(x.m).forEach(function (c) { var m = x.m[c]; if (!m.a) return; var b = buckets[c] || (buckets[c] = { hi: 0, mid: 0, lo: 0 }), p = pct(m.r, m.a); b[p >= 80 ? "hi" : p >= 60 ? "mid" : "lo"]++; }); });
+    function p0(c) { return pct(s.tot[c].r, s.tot[c].a); }
+    var weak = s.leaves.filter(function (c) { return s.tot[c] && s.tot[c].a >= 10; }).sort(function (x, y) { return p0(x) - p0(y); }).slice(0, 3);
+    if (weak.length) h += '<p class="focus"><b>Reteach first:</b> ' + weak.map(function (c) { return esc(leafCode(c)) + " " + lvBadge(info(c).level) + esc(leafText(c)) + " (" + p0(c) + "%)"; }).join(" · ") + "</p>";
+    var list = s.codes.slice();
+    if (stdSort === "weak") list.sort(function (x, y) { return p0(x) - p0(y); });
+    h += '<div class="std-wrap"><table class="std"><thead><tr><th class="l">Standard / skill</th><th>Skill area</th><th class="skl">What students do</th><th>Students</th><th>Questions</th><th>Right first try</th><th>Class % right</th>' +
+      '<th>Students 80%+</th><th>60–79%</th><th>Below 60%</th></tr></thead><tbody>';
+    function row(c, cls, label, text) {
+      var t = s.tot[c], p = pct(t.r, t.a), bk = buckets[c] || { hi: 0, mid: 0, lo: 0 };
+      return '<tr class="' + cls + '"><td class="l">' + esc(label) + "</td><td>" + (cls === "sk" ? "" : esc(STRAND[strandOf(label)] || "")) + '</td><td class="skl">' + text + "</td><td>" + t.n + "</td><td>" + t.a + "</td><td>" + t.r +
+        '</td><td class="' + cellCls(p) + '">' + p + "% " + bar(p) + '</td><td class="c-hi">' + bk.hi + '</td><td class="c-mid">' + bk.mid + '</td><td class="c-lo">' + bk.lo + "</td></tr>";
+    }
+    list.forEach(function (c) {
+      var k = s.kids[c];
+      h += row(c, k.length ? "sd" : "", c, esc(skillText(c)));
+      var kl = k.slice();
+      if (stdSort === "weak") kl.sort(function (x, y) { return p0(x) - p0(y); });
+      kl.forEach(function (sk) { h += row(sk, "sk", leafCode(sk), lvBadge(info(sk).level) + esc(leafText(sk))); });
+    });
+    return h + "</tbody></table></div>";
+  }
+  function stuCols(s) {
+    var lv = ["LOTS", "HOTS"].filter(function (k) { return s.tot[k]; });
+    return lv.concat(stdCols === "skills" ? s.leaves : s.codes);
+  }
+  function colHead(c) {
+    if (c === "LOTS" || c === "HOTS") return '<th title="All ' + (c === "LOTS" ? "lower" : "higher") + '-order skills">' + lvBadge(c) + "</th>";
+    var i = info(c);
+    return '<th title="' + esc(leafText(c)) + '">' + esc(leafCode(c)) + (i.level ? "<br>" + lvBadge(i.level) : "") + "</th>";
+  }
+  function paintStdStudents(s) {
+    var cols = stuCols(s);
+    var h = '<div class="std-wrap"><table class="std"><thead><tr><th class="l">Student</th>' + cols.map(colHead).join("") + "</tr></thead><tbody>";
+    h += '<tr class="cls"><td class="l">Class total</td>' + cols.map(function (c) { var t = s.tot[c], p = pct(t.r, t.a); return '<td class="' + cellCls(p) + '">' + p + "% (" + t.a + ")</td>"; }).join("") + "</tr>";
     s.per.forEach(function (x) {
-      h += '<tr><td class="l">' + esc(fullName(x.r)) + "</td>" + s.codes.map(function (c) {
+      h += '<tr><td class="l">' + esc(fullName(x.r)) + "</td>" + cols.map(function (c) {
         var m = x.m[c]; if (!m || !m.a) return "<td>–</td>";
         var p = pct(m.r, m.a); return '<td class="' + cellCls(p) + '">' + p + "% (" + m.a + ")</td>";
       }).join("") + "</tr>";
     });
-    el.innerHTML = h + "</tbody></table></div>";
+    return h + "</tbody></table></div>";
+  }
+  function paintStd() {
+    var s = stdData(), el = $("std");
+    if (!s.codes.length) {
+      el.innerHTML = '<p class="empty">No standards detail yet. ' + (s.old ? s.old + " code" + (s.old === 1 ? " is" : "s are") + " from before version 5.15, which didn't record standards: ask for new codes." : "Add codes in box 2.") + "</p>";
+      return;
+    }
+    var split = s.leaves.length > s.codes.length || !!s.tot.LOTS;
+    var h = '<div class="tabs noprint" role="tablist"><button type="button" class="tab' + (stdPage === "class" ? " on" : "") + '" data-sp="class">Class total</button>' +
+      '<button type="button" class="tab' + (stdPage === "students" ? " on" : "") + '" data-sp="students">Student by student</button>' +
+      (stdPage === "class" ? '<label class="sortby">Order <select id="std-sort"><option value="std"' + (stdSort === "std" ? " selected" : "") + '>By standard</option><option value="weak"' + (stdSort === "weak" ? " selected" : "") + '>Weakest first</option></select></label>' :
+        split ? '<label class="sortby">Columns <select id="std-cols"><option value="skills"' + (stdCols === "skills" ? " selected" : "") + '>Each skill</option><option value="stds"' + (stdCols === "stds" ? " selected" : "") + '>Each standard</option></select></label>' : "") + "</div>";
+    h += '<p class="std-key">' + (stdPage === "class" ? "Every student's answers added together. Class % right = right on the first try ÷ questions answered. The last three columns count students by their own % on that standard or skill." :
+      "Each cell: % right on the first try (questions answered). Point at a column heading to read its skill.") + " Green 80%+, yellow 60–79%, red below 60%." +
+      (split && (s.tot.LOTS || s.tot.HOTS) ? " " + lvBadge("LOTS") + "= lower-order skill (identify, describe, explain, interpret); " + lvBadge("HOTS") + "= higher-order skill (analyze, compare, distinguish, evaluate). A standard with two action verbs is split into two skills." : "") +
+      (s.old ? " " + s.old + " student" + (s.old === 1 ? "'s code is" : "s' codes are") + " from before version 5.15 and not included." : "") + "</p>";
+    h += stdPage === "class" ? paintStdClass(s) : paintStdStudents(s);
+    el.innerHTML = h;
+    Array.prototype.forEach.call(el.querySelectorAll(".tab[data-sp]"), function (t) { t.addEventListener("click", function () { stdPage = t.getAttribute("data-sp"); paintStd(); }); });
+    var so = $("std-sort"); if (so) so.addEventListener("change", function () { stdSort = so.value; paintStd(); });
+    var sc = $("std-cols"); if (sc) sc.addEventListener("change", function () { stdCols = sc.value; paintStd(); });
   }
   function stdCsv() {
-    var s = stdData(), out = [["Student", "Nickname"].concat([].concat.apply([], s.codes.map(function (c) { return [c + " answered", c + " right first try", c + " % right"]; })))];
-    out.push(["Class", ""].concat([].concat.apply([], s.codes.map(function (c) { var t = s.tot[c]; return [t.a, t.r, pct(t.r, t.a)]; }))));
+    var s = stdData(), out = [["CLASS TOTAL"], ["Standard", "Skill", "Level", "Skill area", "What students do", "Students", "Questions", "Right first try", "Class % right"]];
+    function line(std, sk, c) { var t = s.tot[c], i = info(c); out.push([std, sk, i.level, STRAND[strandOf(std)] || "", sk ? leafText(c) : skillText(c), t.n, t.a, t.r, pct(t.r, t.a)]); }
+    ["LOTS", "HOTS"].forEach(function (k) { if (s.tot[k]) { var t = s.tot[k]; out.push(["All " + k + " skills", "", k, "", k === "LOTS" ? "Lower-order skills" : "Higher-order skills", t.n, t.a, t.r, pct(t.r, t.a)]); } });
+    s.codes.forEach(function (c) {
+      line(c, "", c);
+      s.kids[c].forEach(function (k) { line(c, /\*$/.test(k) ? "(whole standard)" : k, k); });
+    });
+    var cols = ["LOTS", "HOTS"].filter(function (k) { return s.tot[k]; }).concat(s.leaves);
+    out.push([], ["STUDENT BY STUDENT (each skill)"]);
+    out.push(["Student", "Nickname"].concat([].concat.apply([], cols.map(function (c) { var n = /\*$/.test(c) ? leafCode(c) + " whole standard" : c; return [n + " answered", n + " right first try", n + " % right"]; }))));
+    out.push(["Class total", ""].concat([].concat.apply([], cols.map(function (c) { var t = s.tot[c]; return [t.a, t.r, pct(t.r, t.a)]; }))));
     s.per.forEach(function (x) {
-      out.push([fullName(x.r), x.r.data.nick || ""].concat([].concat.apply([], s.codes.map(function (c) { var m = x.m[c]; return m && m.a ? [m.a, m.r, pct(m.r, m.a)] : ["", "", ""]; }))));
+      out.push([fullName(x.r), x.r.data.nick || ""].concat([].concat.apply([], cols.map(function (c) { var m = x.m[c]; return m && m.a ? [m.a, m.r, pct(m.r, m.a)] : ["", "", ""]; }))));
     });
     return csvText(out, ",");
   }
@@ -687,7 +796,7 @@
     link($("std-csv"), rows.some(mine) ? stdCsv() : null, fileStem() + "standards-" + isoTime(Date.now()).slice(0, 10) + ".csv");
     var imp = importCsv(), hint = $("import-hint"), cols = assignCols();
     link($("import"), imp, fileStem() + "canvas-gradebook-import-" + isoTime(Date.now()).slice(0, 10) + ".csv");
-    if (!roster) hint.textContent = "The Canvas gradebook import file needs your class list: drop your gradebook export in box 1.";
+    if (!roster) hint.textContent = "The Canvas gradebook import file needs your class list: drop your gradebook export in box 2.";
     else if (!cols.length) hint.textContent = "Your gradebook export has no assignments yet. Make the \"" + B.assignment + "\" assignment, then export the gradebook again.";
     else {
       hint.innerHTML = "Import file: fills the column <b>" + esc(assignCol() || "?") + "</b>. In Canvas: Grades → Import → choose the file → Upload, check the changes, then Save. " +
@@ -709,6 +818,7 @@
   function paint() {
     applyRounds();
     $("goal-line").textContent = goalLine();
+    $("goal-line").hidden = $("goals-box").open;   /* the summary line only when the goals box is folded */
     paintSummary();
     if (view === "cards") paintCards();
     else if (view === "table") paintTable();
@@ -808,6 +918,7 @@
   } catch (e) {}
   if (!rows.length && !roster) $("how").open = true;
 
+  $("goals-box").addEventListener("toggle", function () { $("goal-line").hidden = $("goals-box").open; });
   paintGoals();
   paintRoster();
   paintRounds();
