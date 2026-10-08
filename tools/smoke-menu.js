@@ -73,6 +73,19 @@ async function playing(page) {
   }
   function SolSceneTutDone(v) { return v === true; }
 
+  /* a shooter's level 1 never shows the maze how-to, not even while it loads */
+  var ps = await browser.newPage({ viewport: { width: 700, height: 500 } });
+  ps.on("pageerror", function (e) { errors.push(e.message); });
+  await ps.goto(base + "index.html", { waitUntil: "load" }); await ps.waitForTimeout(600);
+  await ps.click('#title-screen .card[data-family="ALL"]'); await ps.waitForSelector("#mode-screen:not(.hidden)");
+  await ps.click('#mode-packs .card[data-gamemode="raid"]'); await ps.waitForSelector("#skill-screen:not(.hidden)"); await ps.waitForTimeout(300);
+  await ps.click("#btn-skill-start"); await ps.waitForTimeout(300);
+  if (await ps.isVisible("#btn-char-confirm")) await ps.click("#btn-char-confirm");
+  var flashed = false;
+  for (var f = 0; f < 30; f++) { if (await ps.isVisible("#tut-overlay")) flashed = true; await ps.mouse.move(200 + f, 300); await ps.waitForTimeout(100); }
+  check(!flashed, "Eagle Swoop level 1: the maze how-to never appears");
+  await ps.close();
+
   /* the way out, in the maze and in a shooter */
   for (var mode of ["maze", "raid", "worms"]) {
     var p = await browser.newPage({ viewport: { width: 1280, height: 500 } });
@@ -84,6 +97,14 @@ async function playing(page) {
     if (mode === "maze") await p.screenshot({ path: path.join(shots, "menu-leave-1280x500.png") });
     check(st.open && st.paused, mode + ": Menu pauses the level and asks first (" + st.msg + ")");
     check(await inView(p, "#btn-leave-go") && await inView(p, "#btn-leave-stay"), mode + ": both choices are on screen");
+    /* leaving the tab and coming back (or the window focus a click in a Canvas iframe fires) keeps it paused */
+    var held = await p.evaluate(function () {
+      Object.defineProperty(document, "hidden", { configurable: true, get: function () { return true; } }); document.dispatchEvent(new Event("visibilitychange"));
+      Object.defineProperty(document, "hidden", { configurable: true, get: function () { return false; } }); document.dispatchEvent(new Event("visibilitychange"));
+      window.dispatchEvent(new Event("focus"));
+      return SolScene.scene.isPaused() && !document.getElementById("leave-overlay").classList.contains("hidden");
+    });
+    check(held, mode + ": switching tabs or refocusing the window keeps the level paused behind the box");
     await p.click("#btn-leave-stay"); await p.waitForTimeout(250);
     st = await p.evaluate(function () { return { open: !document.getElementById("leave-overlay").classList.contains("hidden"), paused: SolScene.scene.isPaused(), play: !document.getElementById("play").classList.contains("hidden") }; });
     check(!st.open && !st.paused && st.play, mode + ": Keep playing closes the box and the level runs again");

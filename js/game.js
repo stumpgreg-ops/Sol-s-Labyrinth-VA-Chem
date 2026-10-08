@@ -27060,7 +27060,7 @@
 
   function restartNight(n) {
     cfg.night = clamp(n, 1, 100);
-    wantNight1Tut = isNight1(cfg.night) && !tutClosed;
+    wantNight1Tut = isNight1(cfg.night) && !tutClosed && sceneKeyFor(cfg.night) !== "mode";
     writeSavedNight(cfg.night);
     document.getElementById("overlay").classList.add("hidden");
     /* VO 3:56pm: Next night must not inherit trap freeze / slow-mo */
@@ -27300,6 +27300,14 @@
       if (fl) fl.className = "";
     } catch (e2) {}
     if (!playScene) return;
+    /* Chemistry 1.5: the Leave this level? box holds the level paused. Coming back to the tab (or the window focus a
+       click inside a Canvas iframe fires) restarts the game loop but leaves the level paused behind the box. */
+    var lo = document.getElementById("leave-overlay");
+    if (lo && !lo.classList.contains("hidden")) {
+      playScene._tabHidden = false;
+      try { if (gameRef && gameRef.isPaused) gameRef.resume(); } catch (eL) {}
+      return;
+    }
     playScene._tabHidden = false;
     playScene.trapOpen = false;
     playScene.planBeatMs = 0;
@@ -27578,7 +27586,8 @@
       showPlayUi(true);
       tutClosed = false;
       tutIgnoreUntil = Date.now() + 400;
-      wantNight1Tut = isNight1(night);
+      /* Chemistry 1.5: the maze how-to only on a maze level (a shooter's level 1 used to flash it while loading) */
+      wantNight1Tut = isNight1(night) && sceneKeyFor(night) !== "mode";
       if (wantNight1Tut) revealTutDom(null, 0, tutorialCards({ needExtracts: 5, needStrikes: 3 }).length, false);
       else hideTut();
       enterFullscreen();
