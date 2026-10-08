@@ -126,10 +126,10 @@
           sol: "GOVT.6.a",
           stem: "Which development most directly led to the Twenty-sixth Amendment?",
           choices: [
-            { letter: "A", text: "the end of Reconstruction in the South" },
-            { letter: "B", text: "the campaign for women's suffrage" },
-            { letter: "C", text: "the drafting of young men who could not vote during the Vietnam War" },
-            { letter: "D", text: "the march from Selma to Montgomery" }
+            { letter: "A", text: "the end of Reconstruction and federal troops in the South" },
+            { letter: "B", text: "the long campaign for women's suffrage in the states" },
+            { letter: "C", text: "the drafting of young men who could not yet vote, during the Vietnam War" },
+            { letter: "D", text: "the 1965 march for voting rights from Selma to Montgomery" }
           ],
           correct: "C"
         },
@@ -225,15 +225,15 @@
       kind: "Citizenship & Elections · GOVT.5",
       blurb: "The steps an immigrant takes to become a naturalized citizen.",
       level: 1,
-      passage: "<p>" + N(1) + "Most immigrants who become citizens follow the path of naturalization. " + N(2) + "An applicant must usually be at least 18 and a <strong>lawful permanent resident</strong>, the status shown by a \"green card,\" for five years, or for three years if married to and living with a U.S. citizen. " + N(3) + "The applicant files a form with U.S. Citizenship and Immigration Services (USCIS), is fingerprinted for a background check, and must show good moral character. " + N(4) + "At an interview the applicant must speak and read basic English and pass a civics test on U.S. history and government. " + N(5) + "The final step is a public ceremony in which new citizens take the <strong>Oath of Allegiance</strong>. " + N(6) + "Children under 18 who hold green cards generally become citizens automatically when a parent is naturalized.</p>",
+      passage: "<p>" + N(1) + "Most immigrants who become citizens are naturalized. " + N(2) + "An applicant must usually be at least 18 and a <strong>lawful permanent resident</strong>, the status shown by a \"green card,\" for five years, or for three years if married to and living with a U.S. citizen. " + N(3) + "The applicant applies to U.S. Citizenship and Immigration Services (USCIS), passes a background check, and must show good moral character. " + N(4) + "At an interview the applicant must show basic English and pass a civics test. " + N(5) + "Finally, at a public ceremony, new citizens take the <strong>Oath of Allegiance</strong>. " + N(6) + "Children under 18 with green cards generally become citizens when a parent is naturalized.</p>",
       claims: [
         {
           id: "last",
           sol: "GOVT.5.a",
           stem: "Which step in the process comes LAST?",
           choices: [
-            { letter: "A", text: "filing an application with USCIS" },
-            { letter: "B", text: "being fingerprinted for a background check" },
+            { letter: "A", text: "applying to USCIS" },
+            { letter: "B", text: "passing a background check" },
             { letter: "C", text: "passing the civics test at the interview" },
             { letter: "D", text: "taking the Oath of Allegiance at a ceremony" }
           ],
@@ -367,7 +367,7 @@
       kind: "Citizenship & Elections · GOVT.5",
       blurb: "An all-volunteer military, Selective Service registration, and service out of uniform.",
       level: 2,
-      passage: "<p>" + N(1) + "The United States has relied on an <strong>all-volunteer force</strong> since 1973, when the military draft ended near the close of the Vietnam War. " + N(2) + "Even so, almost all men living in the United States must register with the <strong>Selective Service System</strong> within 30 days of turning 18, and the requirement lasts through age 25. " + N(3) + "Registering does not mean a man will serve; it gives the government a list it could use if Congress and the president restored a draft in a national emergency. " + N(4) + "Men who fail to register can lose eligibility for federal jobs. " + N(5) + "Many Americans also serve without a uniform, through programs such as the Peace Corps and AmeriCorps or as volunteers in their own communities.</p>",
+      passage: "<p>" + N(1) + "The United States has relied on an <strong>all-volunteer force</strong> since the military draft ended in 1973, near the close of the Vietnam War. " + N(2) + "Even so, almost all men living in the United States must register with the <strong>Selective Service System</strong> within 30 days of turning 18, and the requirement lasts through age 25. " + N(3) + "Registering does not mean serving; it gives the government a list to use if a draft were ever restored in a national emergency. " + N(4) + "Men who fail to register can lose eligibility for federal jobs. " + N(5) + "Many Americans also serve out of uniform, through the Peace Corps, AmeriCorps, or local volunteer work.</p>",
       claims: [
         {
           id: "today",
@@ -512,14 +512,14 @@
       passage: "<p>" + N(1) + "Rules for campaign money have changed through both laws and court decisions.</p><ul><li><strong>1971–1974</strong> The Federal Election Campaign Act requires disclosure of contributions, limits donations, and creates the Federal Election Commission (FEC).</li><li><strong>1976</strong> In <em>Buckley v. Valeo</em>, the Supreme Court upholds limits on contributions but strikes down limits on campaign spending, treating spending as a form of speech.</li><li><strong>2002</strong> The Bipartisan Campaign Reform Act bans unlimited \"soft money\" donations to national parties.</li><li><strong>2010</strong> In <em>Citizens United v. FEC</em>, the Court rules that government may not limit independent political spending by corporations and unions.</li><li><strong>2010</strong> After a lower-court ruling, <strong>super PACs</strong> form; they may raise and spend unlimited sums but may not coordinate with candidates.</li></ul><p>" + N(2) + "Online fundraising now lets donors anywhere in the country give to a race in a single state or district.</p>",
       claims: [
         {
-          id: "first",
-          sol: "GOVT.6.b",
-          stem: "Which of these happened FIRST?",
+          id: "pac",
+          sol: "GOVT.6.c",
+          stem: "How do interest groups most often use a political action committee (PAC)?",
           choices: [
-            { letter: "A", text: "Super PACs began raising unlimited sums." },
-            { letter: "B", text: "Congress banned soft money to national parties." },
-            { letter: "C", text: "The Federal Election Commission was created." },
-            { letter: "D", text: "The Court decided Citizens United v. FEC." }
+            { letter: "A", text: "to draw new district lines after each census" },
+            { letter: "B", text: "to count ballots and certify election results" },
+            { letter: "C", text: "to pool members' donations for favored candidates" },
+            { letter: "D", text: "to nominate candidates in place of a primary" }
           ],
           correct: "C"
         },
@@ -534,6 +534,18 @@
             { letter: "D", text: "the powers reserved to the states in the Tenth Amendment" }
           ],
           correct: "A"
+        },
+        {
+          id: "give",
+          sol: "GOVT.5.d",
+          stem: "Besides voting, which is a lawful way for a citizen to take part in a campaign?",
+          choices: [
+            { letter: "A", text: "casting a ballot for a friend who is away" },
+            { letter: "B", text: "contributing a legal amount to a candidate" },
+            { letter: "C", text: "removing an opponent's yard signs" },
+            { letter: "D", text: "voting twice in the same primary" }
+          ],
+          correct: "B"
         },
         {
           id: "superpac",
@@ -560,18 +572,6 @@
           correct: "D"
         },
         {
-          id: "pac",
-          sol: "GOVT.6.b",
-          stem: "How do interest groups most often use a political action committee (PAC)?",
-          choices: [
-            { letter: "A", text: "to collect members' donations and give to candidates who share their goals" },
-            { letter: "B", text: "to draw new district lines after each census" },
-            { letter: "C", text: "to count ballots and certify election results" },
-            { letter: "D", text: "to nominate candidates in place of a primary" }
-          ],
-          correct: "A"
-        },
-        {
           id: "two",
           sol: "GOVT.6.b",
           stem: "Which TWO statements are supported by the timeline? Select TWO.",
@@ -596,7 +596,7 @@
       claims: [
         {
           id: "virginia",
-          sol: "GOVT.6.c",
+          sol: "GOVT.5.d",
           stem: "Based on sentence 4, a Virginia voter on primary day may —",
           choices: [
             { letter: "A", text: "vote in both parties' primaries" },
@@ -715,7 +715,7 @@
         },
         {
           id: "nomajority",
-          sol: "GOVT.6.e",
+          sol: "GOVT.6.c",
           stem: "If no candidate wins 270 electoral votes, how is the president chosen?",
           choices: [
             { letter: "A", text: "The Senate chooses, with each senator casting one vote." },
@@ -738,14 +738,14 @@
           correct: "A"
         },
         {
-          id: "virginia",
-          sol: "GOVT.6.e",
-          stem: "How did the 2020 census affect Virginia's role in presidential elections?",
+          id: "dc",
+          sol: "GOVT.6.a",
+          stem: "According to sentence 2, how did the Twenty-third Amendment extend voting rights?",
           choices: [
-            { letter: "A", text: "Virginia gained an elector because its population grew." },
-            { letter: "B", text: "Virginia lost an elector to a faster-growing state." },
-            { letter: "C", text: "Virginia began dividing its electors by district." },
-            { letter: "D", text: "Virginia kept the same number of electors as before." }
+            { letter: "A", text: "It lowered the voting age in Washington, D.C., to 18." },
+            { letter: "B", text: "It gave Washington, D.C., two senators and a representative." },
+            { letter: "C", text: "It let Washington, D.C., elect its own mayor and council." },
+            { letter: "D", text: "It let residents of Washington, D.C., vote for president." }
           ],
           correct: "D"
         }
@@ -893,13 +893,13 @@
         },
         {
           id: "virginia",
-          sol: "GOVT.6.f",
-          stem: "The main purpose of Virginia's 2020 amendment was to —",
+          sol: "GOVT.5.d",
+          stem: "Sentence 9 shows Virginians taking part in the political process by —",
           choices: [
-            { letter: "A", text: "move map-drawing from the legislature alone to a bipartisan commission" },
-            { letter: "B", text: "increase the number of seats in the House of Delegates" },
-            { letter: "C", text: "let the governor draw congressional districts alone" },
-            { letter: "D", text: "end the census count in Virginia" }
+            { letter: "A", text: "voting on an amendment to the state constitution" },
+            { letter: "B", text: "serving as members of a federal jury" },
+            { letter: "C", text: "drawing district maps for the Supreme Court" },
+            { letter: "D", text: "registering with the Selective Service System" }
           ],
           correct: "A"
         },
@@ -927,14 +927,14 @@
       passage: "<blockquote>" + N(1) + "The right of citizens of the United States to vote shall not be denied or abridged by the United States or by any State on account of race, color, or previous condition of servitude.</blockquote><p class=\"src\">— Fifteenth Amendment, 1870</p><p>" + N(2) + "In Virginia that promise went unkept for decades. " + N(3) + "The Virginia Constitution of 1902 added a <strong>poll tax</strong> and strict registration requirements enforced by local registrars, and the number of Black voters in the state fell sharply. " + N(4) + "The poll tax also kept many poor white Virginians from voting. " + N(5) + "The Twenty-fourth Amendment (1964) banned poll taxes in federal elections, and in 1966, in <em>Harper v. Virginia Board of Elections</em>, the Supreme Court struck down Virginia's poll tax in state elections. " + N(6) + "The <strong>Voting Rights Act of 1965</strong> suspended literacy tests and required states with a history of discrimination, including Virginia, to get federal approval, called <strong>preclearance</strong>, before changing their voting rules. " + N(7) + "In <em>Shelby County v. Holder</em> (2013), the Court struck down the formula that decided which places needed preclearance, ruling that it rested on outdated data.</p>",
       claims: [
         {
-          id: "fifteenth",
-          sol: "GOVT.6.a",
-          stem: "The Fifteenth Amendment prohibited governments from —",
+          id: "shelby",
+          sol: "GOVT.6.f",
+          stem: "According to sentence 7, why did the Court strike down the preclearance formula in Shelby County v. Holder?",
           choices: [
-            { letter: "A", text: "denying the vote because of a person's race" },
-            { letter: "B", text: "denying the vote because of a person's sex" },
-            { letter: "C", text: "charging a tax in order to vote" },
-            { letter: "D", text: "setting the voting age above 18" }
+            { letter: "A", text: "It rested on data that the Court found outdated." },
+            { letter: "B", text: "It violated the Twenty-fourth Amendment." },
+            { letter: "C", text: "It allowed poll taxes in federal elections." },
+            { letter: "D", text: "It had never been approved by Congress." }
           ],
           correct: "A"
         },
@@ -979,10 +979,10 @@
           sol: "GOVT.6.a",
           stem: "Sentences 3 and 5 together suggest that —",
           choices: [
-            { letter: "A", text: "the poll tax never applied in Virginia" },
-            { letter: "B", text: "the Twenty-fourth Amendment alone did not end Virginia's poll tax in state elections" },
+            { letter: "A", text: "the poll tax was never used in Virginia" },
+            { letter: "B", text: "the 1964 amendment left state poll taxes in place" },
             { letter: "C", text: "the Voting Rights Act created the poll tax" },
-            { letter: "D", text: "the Supreme Court approved the 1902 constitution in 1966" }
+            { letter: "D", text: "the Court approved the 1902 constitution in 1966" }
           ],
           correct: "B"
         },
@@ -991,10 +991,10 @@
           sol: "GOVT.5.d",
           stem: "Which action by a citizen today best reflects the responsibility the passage's history highlights?",
           choices: [
-            { letter: "A", text: "paying a fee to a registrar in order to vote" },
-            { letter: "B", text: "registering to vote and casting a ballot in local, state and national elections" },
-            { letter: "C", text: "letting others decide elections for the community" },
-            { letter: "D", text: "voting only in presidential election years" }
+            { letter: "A", text: "paying a fee to a registrar before each election" },
+            { letter: "B", text: "registering and voting in local, state and national elections" },
+            { letter: "C", text: "letting neighbors decide elections for the community" },
+            { letter: "D", text: "voting only when a president is on the ballot" }
           ],
           correct: "B"
         }

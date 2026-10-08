@@ -20,10 +20,10 @@
           sol: "VUS.15.a",
           stem: "In Source 1, the iron curtain refers to —",
           choices: [
-            { letter: "A", text: "a wall built around West Berlin in 1946" },
-            { letter: "B", text: "the division between Soviet-controlled Eastern Europe and the West" },
-            { letter: "C", text: "a line of forts along the French border" },
-            { letter: "D", text: "a trade agreement among Western nations" }
+            { letter: "A", text: "a wall the Soviets built around West Berlin in 1946" },
+            { letter: "B", text: "the split between Soviet-controlled Eastern Europe and the West" },
+            { letter: "C", text: "a line of French forts built along the German border" },
+            { letter: "D", text: "a trade agreement signed among Western European nations" }
           ],
           correct: "B"
         },
@@ -32,9 +32,9 @@
           sol: "VUS.15.a",
           stem: "In Source 2, the word subjugation most nearly means —",
           choices: [
-            { letter: "A", text: "free trade" },
-            { letter: "B", text: "a fair election" },
-            { letter: "C", text: "foreign aid" },
+            { letter: "A", text: "free and open trade" },
+            { letter: "B", text: "holding a fair election" },
+            { letter: "C", text: "receiving foreign aid" },
             { letter: "D", text: "being brought under control" }
           ],
           correct: "D"
@@ -162,10 +162,10 @@
           sol: "VUS.17.a",
           stem: "Which right did Gideon v. Wainwright protect?",
           choices: [
-            { letter: "A", text: "the right to vote at age eighteen" },
+            { letter: "A", text: "the right to vote at age eighteen in all elections" },
             { letter: "B", text: "the right to a free lawyer in serious criminal cases" },
-            { letter: "C", text: "the right to attend an integrated school" },
-            { letter: "D", text: "the right to bear arms" }
+            { letter: "C", text: "the right to attend an integrated public school" },
+            { letter: "D", text: "the right to keep and bear arms at home" }
           ],
           correct: "B"
         },
@@ -318,10 +318,10 @@
           sol: "VUS.15.c",
           stem: "How was the Cuban Missile Crisis resolved?",
           choices: [
-            { letter: "A", text: "The United States invaded Cuba." },
-            { letter: "B", text: "Castro was removed from power." },
-            { letter: "C", text: "The UN took control of Cuba." },
-            { letter: "D", text: "Both sides made concessions and the missiles were removed." }
+            { letter: "A", text: "The United States invaded and occupied Cuba." },
+            { letter: "B", text: "Castro was forced from power by Cuban exiles." },
+            { letter: "C", text: "The United Nations took control of the island." },
+            { letter: "D", text: "Both sides gave ground, and the missiles were removed." }
           ],
           correct: "D"
         },
@@ -342,10 +342,10 @@
           sol: "VUS.15.c",
           stem: "Which conclusion is best supported by the last entry on the timeline?",
           choices: [
-            { letter: "A", text: "The Cold War ended in 1963." },
-            { letter: "B", text: "Cuba and the U.S. became allies." },
-            { letter: "C", text: "The two powers wanted faster contact to avoid another crisis." },
-            { letter: "D", text: "The Soviet Union put new missiles in Cuba." }
+            { letter: "A", text: "The Cold War came to an end in 1963." },
+            { letter: "B", text: "Cuba and the United States became close allies." },
+            { letter: "C", text: "Both powers wanted quick contact in a future crisis." },
+            { letter: "D", text: "The Soviet Union placed new missiles in Cuba." }
           ],
           correct: "C"
         }
@@ -401,10 +401,10 @@
           sol: "VUS.17.b",
           stem: "How did the United States respond to the September 11 attacks?",
           choices: [
-            { letter: "A", text: "It left the United Nations." },
+            { letter: "A", text: "It withdrew from the United Nations entirely." },
             { letter: "B", text: "It sent forces to Afghanistan, where al-Qaeda was based." },
-            { letter: "C", text: "It ended all air travel for a year." },
-            { letter: "D", text: "It closed its embassies around the world." }
+            { letter: "C", text: "It ended all commercial air travel for a year." },
+            { letter: "D", text: "It closed all of its embassies around the world." }
           ],
           correct: "B"
         },
@@ -506,7 +506,7 @@
       claims: [
         {
           id: "domino",
-          sol: "VUS.15.d",
+          sol: "VUS.15.a",
           stem: "According to sentence 2, the domino theory held that —",
           choices: [
             { letter: "A", text: "the fall of one nation to communism would lead others to fall" },
@@ -521,10 +521,10 @@
           sol: "VUS.15.d",
           stem: "What was the significance of the Gulf of Tonkin Resolution?",
           choices: [
-            { letter: "A", text: "It ended the draft." },
+            { letter: "A", text: "It ended the military draft for college students." },
             { letter: "B", text: "It formally declared war on North Vietnam." },
             { letter: "C", text: "It gave the president broad power to expand the war." },
-            { letter: "D", text: "It divided Vietnam into two nations." }
+            { letter: "D", text: "It divided Vietnam into two separate nations." }
           ],
           correct: "C"
         },
@@ -558,9 +558,9 @@
           stem: "What happened to many South Vietnamese after Saigon fell in 1975?",
           choices: [
             { letter: "A", text: "They fled as refugees, and many resettled in the U.S." },
-            { letter: "B", text: "They joined NATO." },
-            { letter: "C", text: "They moved to North Korea." },
-            { letter: "D", text: "They voted to rejoin France." }
+            { letter: "B", text: "They were allowed to join NATO as a nation." },
+            { letter: "C", text: "They moved north to settle in North Korea." },
+            { letter: "D", text: "They voted to become a French colony again." }
           ],
           correct: "A"
         },
@@ -585,7 +585,7 @@
       kind: "Cold War & Modern America · VUS.17",
       blurb: "Highways, equal pay, girls' sports, tribal control and access for all.",
       level: 2,
-      passage: "<table><tr><th>Law</th><th>Year</th><th>What it did</th></tr><tr><td>Federal Highway Act</td><td>1956</td><td>Funded a national system of <strong>interstate highways</strong>, partly for defense</td></tr><tr><td>Equal Pay Act</td><td>1963</td><td>Required equal pay for men and women doing equal work</td></tr><tr><td>Title IX</td><td>1972</td><td>Banned sex discrimination in schools that receive federal money, including in sports</td></tr><tr><td>Indian Self-Determination and Education Assistance Act</td><td>1975</td><td>Let tribes run federal programs, such as schools and health care, for their own people</td></tr><tr><td>Americans with Disabilities Act</td><td>1990</td><td>Banned discrimination against people with disabilities and required public places to be <strong>accessible</strong></td></tr></table><p>" + N(1) + "The Indian law followed protests by the <strong>American Indian Movement</strong> (AIM), including its 1973 occupation of Wounded Knee, South Dakota.</p>",
+      passage: "<table><tr><th>Law</th><th>Year</th><th>What it did</th></tr><tr><td>Federal Highway Act</td><td>1956</td><td>Funded a national system of <strong>interstate highways</strong>, partly for military defense</td></tr><tr><td>Equal Pay Act</td><td>1963</td><td>Required equal pay for men and women doing equal work</td></tr><tr><td>Title IX</td><td>1972</td><td>Banned sex discrimination in schools that receive federal money, including in sports</td></tr><tr><td>Indian Self-Determination and Education Assistance Act</td><td>1975</td><td>Let tribes run federal programs, such as schools and health care, for their own people</td></tr><tr><td>Americans with Disabilities Act (ADA)</td><td>1990</td><td>Banned discrimination against people with disabilities and required public places to be <strong>accessible</strong></td></tr></table><p>" + N(1) + "The Indian law followed protests by the <strong>American Indian Movement</strong> (AIM), including its 1973 occupation of Wounded Knee, South Dakota.</p>",
       claims: [
         {
           id: "titleix",
@@ -601,7 +601,7 @@
         },
         {
           id: "highway",
-          sol: "VUS.17.a",
+          sol: "VUS.17.e",
           stem: "Which was a long-term effect of the Federal Highway Act?",
           choices: [
             { letter: "A", text: "Fewer Americans owned cars." },
@@ -617,9 +617,9 @@
           stem: "In the table, the word accessible most nearly means —",
           choices: [
             { letter: "A", text: "possible for everyone to enter and use" },
-            { letter: "B", text: "owned by the government" },
-            { letter: "C", text: "open only during business hours" },
-            { letter: "D", text: "free of charge" }
+            { letter: "B", text: "owned and run by the government" },
+            { letter: "C", text: "open only during regular business hours" },
+            { letter: "D", text: "free of charge to every visitor" }
           ],
           correct: "A"
         },
@@ -628,9 +628,9 @@
           sol: "VUS.17.a",
           stem: "Which conclusion is best supported by sentence 1 and the table?",
           choices: [
-            { letter: "A", text: "AIM opposed tribal control of programs." },
-            { letter: "B", text: "Congress acted before AIM was formed." },
-            { letter: "C", text: "Activism by Native Americans helped bring more tribal self-government." },
+            { letter: "A", text: "AIM opposed letting tribes run their own programs." },
+            { letter: "B", text: "Congress passed the law before AIM was formed." },
+            { letter: "C", text: "Native American activism helped win more tribal self-rule." },
             { letter: "D", text: "The Indian law ended all federal aid to tribes." }
           ],
           correct: "C"
@@ -655,7 +655,7 @@
             { letter: "A", text: "Title IX" },
             { letter: "B", text: "the Equal Pay Act" },
             { letter: "C", text: "the Indian Self-Determination Act" },
-            { letter: "D", text: "the Americans with Disabilities Act" }
+            { letter: "D", text: "the ADA" }
           ],
           correct: "D"
         }
@@ -684,13 +684,13 @@
         },
         {
           id: "nixon",
-          sol: "VUS.15.d",
+          sol: "VUS.15.c",
           stem: "Why was Nixon's 1972 visit to China significant?",
           choices: [
-            { letter: "A", text: "It ended the Korean War." },
-            { letter: "B", text: "It made China a U.S. military ally." },
+            { letter: "A", text: "It brought a formal end to the Korean War." },
+            { letter: "B", text: "It made China a military ally of the U.S." },
             { letter: "C", text: "It opened relations after decades of no official contact." },
-            { letter: "D", text: "It returned Taiwan to the Communists." }
+            { letter: "D", text: "It handed Taiwan over to the Communists." }
           ],
           correct: "C"
         },
@@ -711,9 +711,9 @@
           sol: "VUS.15.d",
           stem: "According to sentence 5, why did many Hmong families leave Laos?",
           choices: [
-            { letter: "A", text: "They were sent to Taiwan by treaty." },
-            { letter: "B", text: "They wished to fight in Korea." },
-            { letter: "C", text: "They had been invited by Mao Zedong." },
+            { letter: "A", text: "They were sent to Taiwan under a treaty." },
+            { letter: "B", text: "They wished to fight for the UN in Korea." },
+            { letter: "C", text: "They had been invited to China by Mao." },
             { letter: "D", text: "They had aided the U.S. and were in danger after 1975." }
           ],
           correct: "D"
@@ -724,9 +724,9 @@
           stem: "Which conclusion about refugees is best supported by sentences 6 and 7?",
           choices: [
             { letter: "A", text: "Most refugees returned to Asia within a year." },
-            { letter: "B", text: "Refugee communities helped shape life in places like Northern Virginia." },
+            { letter: "B", text: "Refugees helped shape communities such as Northern Virginia's." },
             { letter: "C", text: "Congress refused to admit refugees from Vietnam." },
-            { letter: "D", text: "Refugees settled only on the West Coast." }
+            { letter: "D", text: "Refugees were allowed to settle only in California." }
           ],
           correct: "B"
         },
@@ -735,10 +735,10 @@
           sol: "VUS.15.a",
           stem: "How did the 1949 events in China affect U.S. Cold War policy?",
           choices: [
-            { letter: "A", text: "Americans became more worried about communism spreading in Asia." },
-            { letter: "B", text: "The U.S. ended its policy of containment." },
-            { letter: "C", text: "The U.S. withdrew all forces from Asia." },
-            { letter: "D", text: "The Marshall Plan was moved to China." }
+            { letter: "A", text: "Fears grew that communism would spread across Asia." },
+            { letter: "B", text: "The U.S. ended its policy of containing communism." },
+            { letter: "C", text: "The U.S. withdrew all of its forces from Asia." },
+            { letter: "D", text: "The Marshall Plan's aid was moved from Europe to China." }
           ],
           correct: "A"
         }
@@ -758,10 +758,10 @@
           sol: "VUS.15.a",
           stem: "Why did the launch of Sputnik alarm Americans?",
           choices: [
-            { letter: "A", text: "It ended the Korean War." },
-            { letter: "B", text: "It was launched from Cuba." },
+            { letter: "A", text: "It brought an end to the Korean War." },
+            { letter: "B", text: "It was launched by the Soviets from Cuba." },
             { letter: "C", text: "It suggested the Soviets led in rocket technology." },
-            { letter: "D", text: "It destroyed an American satellite." }
+            { letter: "D", text: "It shot down an American satellite in orbit." }
           ],
           correct: "C"
         },
@@ -771,9 +771,9 @@
           stem: "According to sentence 2, how did the United States respond to Sputnik?",
           choices: [
             { letter: "A", text: "It created NASA and invested in science education." },
-            { letter: "B", text: "It banned all space research." },
-            { letter: "C", text: "It joined the Soviet space program." },
-            { letter: "D", text: "It cut funding for schools." }
+            { letter: "B", text: "It banned all space research for ten years." },
+            { letter: "C", text: "It asked to join the Soviet space program." },
+            { letter: "D", text: "It cut federal funding for public schools." }
           ],
           correct: "A"
         },
@@ -790,14 +790,14 @@
           correct: "D"
         },
         {
-          id: "internet",
-          sol: "VUS.17.e",
-          stem: "Which statement about the internet is supported by sentence 5?",
+          id: "coverage",
+          sol: "VUS.17.c",
+          stem: "According to sentence 4, television news shaped public views of —",
           choices: [
-            { letter: "A", text: "It was invented by a private company in the 1990s." },
-            { letter: "B", text: "Its origins were tied to government defense research." },
-            { letter: "C", text: "It began as part of the Apollo program." },
-            { letter: "D", text: "It was first used in Soviet schools." }
+            { letter: "A", text: "the Bay of Pigs and the Berlin Airlift" },
+            { letter: "B", text: "the civil rights struggle and the Vietnam War" },
+            { letter: "C", text: "the Apollo 11 landing and Sputnik" },
+            { letter: "D", text: "personal computers and smartphones" }
           ],
           correct: "B"
         },
@@ -807,9 +807,9 @@
           stem: "Which statement best describes the trade-off described in sentence 7?",
           choices: [
             { letter: "A", text: "New technology made life slower but more private." },
-            { letter: "B", text: "Faster communication came with concerns about privacy and false information." },
-            { letter: "C", text: "Computers replaced television in every home." },
-            { letter: "D", text: "Technology ended the need for news media." }
+            { letter: "B", text: "Faster communication raised worries about privacy and falsehoods." },
+            { letter: "C", text: "Computers replaced television sets in every home." },
+            { letter: "D", text: "Technology ended the need for any news media." }
           ],
           correct: "B"
         },
@@ -819,9 +819,9 @@
           stem: "In sentence 1, the word satellite most nearly means —",
           choices: [
             { letter: "A", text: "an object that orbits Earth" },
-            { letter: "B", text: "a nuclear missile" },
-            { letter: "C", text: "a moon base" },
-            { letter: "D", text: "a radio station" }
+            { letter: "B", text: "a long-range nuclear missile" },
+            { letter: "C", text: "a base built on the Moon" },
+            { letter: "D", text: "a radio station on the ground" }
           ],
           correct: "A"
         }
@@ -864,13 +864,13 @@
         },
         {
           id: "wall",
-          sol: "VUS.15.e",
+          sol: "VUS.15.c",
           stem: "Reagan's words at the Berlin Wall were mainly meant to —",
           choices: [
-            { letter: "A", text: "challenge the Soviet leader to allow freedom in Eastern Europe" },
-            { letter: "B", text: "announce a U.S. attack on East Germany" },
+            { letter: "A", text: "challenge the Soviet leader to allow more freedom" },
+            { letter: "B", text: "announce a coming U.S. attack on East Germany" },
             { letter: "C", text: "praise the Soviet Union for building the wall" },
-            { letter: "D", text: "ask Congress to fund a new wall" }
+            { letter: "D", text: "ask Congress to pay for a new wall in Berlin" }
           ],
           correct: "A"
         },
@@ -923,7 +923,7 @@
       claims: [
         {
           id: "era",
-          sol: "VUS.17.c",
+          sol: "VUS.17.a",
           stem: "According to sentence 1, what happened to the Equal Rights Amendment?",
           choices: [
             { letter: "A", text: "It was never passed by Congress." },
@@ -1033,10 +1033,10 @@
           sol: "VUS.17.d",
           stem: "In sentence 8, the word milestone most nearly means —",
           choices: [
-            { letter: "A", text: "a setback" },
-            { letter: "B", text: "a law" },
+            { letter: "A", text: "a serious setback" },
+            { letter: "B", text: "a law passed by Congress" },
             { letter: "C", text: "an important turning point" },
-            { letter: "D", text: "a debate" }
+            { letter: "D", text: "a heated debate" }
           ],
           correct: "C"
         },
@@ -1053,14 +1053,14 @@
           correct: "D"
         },
         {
-          id: "views",
-          sol: "VUS.17.d",
-          stem: "Sentence 8 shows that Americans viewed Obama's election —",
+          id: "chisholm",
+          sol: "VUS.17.c",
+          stem: "Shirley Chisholm's 1972 campaign drew on the civil rights movement and which other movement of the era?",
           choices: [
-            { letter: "A", text: "as proof that the Voting Rights Act should be repealed" },
-            { letter: "B", text: "in only one way" },
-            { letter: "C", text: "as unrelated to civil rights" },
-            { letter: "D", text: "as progress, though some stressed remaining inequalities" }
+            { letter: "A", text: "the conservative movement" },
+            { letter: "B", text: "the pro-life movement" },
+            { letter: "C", text: "the Black Power Movement's Panthers" },
+            { letter: "D", text: "the women's movement" }
           ],
           correct: "D"
         },

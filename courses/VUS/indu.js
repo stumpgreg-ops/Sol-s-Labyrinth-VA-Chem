@@ -63,7 +63,7 @@
       claims: [
         Q("push", "VUS.10.b", "According to sentence 2, one reason immigrants LEFT their home countries was —", [
           "free land offered by the Homestead Act",
-          "poverty and religious persecution at home",
+          "poverty and persecution at home",
           "the chance to vote in American elections",
           "high wages in American textile mills"], "B"),
         Q("ports", "VUS.10.b", "Which conclusion is best supported by sentences 3 and 4?", [

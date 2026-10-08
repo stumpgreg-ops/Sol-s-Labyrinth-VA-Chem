@@ -69,9 +69,9 @@
           stem: "Which conclusion about Japan is best supported by the map?",
           choices: [
             { letter: "A", text: "It was too far from the mainland to learn from it." },
-            { letter: "B", text: "It was close enough to borrow from its neighbors yet separated by water." },
-            { letter: "C", text: "It shared a long land border with China." },
-            { letter: "D", text: "It was made up of one large, flat island." }
+            { letter: "B", text: "It was near its neighbors but separated by water." },
+            { letter: "C", text: "It shared a long land border with China and Korea." },
+            { letter: "D", text: "It was made up of one large and very flat island." }
           ],
           correct: "B"
         }
@@ -93,8 +93,8 @@
           choices: [
             { letter: "A", text: "gunpowder" },
             { letter: "B", text: "tea drinking" },
-            { letter: "C", text: "paper" },
-            { letter: "D", text: "the magnetic compass" }
+            { letter: "C", text: "paper making" },
+            { letter: "D", text: "the compass" }
           ],
           correct: "D"
         },
@@ -495,7 +495,7 @@
         },
         {
           id: "tradeoff",
-          sol: "WHI.7.b",
+          sol: "WHI.7.e",
           stem: "A Song farmer chose to grow tea for market instead of more rice for his family. What was the opportunity cost of that choice?",
           choices: [
             { letter: "A", text: "the money he earned by selling the tea" },
@@ -507,7 +507,7 @@
         },
         {
           id: "printing",
-          sol: "WHI.7.e",
+          sol: "WHI.7.f",
           stem: "How did cheaper printed books, described in sentence 7, affect Song society?",
           choices: [
             { letter: "A", text: "They ended the use of paper for government records." },
@@ -526,7 +526,7 @@
       kind: "Medieval China & Japan · WHI.7",
       blurb: "Confucian classics, long exams and the officials who ran China.",
       level: 3,
-      passage: "<blockquote>" + N(1) + "The Master said, \"He who exercises government by means of his virtue may be compared to the north polar star, which keeps its place and all the stars turn towards it.\"</blockquote><p class=\"src\">— Confucius, Analects, Book 2 (James Legge translation)</p><p>" + N(2) + "China's emperors relied on <strong>scholar-officials</strong> to carry out their rule. " + N(3) + "Begun under the Sui and expanded under the Tang and Song, the <strong>civil service examination</strong> tested men on the Confucian classics. " + N(4) + "Candidates studied for years; only a small share passed the highest levels. " + N(5) + "Those who succeeded gained government posts, respect and wealth for their families. " + N(6) + "In the Song era, the thinker Zhu Xi developed <strong>Neo-Confucianism</strong>, which blended Confucian ethics with ideas drawn from Buddhism and Daoism.</p>",
+      passage: "<blockquote>" + N(1) + "The Master said, \"He who exercises government by means of his virtue may be compared to the north polar star, which keeps its place and all the stars turn towards it.\"</blockquote><p class=\"src\">— Confucius, Analects, Book 2 (James Legge translation)</p><p>" + N(2) + "China's emperors relied on <strong>scholar-officials</strong> to carry out their rule. " + N(3) + "Begun under the Sui and expanded under the Tang and Song, the <strong>civil service examination</strong> tested men on the Confucian classics. " + N(4) + "Candidates studied for years; only a small share passed the highest levels. " + N(5) + "Those who succeeded gained government posts, respect and wealth for their families. " + N(6) + "In the Song era, the thinker Zhu Xi developed <strong>Neo-Confucianism</strong>, which blended Confucian ethics with ideas drawn from Buddhism and Daoism. " + N(7) + "Cheaper printed books in the Song era let more families buy the classics that exam candidates had to master.</p>",
       claims: [
         {
           id: "star",
@@ -541,14 +541,14 @@
           correct: "C"
         },
         {
-          id: "exam",
-          sol: "WHI.7.f",
-          stem: "What did the civil service examination mainly test?",
+          id: "books",
+          sol: "WHI.7.e",
+          stem: "Which Chinese development described in sentence 7 helped more men prepare for the examinations?",
           choices: [
-            { letter: "A", text: "knowledge of the Confucian classics" },
-            { letter: "B", text: "skill in archery and horsemanship" },
-            { letter: "C", text: "the ability to speak foreign languages" },
-            { letter: "D", text: "experience as a merchant or trader" }
+            { letter: "A", text: "printing" },
+            { letter: "B", text: "the compass" },
+            { letter: "C", text: "gunpowder" },
+            { letter: "D", text: "Champa rice" }
           ],
           correct: "A"
         },
@@ -609,17 +609,17 @@
       kind: "Medieval China & Japan · WHI.9",
       blurb: "Poetry, painting and the Tale of Genji in Japan's golden age.",
       level: 2,
-      passage: "<p>" + N(1) + "In 794 Japan's emperor moved the capital to Heian, later called Kyoto. " + N(2) + "For the next three centuries the court enjoyed a <strong>golden age</strong> of art and literature. " + N(3) + "Nobles prized beauty and elegant manners; they wrote poems to one another, judged good handwriting and arranged their clothing in careful layers of color. " + N(4) + "Japanese writers had long used Chinese characters, but now a simpler phonetic script, <strong>kana</strong>, let them write Japanese words as they were spoken. " + N(5) + "Court women used kana to write some of the era's greatest works. " + N(6) + "Around the year 1000, the lady-in-waiting Murasaki Shikibu wrote <strong>The Tale of Genji</strong>, a long story about the life and loves of a prince, often called the world's first novel. " + N(7) + "It is still read, studied and retold in films and comics today.</p>",
+      passage: "<p>" + N(1) + "In 794 Japan's emperor moved the capital to Heian, later called Kyoto. " + N(2) + "For the next three centuries the court enjoyed a <strong>golden age</strong> of art and literature. " + N(3) + "Nobles prized beauty and elegant manners; they wrote poems to one another, judged good handwriting and arranged their clothing in careful layers of color. " + N(4) + "Japanese writers had long used Chinese characters, but now a simpler phonetic script, <strong>kana</strong>, let them write Japanese words as they were spoken. " + N(5) + "Court women used kana to write some of the era's greatest works. " + N(6) + "Around the year 1000, the lady-in-waiting Murasaki Shikibu wrote <strong>The Tale of Genji</strong>, a long story about the life and loves of a prince, often called the world's first novel. " + N(7) + "It is still read, studied and retold in films and comics today. " + N(8) + "The golden age faded in the late 1100s, when warrior clans began fighting for control of the country.</p>",
       claims: [
         {
-          id: "genji",
-          sol: "WHI.9.e",
-          stem: "Who wrote The Tale of Genji?",
+          id: "end",
+          sol: "WHI.9.f",
+          stem: "According to sentence 8, what brought the Heian golden age to a close?",
           choices: [
-            { letter: "A", text: "Prince Shotoku" },
-            { letter: "B", text: "Zhu Xi" },
-            { letter: "C", text: "Minamoto Yoritomo" },
-            { letter: "D", text: "Murasaki Shikibu" }
+            { letter: "A", text: "a Mongol conquest of Kyoto" },
+            { letter: "B", text: "the arrival of Buddhism from Korea" },
+            { letter: "C", text: "a ban on writing in kana" },
+            { letter: "D", text: "the rise of warring warrior clans" }
           ],
           correct: "D"
         },
@@ -725,10 +725,10 @@
           sol: "WHI.7.c",
           stem: "Which statement best describes how Mongol rule affected Confucian scholars in China?",
           choices: [
-            { letter: "A", text: "They gained more power than under any earlier dynasty." },
-            { letter: "B", text: "They were made the generals of the Mongol army." },
-            { letter: "C", text: "They lost access to many offices, though Neo-Confucianism later shaped the restored exams." },
-            { letter: "D", text: "They were required to give up Confucian teachings." }
+            { letter: "A", text: "They gained more power than under any earlier Chinese dynasty." },
+            { letter: "B", text: "They were made the generals who led the Mongol armies." },
+            { letter: "C", text: "They lost many offices, but Neo-Confucianism later shaped the exams." },
+            { letter: "D", text: "They were required by law to give up all Confucian teachings." }
           ],
           correct: "C"
         },
@@ -777,7 +777,7 @@
       kind: "Medieval China & Japan · WHI.7",
       blurb: "Two views of the great Ming fleets and why they stopped sailing.",
       level: 3,
-      passage: "<p><strong>Viewpoint 1</strong> " + N(1) + "Between 1405 and 1433, the Ming admiral <strong>Zheng He</strong> led seven voyages across the Indian Ocean. " + N(2) + "His fleets, with hundreds of ships and thousands of sailors, visited Southeast Asia, India, the Persian Gulf, Arabia and the east coast of Africa. " + N(3) + "Using the magnetic compass and large ships with watertight compartments, the voyages displayed Ming power, gathered <strong>tribute</strong> from foreign rulers and expanded trade. " + N(4) + "Zheng He returned with gifts such as spices, gems and even a giraffe from Africa.</p><p><strong>Viewpoint 2</strong> " + N(5) + "After 1433 the voyages ended. " + N(6) + "Many Confucian officials saw them as costly displays that did little to help farmers, the true foundation of the state in their view. " + N(7) + "The Ming also faced danger from Mongol forces on the northern frontier and spent heavily rebuilding the Great Wall. " + N(8) + "The government limited private overseas trade, and China turned its attention inward. " + N(9) + "Within a century, Portuguese ships were sailing into the same waters Zheng He had explored.</p>",
+      passage: "<p><strong>Viewpoint 1</strong> " + N(1) + "Between 1405 and 1433, the Ming admiral <strong>Zheng He</strong>, a Muslim court official who served the Yongle emperor, led seven voyages across the Indian Ocean. " + N(2) + "His fleets, with hundreds of ships and thousands of sailors, visited Southeast Asia, India, the Persian Gulf, Arabia and the east coast of Africa. " + N(3) + "Using the magnetic compass and large ships with watertight compartments, the voyages displayed Ming power, gathered <strong>tribute</strong> from foreign rulers and expanded trade. " + N(4) + "Zheng He returned with gifts such as spices, gems and even a giraffe from Africa.</p><p><strong>Viewpoint 2</strong> " + N(5) + "After 1433 the voyages ended. " + N(6) + "Many Confucian officials saw them as costly displays that did little to help farmers, the true foundation of the state in their view. " + N(7) + "The Ming also faced danger from Mongol forces on the northern frontier and spent heavily rebuilding the Great Wall. " + N(8) + "The government limited private overseas trade, and China turned its attention inward. " + N(9) + "Within a century, Portuguese ships were sailing into the same waters Zheng He had explored.</p>",
       claims: [
         {
           id: "purpose",
@@ -844,12 +844,12 @@
           sol: "WHI.7.d",
           stem: "Which conclusion is best supported by sentences 8 and 9?",
           choices: [
-            { letter: "A", text: "China's withdrawal from the seas left room for European sailors in Asia." },
+            { letter: "A", text: "The Ming continued sending large fleets until 1600." },
             { letter: "B", text: "Portugal and China formed an alliance to explore Africa together." },
-            { letter: "C", text: "The Ming continued sending large fleets until 1600." },
+            { letter: "C", text: "China's withdrawal from the seas left room for European sailors in Asia." },
             { letter: "D", text: "The end of the voyages caused the immediate fall of the Ming." }
           ],
-          correct: "C" === "C" ? "A" : "A"
+          correct: "C"
         }
       ]
     },
@@ -860,7 +860,7 @@
       kind: "Medieval China & Japan · WHI.9",
       blurb: "How warriors took power in Japan in the late 1100s, and the code they lived by.",
       level: 3,
-      passage: "<p>" + N(1) + "By the 1100s, the emperor's court in Kyoto had grown weak. " + N(2) + "Landowners in the provinces hired armed warriors, called <strong>samurai</strong>, to protect their estates and collect taxes. " + N(3) + "Two powerful warrior clans, the Taira and the Minamoto, fought for control of Japan in the Gempei War (1180–1185). " + N(4) + "The Minamoto won, and their leader, Minamoto Yoritomo, set up a military government at Kamakura, far from the court. " + N(5) + "In 1192 the emperor gave him the title <strong>shogun</strong>. " + N(6) + "For nearly 700 years afterward, shoguns, not emperors, held real power in Japan, though the emperor remained as a respected symbol. " + N(7) + "Samurai followed a code later called <strong>bushido</strong>, \"the way of the warrior.\" " + N(8) + "It stressed loyalty to one's lord, courage, honor and self-discipline, and a samurai was expected to prefer death to disgrace. " + N(9) + "Although the samurai class was abolished in the 1870s, many Japanese still point to ideals such as loyalty, discipline and duty, and martial arts like kendo and judo are practiced around the world.</p>",
+      passage: "<p>" + N(1) + "By the 1100s, the emperor's court in Kyoto had grown weak. " + N(2) + "Landowners in the provinces hired armed warriors, called <strong>samurai</strong>, to protect their estates and collect taxes. " + N(3) + "Two powerful warrior clans, the Taira and the Minamoto, fought for control of Japan in the Gempei War (1180–1185). " + N(4) + "The Minamoto won, and their leader, Minamoto Yoritomo, set up a military government at Kamakura, far from the court. " + N(5) + "In 1192 the emperor gave him the title <strong>shogun</strong>. " + N(6) + "For nearly 700 years afterward, shoguns, not emperors, held real power in Japan, though the emperor remained as a respected symbol. " + N(7) + "Samurai followed a code later called <strong>bushido</strong>, \"the way of the warrior.\" " + N(8) + "It stressed loyalty to one's lord, courage, honor and self-discipline, and a samurai was expected to prefer death to disgrace. " + N(9) + "Many samurai also practiced Zen Buddhism, whose meditation trained the calm focus a warrior needed. " + N(10) + "Although the samurai class was abolished in the 1870s, many Japanese still point to ideals such as loyalty, discipline and duty, and martial arts like kendo and judo are practiced around the world.</p>",
       claims: [
         {
           id: "cause",
@@ -911,21 +911,21 @@
           correct: "A"
         },
         {
-          id: "military",
-          sol: "WHI.9.f",
-          stem: "Which conclusion is best supported by sentence 6?",
+          id: "zen",
+          sol: "WHI.9.d",
+          stem: "Based on sentence 9, which form of Buddhism was most closely tied to samurai culture?",
           choices: [
-            { letter: "A", text: "The emperors ruled Japan directly until 1868." },
-            { letter: "B", text: "Japan was governed by elected officials after 1192." },
-            { letter: "C", text: "The shoguns removed the emperor from Japan." },
-            { letter: "D", text: "Japan became a society led by its warriors." }
+            { letter: "A", text: "Pure Land" },
+            { letter: "B", text: "Theravada" },
+            { letter: "C", text: "Tibetan" },
+            { letter: "D", text: "Zen" }
           ],
           correct: "D"
         },
         {
           id: "today",
           sol: "WHI.9.c",
-          stem: "Sentence 9 is best used to support which claim?",
+          stem: "Sentence 10 is best used to support which claim?",
           choices: [
             { letter: "A", text: "The samurai still govern Japan today." },
             { letter: "B", text: "Bushido was forgotten after the 1870s." },

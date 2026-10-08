@@ -541,14 +541,14 @@
           correct: "A"
         },
         {
-          id: "torah",
-          sol: "WHI.2.c",
-          stem: "According to sentence 3, the Torah is —",
+          id: "ur",
+          sol: "WHI.2.b",
+          stem: "According to the Hebrew Bible, Abraham's family came from the city of Ur, which was located in —",
           choices: [
-            { letter: "A", text: "a collection of Babylonian laws" },
-            { letter: "B", text: "a history of the Egyptian pharaohs" },
-            { letter: "C", text: "the first five books of the Hebrew Bible" },
-            { letter: "D", text: "a book of prayers written in Rome" }
+            { letter: "A", text: "the Nile Valley" },
+            { letter: "B", text: "Nubia, south of Egypt" },
+            { letter: "C", text: "Mesopotamia" },
+            { letter: "D", text: "the Phoenician coast" }
           ],
           correct: "C"
         },
@@ -565,14 +565,14 @@
           correct: "A"
         },
         {
-          id: "passover",
-          sol: "WHI.2.c",
-          stem: "According to sentence 4, the holiday of Passover recalls —",
+          id: "egypt",
+          sol: "WHI.2.a",
+          stem: "According to sentence 1, before the Exodus the Israelites had been enslaved in —",
           choices: [
-            { letter: "A", text: "the building of the Temple in Jerusalem" },
-            { letter: "B", text: "the founding of the city of Babylon" },
-            { letter: "C", text: "the crowning of King David" },
-            { letter: "D", text: "the Exodus of the Israelites from Egypt" }
+            { letter: "A", text: "Babylon" },
+            { letter: "B", text: "Phoenicia" },
+            { letter: "C", text: "Assyria" },
+            { letter: "D", text: "Egypt" }
           ],
           correct: "D"
         }
@@ -709,14 +709,14 @@
           correct: "A"
         },
         {
-          id: "sourcea",
-          sol: "WHI.1.d",
-          stem: "According to Source A, which development led to permanent villages?",
+          id: "food",
+          sol: "WHI.1.c",
+          stem: "According to Source B, the builders of Göbekli Tepe most likely got their food by —",
           choices: [
-            { letter: "A", text: "the building of temples" },
-            { letter: "B", text: "the painting of caves" },
-            { letter: "C", text: "farming and a food surplus" },
-            { letter: "D", text: "migration out of Africa" }
+            { letter: "A", text: "growing wheat in irrigated fields" },
+            { letter: "B", text: "trading with distant river cities" },
+            { letter: "C", text: "hunting and gathering wild foods" },
+            { letter: "D", text: "herding domesticated sheep" }
           ],
           correct: "C"
         },
@@ -780,26 +780,26 @@
           correct: "A"
         },
         {
-          id: "return",
-          sol: "WHI.2.c",
-          stem: "According to the timeline, which empire allowed the exiles to return to Jerusalem?",
+          id: "babylon",
+          sol: "WHI.2.b",
+          stem: "Babylon, where many people of Judah were taken in 586 B.C., was located in —",
           choices: [
-            { letter: "A", text: "the Assyrian Empire" },
-            { letter: "B", text: "the Babylonian Empire" },
-            { letter: "C", text: "the Roman Empire" },
-            { letter: "D", text: "the Persian Empire" }
+            { letter: "A", text: "the Nile Valley" },
+            { letter: "B", text: "Phoenicia" },
+            { letter: "C", text: "Nubia" },
+            { letter: "D", text: "Mesopotamia" }
           ],
           correct: "D"
         },
         {
-          id: "survive",
-          sol: "WHI.2.c",
-          stem: "Which conclusion is best supported by the timeline and sentence 4?",
+          id: "letters",
+          sol: "WHI.2.d",
+          stem: "The earliest Hebrew writing used letters borrowed from the alphabet of the Israelites' coastal neighbors to the north, the —",
           choices: [
-            { letter: "A", text: "The Israelites were never conquered by a foreign empire." },
-            { letter: "B", text: "Jewish beliefs and customs survived conquest and exile." },
-            { letter: "C", text: "Jews gave up the Torah during the exile in Babylon." },
-            { letter: "D", text: "The Temple in Jerusalem was never rebuilt after 586 B.C." }
+            { letter: "A", text: "Sumerians" },
+            { letter: "B", text: "Phoenicians" },
+            { letter: "C", text: "Egyptians" },
+            { letter: "D", text: "Nubians" }
           ],
           correct: "B"
         },
@@ -839,14 +839,14 @@
       passage: "<p>" + N(1) + "Egypt and Mesopotamia both grew up along rivers in the dry lands of North Africa and Southwest Asia, but their rivers behaved very differently.</p><table><tr><th>Feature</th><th>Egypt</th><th>Mesopotamia</th></tr><tr><td>River(s)</td><td>Nile</td><td>Tigris and Euphrates</td></tr><tr><td>Flooding</td><td>yearly and fairly predictable</td><td>sudden and unpredictable</td></tr><tr><td>Natural barriers</td><td>deserts on both sides, cataracts to the south</td><td>few; open plains easy to invade</td></tr><tr><td>Government</td><td>one kingdom under a pharaoh, seen as a god-king</td><td>independent city-states, later united in empires</td></tr><tr><td>Religion</td><td>many gods; belief in an afterlife</td><td>many gods; a gloomy view of the afterlife</td></tr></table><p>" + N(2) + "Because Mesopotamian floods could come without warning, farmers there built levees and irrigation canals, work that required cooperation and strong leaders. " + N(3) + "City-states such as Ur and Uruk often fought over water and land. " + N(4) + "Around 2300 B.C., Sargon of Akkad conquered the city-states and created what many historians call the world's first <strong>empire</strong>. " + N(5) + "Egypt's protected location helped its kingdoms last for long periods, and pharaohs built pyramids as tombs to prepare for the afterlife.</p>",
       claims: [
         {
-          id: "floods",
-          sol: "WHI.2.b",
-          stem: "According to the table, how did flooding differ between the two regions?",
+          id: "surplus",
+          sol: "WHI.1.d",
+          stem: "Which development, begun in the Neolithic era, made the cities of both river valleys possible?",
           choices: [
-            { letter: "A", text: "The Nile flooded predictably; the Tigris and Euphrates did not." },
-            { letter: "B", text: "The Tigris and Euphrates never flooded at all." },
-            { letter: "C", text: "Both regions had floods at the same time each year." },
-            { letter: "D", text: "Only the Nile flooded without any warning." }
+            { letter: "A", text: "farming that produced surplus food" },
+            { letter: "B", text: "the use of iron tools and weapons" },
+            { letter: "C", text: "the invention of the alphabet" },
+            { letter: "D", text: "the spread of nomadic herding" }
           ],
           correct: "A"
         },

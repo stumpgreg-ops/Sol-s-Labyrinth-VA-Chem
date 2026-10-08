@@ -56,10 +56,10 @@
           sol: "VUS.1.a",
           stem: "Earthen mounds and large farming towns such as Cahokia were built by people of which region?",
           choices: [
-            { letter: "A", text: "the Southwest" },
-            { letter: "B", text: "the Pacific coast" },
-            { letter: "C", text: "the Northeast" },
-            { letter: "D", text: "the Mississippi River Valley" }
+            { letter: "A", text: "the dry Southwest" },
+            { letter: "B", text: "the rainy Pacific coast" },
+            { letter: "C", text: "the forested Northeast" },
+            { letter: "D", text: "the Mississippi Valley" }
           ],
           correct: "D"
         },
@@ -115,9 +115,9 @@
           sol: "VUS.1.b",
           stem: "Which statement best explains how these tools affected exploration?",
           choices: [
-            { letter: "A", text: "They made voyages far from land safer and more practical." },
-            { letter: "B", text: "They allowed Europeans to reach Asia by land." },
-            { letter: "C", text: "They ended the need for royal sponsors." },
+            { letter: "A", text: "They made voyages far from land more practical." },
+            { letter: "B", text: "They let Europeans reach Asia by an overland route." },
+            { letter: "C", text: "They ended explorers' need for royal sponsors." },
             { letter: "D", text: "They cut the Atlantic crossing to a few days." }
           ],
           correct: "A"
@@ -142,7 +142,7 @@
             { letter: "A", text: "Spain" },
             { letter: "B", text: "England" },
             { letter: "C", text: "Portugal" },
-            { letter: "D", text: "France" }
+            { letter: "D", text: "the Netherlands" }
           ],
           correct: "C"
         }
@@ -155,15 +155,15 @@
       kind: "Early America & the Colonies · VUS.2",
       blurb: "Forty-one men aboard a ship agree to make their own laws.",
       level: 1,
-      passage: "<p>" + N(1) + "In 1620, Pilgrims aboard the Mayflower signed an agreement before going ashore at Plymouth.</p><blockquote>...covenant and combine ourselves together into a <strong>civil body politic</strong>... and by virtue hereof to enact, constitute, and frame such just and equal laws... as shall be thought most meet and convenient for the general good of the colony, unto which we promise all due submission and obedience.</blockquote><p class=\"src\">— The Mayflower Compact, 1620 (excerpt, modernized spelling)</p>",
+      passage: "<p>" + N(1) + "In 1620, Pilgrims aboard the Mayflower signed an agreement before landing.</p><blockquote>...covenant and combine ourselves together into a <strong>civil body politic</strong>... and by virtue hereof to enact, constitute, and frame such just and equal laws... as shall be thought most meet and convenient for the general good of the colony, unto which we promise all due submission and obedience.</blockquote><p class=\"src\">— The Mayflower Compact, 1620 (excerpt, modernized spelling)</p>",
       claims: [
         {
           id: "purpose",
           sol: "VUS.2.d",
           stem: "The main purpose of this document was to —",
           choices: [
-            { letter: "A", text: "declare independence from England" },
-            { letter: "B", text: "form a body that would make laws for the colony" },
+            { letter: "A", text: "declare the colony independent of England" },
+            { letter: "B", text: "form a body to make laws for the colony" },
             { letter: "C", text: "seal a trade agreement with the Wampanoag" },
             { letter: "D", text: "establish the Church of England at Plymouth" }
           ],
@@ -174,10 +174,10 @@
           sol: "VUS.2.d",
           stem: "In the excerpt, the phrase civil body politic most nearly means —",
           choices: [
-            { letter: "A", text: "a church congregation" },
-            { letter: "B", text: "a trading company" },
+            { letter: "A", text: "a congregation that worships together" },
+            { letter: "B", text: "a company formed to trade for profit" },
             { letter: "C", text: "an organized political community" },
-            { letter: "D", text: "a military company" }
+            { letter: "D", text: "a militia that defends a town" }
           ],
           correct: "C"
         },
@@ -187,9 +187,9 @@
           stem: "The signers' promise to obey laws they themselves would make best reflects the idea of —",
           choices: [
             { letter: "A", text: "government by consent of the governed" },
-            { letter: "B", text: "rule by a hereditary monarch" },
-            { letter: "C", text: "separation of church and state" },
-            { letter: "D", text: "judicial review by a court" }
+            { letter: "B", text: "rule by a monarch who inherits power" },
+            { letter: "C", text: "strict separation of church and state" },
+            { letter: "D", text: "judicial review of laws by a court" }
           ],
           correct: "A"
         },
@@ -199,8 +199,8 @@
           stem: "Which leader served for many years as governor of Plymouth Colony?",
           choices: [
             { letter: "A", text: "John Winthrop" },
-            { letter: "B", text: "William Penn" },
-            { letter: "C", text: "John Smith" },
+            { letter: "B", text: "Peter Stuyvesant" },
+            { letter: "C", text: "Roger Williams" },
             { letter: "D", text: "William Bradford" }
           ],
           correct: "D"
@@ -211,9 +211,9 @@
           stem: "The Pilgrims came to North America mainly to —",
           choices: [
             { letter: "A", text: "worship apart from the Church of England" },
-            { letter: "B", text: "search for gold and silver" },
-            { letter: "C", text: "build a refuge for Catholics" },
-            { letter: "D", text: "trade furs with the French" }
+            { letter: "B", text: "search the coast for gold and silver mines" },
+            { letter: "C", text: "build a refuge for persecuted Catholics" },
+            { letter: "D", text: "trade furs with French and Dutch merchants" }
           ],
           correct: "A"
         }
@@ -234,9 +234,9 @@
           stem: "The Virginia Company founded Jamestown mainly to —",
           choices: [
             { letter: "A", text: "earn a profit for its investors" },
-            { letter: "B", text: "create a refuge for Quakers" },
-            { letter: "C", text: "convert Spanish settlers" },
-            { letter: "D", text: "escape persecution in France" }
+            { letter: "B", text: "create a refuge for English Quakers" },
+            { letter: "C", text: "convert Spanish settlers in Florida" },
+            { letter: "D", text: "escape religious persecution in France" }
           ],
           correct: "A"
         },
@@ -245,10 +245,10 @@
           sol: "VUS.2.d",
           stem: "The House of Burgesses was significant because it was —",
           choices: [
-            { letter: "A", text: "the first court to hear appeals in the colonies" },
-            { letter: "B", text: "a council named by the king of Spain" },
+            { letter: "A", text: "the first court to hear appeals in the English colonies" },
+            { letter: "B", text: "a council of advisers named by the king of Spain" },
             { letter: "C", text: "the first elected assembly in the English colonies" },
-            { letter: "D", text: "a town meeting open to all adult colonists" }
+            { letter: "D", text: "a town meeting open to every adult colonist" }
           ],
           correct: "C"
         },
@@ -257,10 +257,10 @@
           sol: "VUS.2.c",
           stem: "Which event on the timeline did the most to make Virginia profitable?",
           choices: [
-            { letter: "A", text: "the founding of Jamestown" },
+            { letter: "A", text: "the founding of Jamestown in 1607" },
             { letter: "B", text: "the planting of Rolfe's tobacco" },
-            { letter: "C", text: "the arrival of John Smith" },
-            { letter: "D", text: "the change to a royal colony" }
+            { letter: "C", text: "John Smith's leadership of the colony" },
+            { letter: "D", text: "the change to a royal colony in 1624" }
           ],
           correct: "B"
         },
@@ -269,9 +269,9 @@
           sol: "VUS.3.c",
           stem: "According to the timeline, the first recorded Africans arrived in Virginia in the same year that —",
           choices: [
-            { letter: "A", text: "Jamestown was founded" },
+            { letter: "A", text: "Jamestown was founded on the James River" },
             { letter: "B", text: "Virginia became a royal colony" },
-            { letter: "C", text: "Rolfe first planted tobacco" },
+            { letter: "C", text: "John Rolfe first planted tobacco" },
             { letter: "D", text: "the House of Burgesses first met" }
           ],
           correct: "D"
@@ -315,12 +315,12 @@
         {
           id: "religion",
           sol: "VUS.2.b",
-          stem: "Which conclusion is best supported by the table?",
+          stem: "Which conclusion about the six colonies is best supported by the table?",
           choices: [
-            { letter: "A", text: "Religion was a motive for most of these colonies." },
-            { letter: "B", text: "Every colony was founded to earn a profit." },
-            { letter: "C", text: "All six colonies were founded before 1620." },
-            { letter: "D", text: "Each colony was founded by a royal governor." }
+            { letter: "A", text: "Religion was a motive for most of them." },
+            { letter: "B", text: "Every one was founded mainly to earn a profit." },
+            { letter: "C", text: "All of them were founded before the year 1620." },
+            { letter: "D", text: "Each one was founded by a governor the king chose." }
           ],
           correct: "A"
         },
@@ -329,10 +329,10 @@
           sol: "VUS.2.b",
           stem: "Roger Williams was banished from Massachusetts Bay mainly for arguing that —",
           choices: [
-            { letter: "A", text: "colonists should not pay taxes to the king" },
+            { letter: "A", text: "colonists should stop paying taxes to the king" },
             { letter: "B", text: "government should not control religious belief" },
-            { letter: "C", text: "the colony should join the Catholic Church" },
-            { letter: "D", text: "Puritans should return to England" }
+            { letter: "C", text: "the colony should rejoin the Catholic Church" },
+            { letter: "D", text: "the Puritans should all return to England" }
           ],
           correct: "B"
         },
@@ -376,10 +376,10 @@
           sol: "VUS.1.c",
           stem: "In sentence 1, the word Reconquista refers to —",
           choices: [
-            { letter: "A", text: "the Spanish conquest of the Aztec Empire" },
+            { letter: "A", text: "the Spanish conquest of the Aztec Empire in Mexico" },
             { letter: "B", text: "the Christian retaking of Spain from Muslim rulers" },
-            { letter: "C", text: "a Protestant reform movement in Germany" },
-            { letter: "D", text: "a Portuguese trade route around Africa" }
+            { letter: "C", text: "a Protestant movement to reform the church in Germany" },
+            { letter: "D", text: "a Portuguese sea route around the tip of Africa" }
           ],
           correct: "B"
         },
@@ -389,9 +389,9 @@
           stem: "How did completing the Reconquista most likely affect Spain's support for Columbus?",
           choices: [
             { letter: "A", text: "It freed the monarchs to fund overseas ventures." },
-            { letter: "B", text: "It forced Spain to give up its navy." },
-            { letter: "C", text: "It made Spain an ally of Protestant England." },
-            { letter: "D", text: "It ended Spain's interest in trade with Asia." }
+            { letter: "B", text: "It forced Spain to give up most of its navy." },
+            { letter: "C", text: "It made Spain a close ally of Protestant England." },
+            { letter: "D", text: "It ended Spain's interest in any trade with Asia." }
           ],
           correct: "A"
         },
@@ -400,10 +400,10 @@
           sol: "VUS.1.b",
           stem: "Coronado's expedition through the Southwest was searching for —",
           choices: [
-            { letter: "A", text: "a northwest passage to Asia" },
-            { letter: "B", text: "a site for a Quaker colony" },
+            { letter: "A", text: "a northwest water passage to Asia" },
+            { letter: "B", text: "a good site for a Quaker colony" },
             { letter: "C", text: "the legendary Seven Cities of Gold" },
-            { letter: "D", text: "furs to sell to French traders" }
+            { letter: "D", text: "beaver furs to sell to French traders" }
           ],
           correct: "C"
         },
@@ -412,10 +412,10 @@
           sol: "VUS.1.c",
           stem: "Which statement best describes how the Counter-Reformation affected the Americas?",
           choices: [
-            { letter: "A", text: "Protestant ministers converted the Aztecs." },
-            { letter: "B", text: "Spain ended its missions to focus on trade." },
-            { letter: "C", text: "England sent Jesuits to found Jamestown." },
-            { letter: "D", text: "Catholic powers sent missionaries to convert Native peoples." }
+            { letter: "A", text: "Protestant ministers converted most of the Aztecs." },
+            { letter: "B", text: "Spain closed its missions in order to focus on trade." },
+            { letter: "C", text: "England sent Jesuit priests to help found Jamestown." },
+            { letter: "D", text: "Catholic powers sent missionaries to Native peoples." }
           ],
           correct: "D"
         },
@@ -448,8 +448,8 @@
           stem: "Which goods were most often carried from Europe to West Africa?",
           choices: [
             { letter: "A", text: "sugar and molasses" },
-            { letter: "B", text: "tobacco and rice" },
-            { letter: "C", text: "silver from Mexico" },
+            { letter: "B", text: "tobacco, rice and indigo" },
+            { letter: "C", text: "silver mined in Mexico" },
             { letter: "D", text: "cloth, guns and tools" }
           ],
           correct: "D"
@@ -459,10 +459,10 @@
           sol: "VUS.3.b",
           stem: "In sentence 3, the Middle Passage was —",
           choices: [
-            { letter: "A", text: "the land route from Virginia to the Ohio Valley" },
-            { letter: "B", text: "the forced voyage of captive Africans across the Atlantic" },
-            { letter: "C", text: "a canal linking the Great Lakes" },
-            { letter: "D", text: "the route that carried sugar to Europe" }
+            { letter: "A", text: "the land route from Virginia west to the Ohio Valley" },
+            { letter: "B", text: "the forced voyage of captives across the Atlantic" },
+            { letter: "C", text: "a canal linking the Great Lakes to the Hudson River" },
+            { letter: "D", text: "the sea route that carried sugar from Cuba to Spain" }
           ],
           correct: "B"
         },
@@ -483,10 +483,10 @@
           sol: "VUS.1.d",
           stem: "Which conclusion is best supported by the map description?",
           choices: [
-            { letter: "A", text: "The economies of four regions were tied together by trade." },
+            { letter: "A", text: "Trade tied the economies of four regions together." },
             { letter: "B", text: "Trade moved only between England and Virginia." },
             { letter: "C", text: "Africa traded only with the New England colonies." },
-            { letter: "D", text: "Europe bought almost nothing from the colonies." }
+            { letter: "D", text: "Europe bought almost nothing grown in the colonies." }
           ],
           correct: "A"
         },
@@ -496,9 +496,9 @@
           stem: "The sugar, rice and tobacco shipped to Europe were produced mainly by —",
           choices: [
             { letter: "A", text: "the forced labor of enslaved Africans" },
-            { letter: "B", text: "free wage workers from Europe" },
-            { letter: "C", text: "Native nations paid in trade goods" },
-            { letter: "D", text: "machines powered by water" }
+            { letter: "B", text: "free wage workers hired in European ports" },
+            { letter: "C", text: "Native nations paid with trade goods" },
+            { letter: "D", text: "new machines powered by waterwheels" }
           ],
           correct: "A"
         }
@@ -519,9 +519,9 @@
           stem: "Most of Bacon's followers were —",
           choices: [
             { letter: "A", text: "wealthy planters along the tidewater rivers" },
-            { letter: "B", text: "frontier farmers, many of them former servants" },
-            { letter: "C", text: "royal soldiers sent from London" },
-            { letter: "D", text: "Native allies of Governor Berkeley" }
+            { letter: "B", text: "frontier farmers, many of them ex-servants" },
+            { letter: "C", text: "royal soldiers sent over from London" },
+            { letter: "D", text: "Native nations allied with Governor Berkeley" }
           ],
           correct: "B"
         },
@@ -530,10 +530,10 @@
           sol: "VUS.4.c",
           stem: "Bacon's followers turned against Governor Berkeley mainly because he —",
           choices: [
-            { letter: "A", text: "raised taxes to build a new capital" },
-            { letter: "B", text: "freed all indentured servants" },
+            { letter: "A", text: "raised taxes to build a new colonial capital" },
+            { letter: "B", text: "freed all of the colony's indentured servants" },
             { letter: "C", text: "would not authorize war on the frontier" },
-            { letter: "D", text: "made an alliance with the French" }
+            { letter: "D", text: "made an alliance with French fur traders" }
           ],
           correct: "C"
         },
@@ -554,9 +554,9 @@
           sol: "VUS.3.b",
           stem: "In sentence 2, indentured servants were people who —",
           choices: [
-            { letter: "A", text: "were enslaved for life" },
-            { letter: "B", text: "owned large plantations" },
-            { letter: "C", text: "served as elected burgesses" },
+            { letter: "A", text: "were held in bondage for their whole lives" },
+            { letter: "B", text: "owned large plantations along the rivers" },
+            { letter: "C", text: "served as elected members of the Burgesses" },
             { letter: "D", text: "worked a set term to repay their passage" }
           ],
           correct: "D"
@@ -566,10 +566,10 @@
           sol: "VUS.4.c",
           stem: "Bacon's Rebellion revealed tension between —",
           choices: [
-            { letter: "A", text: "England and Spain over Florida" },
+            { letter: "A", text: "England and Spain over control of Florida" },
             { letter: "B", text: "poor frontier settlers and the colony's elite" },
-            { letter: "C", text: "Puritans and Quakers in Virginia" },
-            { letter: "D", text: "the French and the Haudenosaunee" }
+            { letter: "C", text: "Puritans and Quakers who had moved to Virginia" },
+            { letter: "D", text: "French traders and the Haudenosaunee nations" }
           ],
           correct: "B"
         }
@@ -590,10 +590,10 @@
           sol: "VUS.2.b",
           stem: "The Great Awakening is best described as —",
           choices: [
-            { letter: "A", text: "a series of laws limiting colonial trade" },
+            { letter: "A", text: "a series of laws that limited colonial trade" },
             { letter: "B", text: "a religious revival that stressed personal faith" },
-            { letter: "C", text: "a movement to restore the Catholic Church" },
-            { letter: "D", text: "a wave of immigration from Germany" }
+            { letter: "C", text: "a movement to restore the Catholic Church in England" },
+            { letter: "D", text: "a wave of immigration from the German states" }
           ],
           correct: "B"
         },
@@ -605,7 +605,7 @@
             { letter: "A", text: "George Whitefield" },
             { letter: "B", text: "Roger Williams" },
             { letter: "C", text: "William Penn" },
-            { letter: "D", text: "John Winthrop" }
+            { letter: "D", text: "Cecil Calvert, Lord Baltimore" }
           ],
           correct: "A"
         },
@@ -614,10 +614,10 @@
           sol: "VUS.2.b",
           stem: "Which effect of the Great Awakening is best supported by sentence 4?",
           choices: [
-            { letter: "A", text: "The Anglican Church gained many new members." },
-            { letter: "B", text: "Colonists stopped attending church at all." },
+            { letter: "A", text: "The Anglican Church gained thousands of new members." },
+            { letter: "B", text: "Most colonists stopped attending any church altogether." },
             { letter: "C", text: "New denominations grew as colonists left old churches." },
-            { letter: "D", text: "Virginia banned the Baptist Church." }
+            { letter: "D", text: "Virginia outlawed the Baptist Church in every county." }
           ],
           correct: "C"
         },
@@ -626,9 +626,9 @@
           sol: "VUS.2.b",
           stem: "In sentence 7, religious toleration most nearly means —",
           choices: [
-            { letter: "A", text: "requiring all to attend one church" },
+            { letter: "A", text: "requiring everyone to attend one church" },
             { letter: "B", text: "a tax that supports the official church" },
-            { letter: "C", text: "a ban on preaching outdoors" },
+            { letter: "C", text: "a ban on preaching outdoors without a license" },
             { letter: "D", text: "acceptance of people whose beliefs differ" }
           ],
           correct: "D"
@@ -650,10 +650,10 @@
           sol: "VUS.3.e",
           stem: "According to sentence 6, many enslaved and free Africans responded to the revival by —",
           choices: [
-            { letter: "A", text: "refusing to attend any church" },
-            { letter: "B", text: "forming a new Anglican parish" },
-            { letter: "C", text: "joining the new churches and adding African traditions" },
-            { letter: "D", text: "returning to Africa as missionaries" }
+            { letter: "A", text: "refusing to attend services of any church" },
+            { letter: "B", text: "forming new parishes of the Anglican Church" },
+            { letter: "C", text: "joining new churches and adding African traditions" },
+            { letter: "D", text: "returning to West Africa to serve there as missionaries" }
           ],
           correct: "C"
         }
@@ -666,7 +666,7 @@
       kind: "Early America & the Colonies · VUS.2",
       blurb: "Spain, France and England ran their colonies in very different ways.",
       level: 2,
-      passage: "<p>" + N(1) + "Spain, France and England built very different colonial systems in North America.</p><table><tr><th></th><th>Spanish</th><th>French</th><th>English</th></tr><tr><td>Main goals</td><td>Gold, silver and converting Native peoples to Catholicism</td><td>Fur trade and missions</td><td>Farmland, trade and religious freedom</td></tr><tr><td>Settlers</td><td>Soldiers, priests and officials</td><td>Few settlers; traders and priests</td><td>Many farming families</td></tr><tr><td>Government</td><td>Viceroys ruling for the king</td><td>Royal governors</td><td>Elected assemblies and royal governors</td></tr><tr><td>Native peoples</td><td>Forced labor on estates and missions</td><td>Trade partners and military allies</td><td>Often pushed off land for farms</td></tr></table><p>" + N(2) + "English colonists also owned property and traded in fairly <strong>free markets</strong>, though Britain regulated their trade with other nations.</p>",
+      passage: "<p>" + N(1) + "Spain, France and England built very different colonial systems in North America.</p><table><tr><th></th><th>Spanish</th><th>French</th><th>English</th></tr><tr><td>Main goals</td><td>Gold, silver and converting Native peoples to Catholicism</td><td>Fur trade and missions</td><td>Farmland, trade and religious freedom</td></tr><tr><td>Settlers</td><td>Soldiers, priests and officials</td><td>Few settlers; traders and priests</td><td>Many farming families</td></tr><tr><td>Government</td><td>Viceroys ruling for the king</td><td>Royal governors</td><td>Elected assemblies and royal governors</td></tr><tr><td>Native peoples</td><td>Forced labor on estates and missions</td><td>Trade partners and military allies</td><td>Often pushed off land for farms</td></tr></table><p>" + N(2) + "English colonists also owned property and traded in fairly <strong>free markets</strong>, where people chose what to make, buy and sell, though Britain regulated their trade with other nations. " + N(3) + "Rivalry among the three empires, and with Native nations, led to repeated wars for control of the continent.</p>",
       claims: [
         {
           id: "french",
@@ -687,8 +687,8 @@
           choices: [
             { letter: "A", text: "elected representative assemblies" },
             { letter: "B", text: "missions run by Catholic priests" },
-            { letter: "C", text: "rule by viceroys for the king" },
-            { letter: "D", text: "a focus on the fur trade" }
+            { letter: "C", text: "rule by viceroys acting for the king" },
+            { letter: "D", text: "a heavy focus on the fur trade" }
           ],
           correct: "A"
         },
@@ -697,10 +697,10 @@
           sol: "VUS.2.c",
           stem: "Which statement best explains why New France had a small population?",
           choices: [
-            { letter: "A", text: "The French king banned all emigration." },
-            { letter: "B", text: "The fur trade needed few settlers and relied on Native trappers." },
-            { letter: "C", text: "Disease killed most French farmers." },
-            { letter: "D", text: "The English blocked French ships at sea." }
+            { letter: "A", text: "The French king banned all emigration to America." },
+            { letter: "B", text: "The fur trade needed few settlers." },
+            { letter: "C", text: "Disease killed most French farmers who arrived." },
+            { letter: "D", text: "English warships blocked every French ship at sea." }
           ],
           correct: "B"
         },
@@ -709,9 +709,9 @@
           sol: "VUS.2.c",
           stem: "In sentence 2, free markets are best described as an economy in which —",
           choices: [
-            { letter: "A", text: "the king sets every price" },
-            { letter: "B", text: "the church owns most land" },
-            { letter: "C", text: "goods are shared equally by law" },
+            { letter: "A", text: "the king sets the price of every good sold" },
+            { letter: "B", text: "the church owns most of the land and shops" },
+            { letter: "C", text: "the law requires goods to be shared equally" },
             { letter: "D", text: "people choose what to buy, sell and own" }
           ],
           correct: "D"
@@ -733,10 +733,10 @@
           sol: "VUS.4.a",
           stem: "Which conclusion about the competition for North America is best supported by the table?",
           choices: [
-            { letter: "A", text: "Each empire's goals shaped how it used land and treated Native peoples." },
-            { letter: "B", text: "All three empires relied mainly on forced labor." },
-            { letter: "C", text: "France had more settlers than England." },
-            { letter: "D", text: "Spain and England shared the same goals." }
+            { letter: "A", text: "Each empire's goals shaped how it treated Native peoples." },
+            { letter: "B", text: "All three empires relied mainly on the forced labor of Native peoples." },
+            { letter: "C", text: "France sent far more settlers than England did." },
+            { letter: "D", text: "Spain and England had the same goals in America." }
           ],
           correct: "A"
         }
@@ -756,10 +756,10 @@
           sol: "VUS.3.a",
           stem: "Which statement is best supported by sentences 1 and 2?",
           choices: [
-            { letter: "A", text: "The captives shared a single African language." },
-            { letter: "B", text: "Most captives came from North Africa." },
+            { letter: "A", text: "The captives all shared a single African language." },
+            { letter: "B", text: "Most of the captives came from North Africa." },
             { letter: "C", text: "The captives came from many different cultures." },
-            { letter: "D", text: "Few captives had any trade skills." }
+            { letter: "D", text: "Few of the captives had any skills of value." }
           ],
           correct: "C"
         },
@@ -769,9 +769,9 @@
           stem: "South Carolina planters valued captives from West Africa's rice-growing regions because they —",
           choices: [
             { letter: "A", text: "knew how to grow rice in flooded fields" },
-            { letter: "B", text: "could build ships for the rice trade" },
-            { letter: "C", text: "spoke English before they arrived" },
-            { letter: "D", text: "had worked on Brazilian sugar estates" }
+            { letter: "B", text: "could build the ships used in the rice trade" },
+            { letter: "C", text: "already spoke English before they arrived" },
+            { letter: "D", text: "had worked on sugar estates in Brazil first" }
           ],
           correct: "A"
         },
@@ -780,10 +780,10 @@
           sol: "VUS.3.b",
           stem: "In sentence 7, chattel slavery means —",
           choices: [
-            { letter: "A", text: "work for a set number of years" },
+            { letter: "A", text: "work for a set number of years to repay a ship fare" },
             { letter: "B", text: "lifelong bondage as property, passed to children" },
-            { letter: "C", text: "labor paid for with land" },
-            { letter: "D", text: "service in a colonial militia" }
+            { letter: "C", text: "labor paid for with grants of farmland" },
+            { letter: "D", text: "required service in a colonial militia" }
           ],
           correct: "B"
         },
@@ -793,7 +793,7 @@
           stem: "According to sentence 6, most enslaved Africans were carried to —",
           choices: [
             { letter: "A", text: "Virginia and Maryland" },
-            { letter: "B", text: "New England" },
+            { letter: "B", text: "the New England colonies" },
             { letter: "C", text: "Spain and Portugal" },
             { letter: "D", text: "Brazil and the Caribbean" }
           ],
@@ -816,10 +816,10 @@
           sol: "VUS.3.d",
           stem: "Which economic factor best explains why so many captives were taken to Brazil and the Caribbean?",
           choices: [
-            { letter: "A", text: "Free settlers there refused all farm work." },
-            { letter: "B", text: "The voyage there was shorter than to Europe." },
-            { letter: "C", text: "Sugar plantations demanded huge numbers of laborers." },
-            { letter: "D", text: "Spain paid planters to buy enslaved workers." }
+            { letter: "A", text: "Free settlers there refused to do any farm work." },
+            { letter: "B", text: "The voyage there was shorter than the trip to Europe." },
+            { letter: "C", text: "Sugar plantations demanded huge numbers of workers." },
+            { letter: "D", text: "Spain paid planters a bounty for each worker bought." }
           ],
           correct: "C"
         }
@@ -840,9 +840,9 @@
           stem: "Which reason best explains why planters shifted from indentured servants to enslaved Africans?",
           choices: [
             { letter: "A", text: "Servants were held for life, but enslaved people were not." },
-            { letter: "B", text: "Enslaved people were held for life, and so were their children." },
-            { letter: "C", text: "Tobacco no longer needed many workers." },
-            { letter: "D", text: "English law banned indentured servitude." }
+            { letter: "B", text: "Enslaved people were held for life, as were their children." },
+            { letter: "C", text: "Tobacco farming no longer needed a large number of workers." },
+            { letter: "D", text: "A new English law banned indentured servitude entirely." }
           ],
           correct: "B"
         },
@@ -888,9 +888,9 @@
           stem: "How did indentured servitude differ from chattel slavery?",
           choices: [
             { letter: "A", text: "Servants were all African; enslaved people were all English." },
-            { letter: "B", text: "Servants could vote; enslaved people could not." },
-            { letter: "C", text: "Servants worked a limited term; enslaved people were held for life." },
-            { letter: "D", text: "Servants worked in towns; enslaved people worked on ships." }
+            { letter: "B", text: "Servants could vote in every election; enslaved people could not." },
+            { letter: "C", text: "Servants served a limited term; enslaved people were held for life." },
+            { letter: "D", text: "Servants worked only in the towns; enslaved people worked on ships." }
           ],
           correct: "C"
         },
@@ -899,10 +899,10 @@
           sol: "VUS.4.c",
           stem: "Which conclusion best explains why the timeline includes Bacon's Rebellion?",
           choices: [
-            { letter: "A", text: "It ended the tobacco economy in Virginia." },
-            { letter: "B", text: "It showed that enslaved people could vote." },
-            { letter: "C", text: "It ended the headright system." },
-            { letter: "D", text: "Unrest among poor former servants pushed planters toward enslaved labor." }
+            { letter: "A", text: "It brought an end to the tobacco economy in Virginia." },
+            { letter: "B", text: "It showed that enslaved people had gained the right to vote." },
+            { letter: "C", text: "It ended the headright system and all grants of land." },
+            { letter: "D", text: "Unrest among former servants pushed planters toward slavery." }
           ],
           correct: "D"
         }
@@ -923,10 +923,10 @@
           sol: "VUS.4.b",
           stem: "Which example of cooperation is described in Source 1?",
           choices: [
-            { letter: "A", text: "a joint attack on Spanish Florida" },
+            { letter: "A", text: "a joint attack on the Spanish in Florida" },
             { letter: "B", text: "trading English goods for Powhatan corn" },
-            { letter: "C", text: "a shared government for Jamestown" },
-            { letter: "D", text: "an alliance against the French" }
+            { letter: "C", text: "a shared government for the Jamestown fort" },
+            { letter: "D", text: "an alliance against French traders to the north" }
           ],
           correct: "B"
         },
@@ -935,10 +935,10 @@
           sol: "VUS.4.d",
           stem: "Which development in Source 2 best explains the cause of the 1622 attack?",
           choices: [
-            { letter: "A", text: "the spread of tobacco farming onto Powhatan land" },
+            { letter: "A", text: "tobacco farming spreading onto Powhatan land" },
             { letter: "B", text: "the marriage of Pocahontas and John Rolfe" },
-            { letter: "C", text: "the arrival of French traders" },
-            { letter: "D", text: "John Smith's return to England" }
+            { letter: "C", text: "the arrival of French traders on the James River" },
+            { letter: "D", text: "John Smith's return to England after an injury" }
           ],
           correct: "A"
         },
@@ -947,10 +947,10 @@
           sol: "VUS.2.a",
           stem: "John Smith's rule that colonists who did not work would not eat was meant to —",
           choices: [
-            { letter: "A", text: "end trade with the Powhatan" },
+            { letter: "A", text: "end all trade between the colony and the Powhatan towns" },
             { letter: "B", text: "punish colonists who practiced other religions" },
-            { letter: "C", text: "keep settlers growing food instead of only hunting gold" },
-            { letter: "D", text: "force Native peoples to work in the fields" }
+            { letter: "C", text: "make settlers grow food instead of hunting for gold" },
+            { letter: "D", text: "force Native peoples to work in English fields" }
           ],
           correct: "C"
         },
@@ -959,17 +959,17 @@
           sol: "VUS.4.d",
           stem: "How does the focus of Source 2 differ from that of Source 1?",
           choices: [
-            { letter: "A", text: "Source 1 describes war; Source 2 describes trade." },
-            { letter: "B", text: "Source 1 is about the French; Source 2 is about the English." },
-            { letter: "C", text: "Source 1 covers the 1640s; Source 2 covers 1607." },
-            { letter: "D", text: "Source 1 stresses trade and peace; Source 2 stresses conflict over land." }
+            { letter: "A", text: "Source 1 describes war, while Source 2 describes trade and peace." },
+            { letter: "B", text: "Source 1 is about the French, while Source 2 is about the English settlers." },
+            { letter: "C", text: "Source 1 covers the 1640s, while Source 2 covers the year 1607." },
+            { letter: "D", text: "Source 1 stresses cooperation; Source 2 stresses conflict over land." }
           ],
           correct: "D"
         },
         {
           id: "first",
           sol: "VUS.4.b",
-          stem: "Which event happened FIRST?",
+          stem: "Which event in the two sources happened FIRST?",
           choices: [
             { letter: "A", text: "Opechancanough's attack on the colony" },
             { letter: "B", text: "the treaty placing the Powhatan under English authority" },
@@ -983,10 +983,10 @@
           sol: "VUS.1.a",
           stem: "In sentence 1, the Powhatan Confederacy is best described as —",
           choices: [
-            { letter: "A", text: "an alliance of many peoples under one paramount chief" },
-            { letter: "B", text: "an English trading company" },
-            { letter: "C", text: "a single village on the James River" },
-            { letter: "D", text: "a treaty between England and Spain" }
+            { letter: "A", text: "an alliance of many peoples under one chief" },
+            { letter: "B", text: "an English company that traded for furs" },
+            { letter: "C", text: "a single village on the banks of the James River" },
+            { letter: "D", text: "a treaty signed between England and Spain" }
           ],
           correct: "A"
         }
@@ -1018,10 +1018,10 @@
           sol: "VUS.4.a",
           stem: "Which advantage did France gain from controlling these waterways?",
           choices: [
-            { letter: "A", text: "fertile land for large tobacco farms" },
-            { letter: "B", text: "gold and silver mines near the coast" },
-            { letter: "C", text: "warm ports that never froze" },
-            { letter: "D", text: "a water route deep into the interior for the fur trade" }
+            { letter: "A", text: "fertile land for large tobacco plantations" },
+            { letter: "B", text: "rich gold and silver mines close to the Atlantic coast" },
+            { letter: "C", text: "warm-water ports that never froze in winter" },
+            { letter: "D", text: "a water route into the interior for the fur trade" }
           ],
           correct: "D"
         },
@@ -1031,9 +1031,9 @@
           stem: "According to sentence 7, the Beaver Wars were fought mainly over —",
           choices: [
             { letter: "A", text: "control of hunting lands and the fur trade" },
-            { letter: "B", text: "the right to settle in New Netherland" },
-            { letter: "C", text: "Spanish missions in New Mexico" },
-            { letter: "D", text: "the boundary of the Carolinas" }
+            { letter: "B", text: "the right to settle in the Dutch colony" },
+            { letter: "C", text: "the Spanish missions built in New Mexico" },
+            { letter: "D", text: "the exact northern boundary of the Carolinas" }
           ],
           correct: "A"
         },
@@ -1042,10 +1042,10 @@
           sol: "VUS.4.d",
           stem: "King Philip's War was mainly caused by —",
           choices: [
-            { letter: "A", text: "Spanish attacks on Wampanoag towns" },
+            { letter: "A", text: "Spanish raids on Wampanoag towns" },
             { letter: "B", text: "English expansion onto Wampanoag lands" },
-            { letter: "C", text: "a dispute among French fur traders" },
-            { letter: "D", text: "the Pueblo uprising in New Mexico" }
+            { letter: "C", text: "a dispute among rival French fur traders" },
+            { letter: "D", text: "news of the Pueblo uprising in New Mexico" }
           ],
           correct: "B"
         },
@@ -1054,10 +1054,10 @@
           sol: "VUS.4.d",
           stem: "The events of 1680 in New Mexico show that —",
           choices: [
-            { letter: "A", text: "Spain and France were allies in the Southwest" },
-            { letter: "B", text: "the Pueblo welcomed Spanish missions" },
+            { letter: "A", text: "Spain and France were close allies in the Southwest" },
+            { letter: "B", text: "the Pueblo welcomed the Spanish missions" },
             { letter: "C", text: "Native peoples resisted European rule by force" },
-            { letter: "D", text: "England controlled the Southwest by 1680" }
+            { letter: "D", text: "England had gained control of the Southwest by then" }
           ],
           correct: "C"
         },
@@ -1089,10 +1089,10 @@
           sol: "VUS.3.c",
           stem: "Which statement best explains why the slave trade within the United States grew after 1808?",
           choices: [
-            { letter: "A", text: "Congress paid planters to move west." },
-            { letter: "B", text: "Enslaved people could no longer be legally imported, but demand kept rising." },
-            { letter: "C", text: "Virginia banned slavery inside its borders." },
-            { letter: "D", text: "Most enslaved people had been freed by 1808." }
+            { letter: "A", text: "Congress began paying planters to move west." },
+            { letter: "B", text: "Imports were banned, but demand for labor rose." },
+            { letter: "C", text: "Virginia banned slavery inside its own borders." },
+            { letter: "D", text: "Most enslaved people had been freed by that year." }
           ],
           correct: "B"
         },
@@ -1101,10 +1101,10 @@
           sol: "VUS.3.c",
           stem: "According to the timeline, Richmond's role in the 1830s–1850s was as —",
           choices: [
-            { letter: "A", text: "a center for freeing enslaved people" },
+            { letter: "A", text: "a center where enslaved people were set free by law" },
             { letter: "B", text: "a port that imported captives from Africa" },
-            { letter: "C", text: "a major market that sold enslaved people south" },
-            { letter: "D", text: "the capital of the Confederacy" }
+            { letter: "C", text: "a major market selling people to the Deep South" },
+            { letter: "D", text: "the capital of the new Confederate States" }
           ],
           correct: "C"
         },
@@ -1125,10 +1125,10 @@
           sol: "VUS.3.e",
           stem: "In sentence 3, spirituals are best described as —",
           choices: [
-            { letter: "A", text: "laws passed by the General Assembly" },
+            { letter: "A", text: "laws that were passed by the General Assembly" },
             { letter: "B", text: "letters written to abolitionist newspapers" },
-            { letter: "C", text: "maps that showed escape routes" },
-            { letter: "D", text: "religious songs that expressed hopes of freedom" }
+            { letter: "C", text: "secret maps that showed the routes of escape north" },
+            { letter: "D", text: "religious songs that expressed hope of freedom" }
           ],
           correct: "D"
         },
@@ -1146,7 +1146,7 @@
         },
         {
           id: "culture",
-          sol: "VUS.3.e",
+          sol: "VUS.3.a",
           stem: "Select TWO details from the passage that show enslaved people preserving their cultures.",
           choices: [
             { letter: "A", text: "Congress banned importing enslaved Africans." },
