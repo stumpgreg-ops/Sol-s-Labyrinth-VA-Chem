@@ -75,7 +75,15 @@
     "L.VL.5.2", "RI.AA.5.7", "RI.CI.5.2", "RI.CR.5.1", "RI.CT.5.8", "RI.IT.5.3", "RI.PP.5.5", "RI.TS.5.4",
     "RL.CI.5.2", "RL.CR.5.1", "RL.CT.5.8", "RL.IT.5.3", "RL.PP.5.5", "RL.TS.5.4",
     /* Chemistry 1.4: the Virginia Chemistry SOL key concepts (CH.1 a-j ... CH.5 a-g) */
-    "CH.1.a", "CH.1.b", "CH.1.c", "CH.1.d", "CH.1.e", "CH.1.f", "CH.1.g", "CH.1.h", "CH.1.i", "CH.1.j", "CH.2.a", "CH.2.b", "CH.2.c", "CH.2.d", "CH.2.e", "CH.2.f", "CH.2.g", "CH.2.h", "CH.2.i", "CH.3.a", "CH.3.b", "CH.3.c", "CH.3.d", "CH.3.e", "CH.3.f", "CH.4.a", "CH.4.b", "CH.4.c", "CH.4.d", "CH.5.a", "CH.5.b", "CH.5.c", "CH.5.d", "CH.5.e", "CH.5.f", "CH.5.g"
+    "CH.1.a", "CH.1.b", "CH.1.c", "CH.1.d", "CH.1.e", "CH.1.f", "CH.1.g", "CH.1.h", "CH.1.i", "CH.1.j", "CH.2.a", "CH.2.b", "CH.2.c", "CH.2.d", "CH.2.e", "CH.2.f", "CH.2.g", "CH.2.h", "CH.2.i", "CH.3.a", "CH.3.b", "CH.3.c", "CH.3.d", "CH.3.e", "CH.3.f", "CH.4.a", "CH.4.b", "CH.4.c", "CH.4.d", "CH.5.a", "CH.5.b", "CH.5.c", "CH.5.d", "CH.5.e", "CH.5.f", "CH.5.g",
+    /* History 1.0: World History & Geography to 1500 A.D. (WHI) */
+    "WHI.1.a", "WHI.1.b", "WHI.1.c", "WHI.1.d", "WHI.1.e", "WHI.2.a", "WHI.2.b", "WHI.2.c", "WHI.2.d", "WHI.3.a", "WHI.3.b", "WHI.3.c", "WHI.3.d", "WHI.3.e", "WHI.3.f", "WHI.4.a", "WHI.4.b", "WHI.4.c", "WHI.4.d", "WHI.4.e", "WHI.4.f", "WHI.5.a", "WHI.5.b", "WHI.5.c", "WHI.5.d", "WHI.5.e", "WHI.6.a", "WHI.6.b", "WHI.6.c", "WHI.6.d", "WHI.6.e", "WHI.7.a", "WHI.7.b", "WHI.7.c", "WHI.7.d", "WHI.7.e", "WHI.7.f", "WHI.8.a", "WHI.8.b", "WHI.8.c", "WHI.8.d", "WHI.8.e", "WHI.9.a", "WHI.9.b", "WHI.9.c", "WHI.9.d", "WHI.9.e", "WHI.9.f", "WHI.10.a", "WHI.10.b", "WHI.10.c", "WHI.10.d", "WHI.11.a", "WHI.11.b", "WHI.11.c", "WHI.11.d", "WHI.11.e", "WHI.12.a", "WHI.12.b", "WHI.12.c", "WHI.12.d", "WHI.12.e", "WHI.13.a", "WHI.13.b", "WHI.13.c",
+    /* History 1.0: World History & Geography: 1500 A.D. to the Present (WHII) */
+    "WHII.1.a", "WHII.1.b", "WHII.1.c", "WHII.2.a", "WHII.2.b", "WHII.2.c", "WHII.3.a", "WHII.3.b", "WHII.3.c", "WHII.4.a", "WHII.4.b", "WHII.4.c", "WHII.4.d", "WHII.4.e", "WHII.4.f", "WHII.4.g", "WHII.5.a", "WHII.5.b", "WHII.5.c", "WHII.5.d", "WHII.6.a", "WHII.6.b", "WHII.6.c", "WHII.6.d", "WHII.6.e", "WHII.6.f", "WHII.6.g", "WHII.6.h", "WHII.7.a", "WHII.7.b", "WHII.7.c", "WHII.7.d", "WHII.7.e", "WHII.8.a", "WHII.8.b", "WHII.8.c", "WHII.8.d", "WHII.8.e", "WHII.8.f", "WHII.8.g", "WHII.9.a", "WHII.9.b", "WHII.9.c", "WHII.9.d", "WHII.9.e", "WHII.9.f", "WHII.10.a", "WHII.10.b", "WHII.10.c", "WHII.10.d", "WHII.10.e", "WHII.10.f", "WHII.11.a", "WHII.11.b", "WHII.11.c", "WHII.11.d", "WHII.12.a", "WHII.12.b", "WHII.12.c", "WHII.12.d", "WHII.12.e",
+    /* History 1.0: Virginia & United States History (VUS) */
+    "VUS.1.a", "VUS.1.b", "VUS.1.c", "VUS.1.d", "VUS.2.a", "VUS.2.b", "VUS.2.c", "VUS.2.d", "VUS.3.a", "VUS.3.b", "VUS.3.c", "VUS.3.d", "VUS.3.e", "VUS.4.a", "VUS.4.b", "VUS.4.c", "VUS.4.d", "VUS.4.e", "VUS.5.a", "VUS.5.b", "VUS.5.c", "VUS.5.d", "VUS.5.e", "VUS.5.f", "VUS.5.g", "VUS.6.a", "VUS.6.b", "VUS.6.c", "VUS.6.d", "VUS.6.e", "VUS.6.f", "VUS.7.a", "VUS.7.b", "VUS.7.c", "VUS.7.d", "VUS.7.e", "VUS.7.f", "VUS.7.g", "VUS.7.h", "VUS.8.a", "VUS.8.b", "VUS.8.c", "VUS.8.d", "VUS.9.a", "VUS.9.b", "VUS.9.c", "VUS.9.d", "VUS.9.e", "VUS.9.f", "VUS.9.g", "VUS.10.a", "VUS.10.b", "VUS.10.c", "VUS.10.d", "VUS.10.e", "VUS.10.f", "VUS.10.g", "VUS.10.h", "VUS.11.a", "VUS.11.b", "VUS.11.c", "VUS.11.d", "VUS.11.e", "VUS.12.a", "VUS.12.b", "VUS.12.c", "VUS.12.d", "VUS.12.e", "VUS.12.f", "VUS.12.g", "VUS.13.a", "VUS.13.b", "VUS.14.a", "VUS.14.b", "VUS.14.c", "VUS.14.d", "VUS.14.e", "VUS.14.f", "VUS.14.g", "VUS.14.h", "VUS.15.a", "VUS.15.b", "VUS.15.c", "VUS.15.d", "VUS.15.e", "VUS.16.a", "VUS.16.b", "VUS.16.c", "VUS.16.d", "VUS.16.e", "VUS.16.f", "VUS.17.a", "VUS.17.b", "VUS.17.c", "VUS.17.d", "VUS.17.e",
+    /* History 1.0: Virginia & United States Government (GOVT) */
+    "GOVT.1.a", "GOVT.1.b", "GOVT.1.c", "GOVT.1.d", "GOVT.2.a", "GOVT.2.b", "GOVT.2.c", "GOVT.2.d", "GOVT.2.e", "GOVT.2.f", "GOVT.3.a", "GOVT.3.b", "GOVT.3.c", "GOVT.3.d", "GOVT.3.e", "GOVT.3.f", "GOVT.3.g", "GOVT.4.a", "GOVT.4.b", "GOVT.4.c", "GOVT.4.d", "GOVT.4.e", "GOVT.5.a", "GOVT.5.b", "GOVT.5.c", "GOVT.5.d", "GOVT.5.e", "GOVT.5.f", "GOVT.5.g", "GOVT.5.h", "GOVT.6.a", "GOVT.6.b", "GOVT.6.c", "GOVT.6.d", "GOVT.6.e", "GOVT.6.f", "GOVT.7.a", "GOVT.7.b", "GOVT.7.c", "GOVT.8.a", "GOVT.8.b", "GOVT.8.c", "GOVT.9.a", "GOVT.9.b", "GOVT.9.c", "GOVT.9.d", "GOVT.10.a", "GOVT.10.b", "GOVT.10.c", "GOVT.10.d", "GOVT.10.e", "GOVT.10.f", "GOVT.11.a", "GOVT.11.b", "GOVT.11.c", "GOVT.11.d", "GOVT.11.e", "GOVT.11.f", "GOVT.12.a", "GOVT.12.b", "GOVT.12.c", "GOVT.13.a", "GOVT.13.b", "GOVT.13.c", "GOVT.13.d", "GOVT.13.e", "GOVT.13.f", "GOVT.14.a", "GOVT.14.b", "GOVT.14.c", "GOVT.14.d", "GOVT.14.e", "GOVT.14.f", "GOVT.14.g"
   ];
   var STD_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ.abcdefghijklmnopqrstuvwxyz-_", STD_MAX = 24;
   /* format 3: the badges, by number. APPEND ONLY. "m-<mode>-<level>" = win that level in that game mode. */
@@ -92,7 +100,11 @@
     "m-ram-10", "m-ram-25", "m-ram-50", "m-ram-75", "m-ram-100", "m-bow-10", "m-bow-25", "m-bow-50", "m-bow-75", "m-bow-100",
     "m-raft-10", "m-raft-25", "m-raft-50", "m-raft-75", "m-raft-100", "m-row-10", "m-row-25", "m-row-50", "m-row-75", "m-row-100",
     /* Chemistry 1.4: one badge pair per unit (the Reading game's rl/ri/rv/dsr badges are not shown there, js/badges.js) */
-    "inv25", "inv100", "atom25", "atom100", "rxn25", "rxn100", "mole25", "mole100", "kmt25", "kmt100"];
+    "inv25", "inv100", "atom25", "atom100", "rxn25", "rxn100", "mole25", "mole100", "kmt25", "kmt100",
+    /* History 1.0: one badge pair per unit of a history course ("u3-25" = 25 right on the first try in the course's
+       third unit; the unit's name comes from BUILDS[game].skills, see badgeInfo) */
+    "u1-25", "u1-100", "u2-25", "u2-100", "u3-25", "u3-100", "u4-25", "u4-100", "u5-25", "u5-100", "u6-25", "u6-100",
+    "u7-25", "u7-100"];
   var MODE_NAMES = { ALL: "Mixed", maze: "Labyrinth", raid: "Eagle Swoop", rocks: "Rune Rocks", sky: "Sun Chariot", ring: "Wolf Ring",
     worms: "Root Worms", strait: "Scylla and Charybdis", ram: "Under the Ram", bow: "Bend the Bow", raft: "Calypso's Raft", row: "Row Past the Sirens" };
   var TIER_NAMES = { 10: "Bronze", 25: "Silver", 50: "Gold", 75: "Platinum", 100: "Champion" };
@@ -124,8 +136,13 @@
     mole25: ["Mole Counter", "Get 25 Molar Relationships questions right on the first try."], mole100: ["Stoichiometry Master", "Get 100 Molar Relationships questions right on the first try."],
     kmt25: ["Gas Law Reader", "Get 25 Phases of Matter questions right on the first try."], kmt100: ["Phase Master", "Get 100 Phases of Matter questions right on the first try."]
   };
-  /* badgeInfo("m-raid-25") -> { id, name, desc, mode, tier } */
-  function badgeInfo(id) {
+  /* badgeInfo("m-raid-25") -> { id, name, desc, mode, tier }; badgeInfo("u3-25", "WHI") names the course's unit */
+  function badgeInfo(id, build) {
+    var u = /^u(\d)-(\d+)$/.exec(id || "");
+    if (u) {
+      var B = BUILDS[build], sk = B && B.skills[+u[1] - 1], unit = sk ? sk[1] : "Unit " + u[1];
+      return { id: id, name: unit + (u[2] === "25" ? " Scholar" : " Master"), desc: "Get " + u[2] + " " + unit + " questions right on the first try.", unit: +u[1], tier: +u[2] };
+    }
     var m = /^m-([A-Za-z]+)-(\d+)$/.exec(id || "");
     if (m) {
       var nm = MODE_NAMES[m[1]] || m[1];
@@ -152,7 +169,21 @@
        Reading game's and the Reading game's never read as its own */
     CHM: { id: 4, tag: "CHM", name: "SOL Lab (Virginia Chemistry)", short: "Virginia Chemistry", assignment: "SOL Lab Chemistry progress",
       skillWord: "Unit", secret: "chm.5Wn7-osprey-c83e-indigo",
-      skills: [["INV", "Scientific Investigation"], ["ATOM", "Atoms & Periodic Table"], ["RXN", "Formulas & Reactions"], ["MOLE", "Molar Relationships"], ["KMT", "Gases & Phases"]] }
+      skills: [["INV", "Scientific Investigation"], ["ATOM", "Atoms & Periodic Table"], ["RXN", "Formulas & Reactions"], ["MOLE", "Molar Relationships"], ["KMT", "Gases & Phases"]] },
+    /* History 1.0: the four Virginia history and government games (courses/<ID>/course.js), each with its own tag,
+       secret and units. skills = the course's units in course.js order (the "u1"… badges follow the same order). */
+    WHI: { id: 5, tag: "WHI", name: "SOL Lab (Virginia World History I)", short: "World History I", assignment: "SOL Lab World History I progress",
+      skillWord: "Unit", secret: "whi.2Hc6-ibis-d41f-ochre",
+      skills: [["EARLY", "Early Humans & Fertile Crescent"], ["ASIA", "Ancient India & China"], ["CLASS", "Persia, Greece & Rome"], ["ISLAM", "Islam & West Africa"], ["EASIA", "Medieval China & Japan"], ["EUROPE", "Medieval Europe & Renaissance"], ["AMER", "Maya, Aztec & Inca"]] },
+    WHII: { id: 6, tag: "WHII", name: "SOL Lab (Virginia World History II)", short: "World History II", assignment: "SOL Lab World History II progress",
+      skillWord: "Unit", secret: "whii.8Jt3-falcon-5b0e-teal",
+      skills: [["R1500", "1500, Renaissance & Reformation"], ["EXPL", "Exploration & Colonization"], ["REVO", "Age of Revolutions"], ["GLOB", "Asia & Africa 1500-1800"], ["INDU", "Industry & Imperialism"], ["WARS", "World Wars & Depression"], ["COLD", "Cold War & Modern World"]] },
+    VUS: { id: 7, tag: "VUS", name: "SOL Lab (Virginia & U.S. History)", short: "VA & US History", assignment: "SOL Lab VA & US History progress",
+      skillWord: "Unit", secret: "vus.6Pq1-eagle-a72c-crimson",
+      skills: [["COLO", "Early America & Colonies"], ["REVO", "Revolution & Constitution"], ["CIVW", "Expansion, Civil War & Reconstruction"], ["INDU", "Industry, Reform & WWI"], ["WAR2", "1920s, Depression & WWII"], ["CRM", "Civil Rights Movement"], ["MODN", "Cold War & Modern America"]] },
+    GOVT: { id: 8, tag: "GOVT", name: "SOL Lab (Virginia & U.S. Government)", short: "VA & US Government", assignment: "SOL Lab Government progress",
+      skillWord: "Unit", secret: "govt.4Lr9-cardinal-e60b-slate",
+      skills: [["FOUN", "Foundations of Government"], ["CONS", "Constitution & Values"], ["CITZ", "Citizenship & Elections"], ["FED", "Federal Government"], ["VAGOV", "Virginia & Local Government"], ["RGTS", "Liberties & Rights"], ["ECON", "Foreign Policy & Economy"]] }
   };
   function buildById(id) { for (var k in BUILDS) if (BUILDS[k].id === id) return k; return null; }
 
@@ -381,7 +412,7 @@
      also has .format 2 and .save (see readSave) */
   function decode(text) {
     var t = String(text || "").toUpperCase().replace(/[\s-]+/g, "");
-    var m = /^SOL(\d+)(VA|NJ|ODY|CHM)([0-9A-Z]*)$/.exec(t);
+    var m = /^SOL(\d+)(VA|NJ|ODY|CHM|WHII|WHI|VUS|GOVT)([0-9A-Z]*)$/.exec(t);
     if (!m) return { ok: false, build: null, why: "This is not a progress code." };
     var build = m[2], B = BUILDS[build];
     var fmt = +m[1];
@@ -435,7 +466,7 @@
   }
   /* the canonical way to write a code (blocks of 4) */
   function format(t) {
-    var m = /^SOL(\d+)(VA|NJ|ODY|CHM)([0-9A-Z]*)$/.exec(String(t).toUpperCase().replace(/[\s-]+/g, ""));
+    var m = /^SOL(\d+)(VA|NJ|ODY|CHM|WHII|WHI|VUS|GOVT)([0-9A-Z]*)$/.exec(String(t).toUpperCase().replace(/[\s-]+/g, ""));
     return m ? "SOL" + m[1] + "-" + m[2] + "-" + (m[3].match(/.{1,4}/g) || []).join("-") : String(t);
   }
 
@@ -443,7 +474,7 @@
      word typed after it (on the same line) breaks it, the last space-separated pieces are dropped one at a time until
      it checks out. `before` is the text on the line before the code (a "Name: CODE" line gives the name). */
   function findCodes(text) {
-    var out = [], re = /SOL[ \t]*(\d+)[ \t]*-?[ \t]*(VA|NJ|ODY|CHM)([0-9A-Za-z \t-]*)/gi, m;
+    var out = [], re = /SOL[ \t]*(\d+)[ \t]*-?[ \t]*(VA|NJ|ODY|CHM|WHII|WHI|VUS|GOVT)([0-9A-Za-z \t-]*)/gi, m;
     text = String(text || "");
     while ((m = re.exec(text))) {
       var lineStart = text.lastIndexOf("\n", m.index) + 1;

@@ -32,9 +32,31 @@ var LOOK = {
   NJ: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
   /* the Odyssey's black glaze, wine and ochre (css/odyssey.css) */
   ODY: { BG: "#140c0a", PANEL: "#22130f", PANEL2: "#2e1a14", LINE: "#6a4430", GOLD: "#e8b04a" },
-  CHM: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" }
+  CHM: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  /* History 1.0 */
+  WHI: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  WHII: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  VUS: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" },
+  GOVT: { BG: "#0b0d13", PANEL: "#151923", PANEL2: "#1d2230", LINE: "#3a4150", GOLD: "#f5c842" }
 };
-function fileName(st) { return (st === "ODY" ? "SOLLabyrinth-Odyssey" : st === "CHM" ? "SOLLab-VA-Chem" : "SOLLabyrinth-" + st) + "-Teacher.html"; }
+/* History 1.0: the four history games' files are SOLLab-VA-<course> (SOLLab-VA-WHI-Teacher.html …) */
+var HIST = { WHI: 1, WHII: 1, VUS: 1, GOVT: 1 };
+function fileName(st) { return (st === "ODY" ? "SOLLabyrinth-Odyssey" : st === "CHM" ? "SOLLab-VA-Chem" : HIST[st] ? "SOLLab-VA-" + st : "SOLLabyrinth-" + st) + "-Teacher.html"; }
+/* History 1.0: a history course's standards for the report, in js/standards-chm.js's shape, made from courses/<ID>/course.js:
+   each standard with its lettered key concepts nested under it, plus the course's units (UNIT: standard -> unit id) */
+function histStandards(st) {
+  var w = {};
+  require("vm").runInNewContext(fs.readFileSync(path.join(root, "courses", st, "course.js"), "utf8"), { window: w });
+  var H = w.HEIST_COURSE, S = {}, UNIT = {}, NAMES = {}, ORDER = [];
+  Object.keys(H.standards).forEach(function (k) {
+    S[k] = { text: H.standards[k].name, skills: Object.keys(H.standards[k].keys).map(function (L) { return { id: k + "." + L, text: H.standards[k].keys[L], level: "" }; }) };
+  });
+  H.families.forEach(function (f) { if (f.id === "ALL") return; ORDER.push(f.id); NAMES[f.id] = f.label; (f.stds || []).forEach(function (x) { UNIT[x] = f.id; }); });
+  return "(function (root) {\n  var STANDARDS = " + JSON.stringify(S) + ";\n  var SKILL = {};\n" +
+    "  Object.keys(STANDARDS).forEach(function (code) { STANDARDS[code].skills.forEach(function (s) { SKILL[s.id] = { code: code, text: s.text, level: s.level }; }); });\n" +
+    "  root.SolStandards = { STANDARDS: STANDARDS, SKILL: SKILL, UNIT: " + JSON.stringify(UNIT) + ", UNIT_NAMES: " + JSON.stringify(NAMES) + ", UNIT_ORDER: " + JSON.stringify(ORDER) + " };\n" +
+    "})(window);\n";
+}
 function build(st, version) {
   st = String(st || "VA").toUpperCase();
   var B = C.BUILDS[st];
@@ -43,7 +65,7 @@ function build(st, version) {
   var code = fs.readFileSync(path.join(root, "js", "progress-code.js"), "utf8");
   var app = fs.readFileSync(path.join(__dirname, "teacher", "teacher.js"), "utf8");
   /* v5.17: the standards and their skills for the standards report (Chemistry: js/standards-chm.js, the CH key concepts) */
-  var stds = st === "CHM" ? fs.readFileSync(path.join(root, "js", "standards-chm.js"), "utf8") : "";
+  var stds = st === "CHM" ? fs.readFileSync(path.join(root, "js", "standards-chm.js"), "utf8") : HIST[st] ? histStandards(st) : "";
   [code, app, stds].forEach(function (js) { if (/<\/script/i.test(js)) throw new Error("tools/build-teacher.js: a script holds </script"); });
   var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;"); };
   var vals = Object.assign({

@@ -30,6 +30,8 @@
  */
 (function () {
   "use strict";
+  /* History 1.0: a history course calls its stimulus "sources" (courses/<ID>/course.js), Chemistry "lab notes" */
+  var NOTES = (typeof window !== "undefined" && window.HEIST_COURSE && window.HEIST_COURSE.source) || "lab notes";
 
   var MODES = {
     raid: {
@@ -38,7 +40,7 @@
       rules: "A wrong letter costs a life. So does bird poo landing on you or a bird crashing into you. If an eagle carries Sol off, free him before the question is answered, or it costs a life. With two Sols, a hit or a beam takes one Sol away instead of a life. You can't shoot until the flock has flown into formation. While you clear the sky after the last answer, a hit still costs a life.",
       keys: "◀ ▶ or A / D move · Space, FIRE or a mouse button shoots (clicking does not move Sol).",
       tip: "EAGLE SWOOP — shoot the eagle with the right letter. If an eagle carries Sol off, hit it to get him back: two Sols!",
-      hint1: "Shoot the eagle carrying the right letter — it takes two arrows. The lab notes stay in the side panel.",
+      hint1: "Shoot the eagle carrying the right letter — it takes two arrows." + " The " + NOTES + " stay in the side panel.",
       hint2: "This question has two right letters. Shoot both eagles that carry them.",
       /* v5.12: what is left to shoot down after the last answer (the teacher's rule) */
       clear: { what: "sky", one: "bird", many: "birds" },
@@ -59,7 +61,7 @@
       rules: "Pulling in a wrong letter costs a life. So does blasting the right answer, a saucer's shot, or a rock hitting your ship — including a rock you let go of before it reached you.",
       keys: "◀ ▶ turn · ▲ thrust · Space, FIRE or the left mouse button shoots · ▼, Shift, PULL or the right mouse button holds the beam. The mouse never steers the ship.",
       tip: "RUNE ROCKS — beam in the right letter, blast the rest. Don't get hit.",
-      hint1: "Pull in the rock with the right letter (▼, Shift or PULL). Blast the others. The lab notes stay in the side panel.",
+      hint1: "Pull in the rock with the right letter (▼, Shift or PULL). Blast the others." + " The " + NOTES + " stay in the side panel.",
       hint2: "This question has two right letters. Pull in both rocks that carry them.",
       news: ["",
         "Comets: a red line flashes where a comet will streak across a second later. Get out of its way.",
@@ -78,7 +80,7 @@
       rules: "Shooting a wrong orb costs a life. So does a feather, a spark, or flying into a raven or a wisp.",
       keys: "Arrow keys, WASD or the on-screen pad fly · Space, FIRE or a mouse button shoots (clicking does not move the chariot).",
       tip: "SUN CHARIOT — shoot the right orb through the gap in its shield. Dodge the ravens, wisps and feathers.",
-      hint1: "Shoot the orb with the right letter through the gap in its turning shield. The lab notes stay in the side panel.",
+      hint1: "Shoot the orb with the right letter through the gap in its turning shield." + " The " + NOTES + " stay in the side panel.",
       hint2: "This question has two right letters. Shoot both orbs that carry them, through the gaps in their shields.",
       news: ["",
         "A raven flies in front of one orb to guard it, the orbs weave more, and the shield gaps are narrower.",
@@ -97,7 +99,7 @@
       rules: "Shooting a wrong stone costs a life. So does letting a wolf reach you.",
       keys: "Arrow keys or WASD move and aim · Space or FIRE shoots · or click or tap to aim and shoot (Sol does not move).",
       tip: "WOLF RING — watch for the right runestone to rise, and shoot it. Keep the wolves off.",
-      hint1: "The runestones rise after the wolves come. Shoot the one with the right letter while it is up. The lab notes stay in the side panel.",
+      hint1: "The runestones rise after the wolves come. Shoot the one with the right letter while it is up." + " The " + NOTES + " stay in the side panel.",
       hint2: "This question has two right letters. Shoot both runestones that carry them.",
       news: ["",
         "The alpha wolf: a big grey wolf that takes three arrows to send away.",
@@ -117,7 +119,7 @@
       rules: "Shooting a wrong letter costs a life. So does a worm reaching Sol, or a wolf or a falling raven running into you. One arrow in the air at a time. While you clear the field after the last answer, a hit still costs a life.",
       keys: "◀ ▶ ▲ ▼ or WASD move Sol in the clearing · Space, FIRE or a mouse button shoots (clicking does not move Sol).",
       tip: "ROOT WORMS — shoot the glowing segment with the right letter. Keep the worms off you.",
-      hint1: "Shoot the worm segment that glows with the right letter. The lab notes stay in the side panel.",
+      hint1: "Shoot the worm segment that glows with the right letter." + " The " + NOTES + " stay in the side panel.",
       hint2: "This question has two right letters. Shoot both glowing segments that carry them.",
       clear: { what: "field", one: "worm segment", many: "worm segments" },
       news: ["",
@@ -139,7 +141,7 @@
       rules: "Sailing through a wrong gate costs a life. So does hitting a rock, touching the dark centre of Charybdis, or being under one of Scylla's heads when it strikes — she snatches a crewman, as she took six men from Odysseus. On the run to the end of the strait after the last answer, a hit still costs a life.",
       keys: "Arrow keys, WASD or the on-screen pad steer · Space, ROW or a mouse button: the crew pulls hard for a moment (a burst of speed). The mouse does not steer.",
       tip: "SCYLLA AND CHARYBDIS — steer through the gate with the right letter and through the gaps in the rocks, all the way to the end of the strait. Keep away from the whirlpool and from Scylla's shadows.",
-      hint1: "Steer between the two rocks marked with the right letter. The lab notes stay in the side panel.",
+      hint1: "Steer between the two rocks marked with the right letter." + " The " + NOTES + " stay in the side panel.",
       hint2: "This question has two right letters. Sail through both gates that carry them.",
       clear: { what: "strait", one: "row of rocks", many: "rows of rocks", tag: "CORRECT! NOW GET THROUGH THE STRAIT!", done: "THROUGH THE STRAIT!",
         sweep: "Clean run: not one hit on the way through the strait" },

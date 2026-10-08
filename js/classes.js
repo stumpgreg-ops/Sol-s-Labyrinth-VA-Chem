@@ -42,14 +42,15 @@
   for (var i = P.length - 1; i >= 0; i--) if (!P[i].claims.length) P.splice(i, 1);
 
   /* 2. the class's own sets become packs: sentences numbered like the regular passages */
-  var gradeNum = "CH";   /* Chemistry build: SOL tags read CH.<standard> */
+  var gradeNum = global.HEIST_PREFIX || "CH";   /* Chemistry build: SOL tags read CH.<standard>; History 1.0: WHI.<standard> … */
   /* a class set's pack must sit in a real unit: "ALL" (Full review) draws from the five unit pools, never from a
      pack whose family is "ALL" itself. A unit class keeps its unit; a Full-review class files the set under the
      unit of its first question's standard (CH.1 → Scientific Investigation, …). */
   var FAMS = global.HEIST_FAMILIES || [];
   function unitFor(grade, skill) {
     if (grade && grade !== "ALL" && FAMS.some(function (f) { return f.id === grade; })) return grade;
-    var hit = FAMS.filter(function (f) { return f.kind === "CH." + String(skill || "1"); })[0];
+    var std = gradeNum + "." + String(skill || "1");
+    var hit = FAMS.filter(function (f) { return f.id !== "ALL" && (f.kind === std || (f.stds || []).indexOf(std) !== -1); })[0];
     return hit ? hit.id : (FAMS.filter(function (f) { return f.id !== "ALL"; })[0] || { id: "INV" }).id;
   }
   function passageHtml(text) {
@@ -70,7 +71,7 @@
       kind: "Class set · " + esc(set.title || ""), blurb: "", level: set.level >= 1 && set.level <= 3 ? set.level : 2, classSet: true,
       passage: passageHtml(set.passage),
       claims: qs.map(function (q, qi) {
-        var skill = /^[1-5]$/.test(String(q.skill || "")) ? String(q.skill) : "1";   /* CH.1–CH.5 */
+        var skill = /^([1-9]|1[0-9])$/.test(String(q.skill || "")) ? String(q.skill) : "1";   /* CH.1–CH.5; WHI.1–WHI.13 … */
         return { id: String(q.id || "q" + (qi + 1)), sol: gradeNum + "." + skill, strand: gradeNum + "." + skill, stem: String(q.stem),
           choices: q.choices.slice(0, 4).map(function (t, k) { return { letter: LET[k], text: String(t || "") }; }).filter(function (ch) { return ch.text; }),
           correct: q.correct };

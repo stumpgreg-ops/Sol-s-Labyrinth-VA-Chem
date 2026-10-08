@@ -1,24 +1,47 @@
 #!/usr/bin/env node
-/* Validates the question packs in js/content*.js.
-   Usage: node tools/validate-content.js            (all files)
+/* Validates the question packs in js/content*.js (Chemistry) or courses/<ID>/*.js (History 1.0: WHI, WHII, VUS, GOVT).
+   Usage: node tools/validate-content.js                      (all Chemistry files)
           node tools/validate-content.js js/content3.js
-   Loads content.js first (it defines HEIST_PACKS, the units and the standards map), then
-   every other content file, and checks structure, uniqueness, answer keys, standard codes
-   and stimulus length. Exit 1 on any error. */
+          node tools/validate-content.js WHI                  (every pack file of a history course)
+          node tools/validate-content.js courses/WHI/early.js (one file of a course)
+   Loads the course file (courses/<ID>/course.js) and content.js first (they define HEIST_PACKS, the units and the
+   standards map), then every pack file, and checks structure, uniqueness, answer keys, standard codes and stimulus
+   length. Exit 1 on any error. */
 var fs = require("fs"), path = require("path"), vm = require("vm");
 var root = path.join(__dirname, "..");
 var args = process.argv.slice(2);
-var all = fs.readdirSync(path.join(root, "js")).filter(function (f) { return /^content\d*\.js$/.test(f); })
-  .sort(function (a, b) { return num(a) - num(b); });
 function num(f) { var m = f.match(/content(\d*)\.js/); return m[1] === "" ? 0 : parseInt(m[1], 10); }
-var files = args.length ? ["content.js"].concat(args.map(function (a) { return path.basename(a); }).filter(function (f) { return f !== "content.js"; })) : all;
+var course = null;
+args = args.filter(function (a) {
+  if (/^[A-Z]+$/.test(a) && fs.existsSync(path.join(root, "courses", a, "course.js"))) { course = a; return false; }
+  var m = /courses[\/\\]([A-Z]+)[\/\\]/.exec(a);
+  if (m) course = m[1];
+  return true;
+});
+var files;   /* paths relative to the repository */
+if (course) {
+  var cdir = path.join("courses", course);
+  var packFiles = args.length ? args.map(function (a) { return path.join(cdir, path.basename(a)); }).filter(function (f) { return path.basename(f) !== "course.js"; })
+    : courseFiles(course);
+  files = [path.join(cdir, "course.js"), path.join("js", "content.js")].concat(packFiles);
+} else {
+  var all = fs.readdirSync(path.join(root, "js")).filter(function (f) { return /^content\d*\.js$/.test(f); })
+    .sort(function (a, b) { return num(a) - num(b); }).map(function (f) { return path.join("js", f); });
+  files = args.length ? [path.join("js", "content.js")].concat(args.map(function (a) { return path.join("js", path.basename(a)); }).filter(function (f) { return path.basename(f) !== "content.js"; })) : all;
+}
+/* a course's pack files, in the order its page loads them (courses/<ID>/units.json) */
+function courseFiles(id) {
+  var list = JSON.parse(fs.readFileSync(path.join(root, "courses", id, "units.json"), "utf8"));
+  return list.map(function (f) { return path.join("courses", id, f); }).filter(function (f) { return fs.existsSync(path.join(root, f)); });
+}
+var PREFIX = "CH";
 
 var sandbox = { window: {}, console: console };
 sandbox.global = sandbox.window;
 var errors = [], warnings = [];
 var before = 0, perFile = {};
 files.forEach(function (f) {
-  var src = fs.readFileSync(path.join(root, "js", f), "utf8");
+  var src = fs.readFileSync(path.join(root, f), "utf8");
   try { vm.runInNewContext(src, sandbox, { filename: f }); }
   catch (e) { errors.push(f + ": does not load: " + e.message); return; }
   var n = (sandbox.window.HEIST_PACKS || []).length;
@@ -27,10 +50,12 @@ files.forEach(function (f) {
 var W = sandbox.window;
 var packs = W.HEIST_PACKS || [];
 var FAMILIES = W.HEIST_FAMILIES || [], STANDARDS = W.HEIST_STANDARDS || {};
+PREFIX = W.HEIST_PREFIX || "CH";
+var SOL_RE = new RegExp("^(" + PREFIX + "\\.\\d+)\\.([a-j])$");
 var famIds = FAMILIES.map(function (f) { return f.id; }).filter(function (id) { return id !== "ALL"; });
 function famDef(id) { return FAMILIES.filter(function (f) { return f.id === id; })[0]; }
 var ids = {}, stems = {}, passages = {};
-var stats = {}, levelStats = {};
+var stats = {}, levelStats = {}, keySeen = {};
 function words(html) { return String(html).replace(/<[^>]+>/g, " ").replace(/\(\d+\)/g, " ").replace(/\s+/g, " ").trim().split(" ").filter(Boolean).length; }
 
 packs.forEach(function (p, pi) {
@@ -59,14 +84,15 @@ packs.forEach(function (p, pi) {
     if (!c.id) errors.push(w + ": missing claim id");
     if (p.claims.filter(function (x) { return x.id === c.id; }).length > 1) errors.push(w + ": duplicate claim id in pack");
     var sol = String(c.sol || "");
-    var m = /^(CH\.[1-5])\.([a-j])$/.exec(sol);
-    if (!m) errors.push(w + ": sol code should look like CH.4.b, got " + sol);
+    var m = SOL_RE.exec(sol);
+    if (!m) errors.push(w + ": sol code should look like " + PREFIX + ".4.b, got " + sol);
     else {
       var std = STANDARDS[m[1]];
       if (!std || !std.keys[m[2]]) errors.push(w + ": " + sol + " is not a key idea in the standards map");
       if (fam && fam.stds && !fam.stds.some(function (s) { return sol.toUpperCase() === s.toUpperCase() || sol.toUpperCase().indexOf(s.toUpperCase() + ".") === 0; }))
         errors.push(w + ": " + sol + " is outside unit " + p.family + " (" + fam.stds.join(", ") + ")");
       stats[m[1]] = (stats[m[1]] || 0) + 1;
+      keySeen[sol] = (keySeen[sol] || 0) + 1;
       solSeen[sol] = true;
     }
     if (c.partB != null) {
@@ -76,6 +102,7 @@ packs.forEach(function (p, pi) {
       else if (pb.partB) errors.push(w + ": a Part B claim cannot have its own partB");
     }
     if (!c.stem || typeof c.stem !== "string") errors.push(w + ": missing stem");
+    else if (/<[a-z\/][^>]*>/i.test(c.stem)) errors.push(w + ": the stem is plain text (no HTML tags)");
     var sk = (c.stem || "").toLowerCase().replace(/\s+/g, " ").trim();
     if (stems[sk] && stems[sk] !== where) warnings.push(w + ": stem repeats one in " + stems[sk]); stems[sk] = where;
     if (!Array.isArray(c.choices) || c.choices.length !== 4) { errors.push(w + ": needs exactly 4 choices"); return; }
@@ -102,6 +129,12 @@ packs.forEach(function (p, pi) {
   if (maxSame >= 4) warnings.push(where + ": " + maxSame + " answers share one letter — spread the keys");
 });
 
+/* every key concept of the units loaded has at least one item (only when a whole course or unit is checked) */
+if (course && !args.length) {
+  Object.keys(STANDARDS).forEach(function (std) {
+    Object.keys(STANDARDS[std].keys).forEach(function (L) { if (!keySeen[std + "." + L]) warnings.push("no item for " + std + "." + L + " (" + STANDARDS[std].keys[L] + ")"); });
+  });
+}
 console.log("Files: " + files.map(function (f) { return f + " (" + (perFile[f] || 0) + " packs)"; }).join(", "));
 console.log("Packs: " + packs.length + "  Questions: " + packs.reduce(function (a, p) { return a + (p.claims ? p.claims.length : 0); }, 0));
 Object.keys(stats).sort().forEach(function (k) { console.log("  " + k + ": " + stats[k]); });

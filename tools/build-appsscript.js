@@ -21,24 +21,39 @@
 var fs = require("fs"), path = require("path"), zlib = require("zlib"), crypto = require("crypto");
 var root = path.join(__dirname, "..");
 var st = "VA", lo = "va";
-var src = root, out = path.join(root, "appsscript"), outSt = out, dist = path.join(root, "dist");
-var BRANCH = process.argv[2] || (function () {
+/* History 1.0: node tools/build-appsscript.js WHI (or WHII, VUS, GOVT) bundles that history course's page (WHI.html)
+   into dist/appsscript-WHI/, the input of tools/build-canvas.js WHI. Only the Chemistry bundle is committed (appsscript/). */
+var HISTORY = ["WHI", "WHII", "VUS", "GOVT"];
+var argv = process.argv.slice(2), COURSE = null;
+if (argv[0] && HISTORY.indexOf(argv[0].toUpperCase()) !== -1) COURSE = argv.shift().toUpperCase();
+var src = root, dist = path.join(root, "dist"), out = COURSE ? path.join(dist, "appsscript-" + COURSE) : path.join(root, "appsscript"), outSt = out;
+var BRANCH = argv[0] || (function () {
   try { return require("child_process").execSync("git rev-parse --abbrev-ref HEAD", { cwd: root }).toString().trim(); } catch (e) { return "claude/youthful-tesla-cgmb12"; }
 })();
 var REPO_RAW = "https://raw.githubusercontent.com/stumpgreg-ops/Sol-s-Labyrinth-VA-Chem/" + BRANCH + "/appsscript/";
 var REPO_PAGES = "https://stumpgreg-ops.github.io/Sol-s-Labyrinth-VA-Chem/appsscript/";
 var PART_BYTES = 3 * 1024 * 1024;
 var TITLE = "SOL Lab · Virginia EOC Chemistry";
+var PAGE = "index.html", TEACHER = "CHM";
 /* left out of the bundle: the tooling, the build output itself, docs, and the files the page does not load */
 var SKIP_DIRS = { "tools": 1, "dist": 1, "docs": 1, "appsscript": 1, ".git": 1, "node_modules": 1, ".claude": 1, "assets/music": 1 };
 var SKIP_FILES = { "index.html": 1, "admin.html": 1, ".gitignore": 1, ".DS_Store": 1, "Thumbs.db": 1 };
+/* History 1.0: each game carries only its own page's content, course and teacher page */
+var SKIP_PATHS = {};   /* by path from the repository root (a course page and its teacher page share a file name) */
+HISTORY.forEach(function (c) { SKIP_PATHS[c + ".html"] = 1; if (c !== COURSE) { SKIP_DIRS["courses/" + c] = 1; SKIP_PATHS["teacher/" + c + ".html"] = 1; } });
+if (COURSE) {
+  PAGE = COURSE + ".html"; TEACHER = COURSE;
+  SKIP_PATHS["teacher/CHM.html"] = 1;
+  fs.readdirSync(path.join(root, "js")).forEach(function (n) { if (/^content\d+\.js$/.test(n)) SKIP_PATHS["js/" + n] = 1; });   /* the Chemistry packs */
+  TITLE = (fs.readFileSync(path.join(root, PAGE), "utf8").match(/<title>([^<]*)<\/title>/) || [0, "SOL Lab"])[1];
+}
 
-var html = fs.readFileSync(path.join(src, "index.html"), "utf8");
+var html = fs.readFileSync(path.join(src, PAGE), "utf8");
 var version = (html.match(/\?v=([0-9.]+)/) || [0, "0"])[1];
 /* v5.15 (Chemistry 1.4): the Teacher screen inside the game reads teacher/CHM.html (js/teacher-screen.js); it is
    rebuilt here from tools/teacher and js/progress-code.js, committed, and travels in the bundle like any other file */
 fs.mkdirSync(path.join(root, "teacher"), { recursive: true });
-fs.writeFileSync(path.join(root, "teacher", "CHM.html"), require("./build-teacher").build("CHM", version));
+fs.writeFileSync(path.join(root, "teacher", TEACHER + ".html"), require("./build-teacher").build(TEACHER, version));
 
 /* ── the files: everything the built game has except music, docs and the page itself ── */
 var files = [];
@@ -46,7 +61,7 @@ var files = [];
   fs.readdirSync(d).sort().forEach(function (n) {
     var p = path.join(d, n), rel = path.relative(src, p).split(path.sep).join("/");
     if (fs.statSync(p).isDirectory()) { if (!SKIP_DIRS[rel]) walk(p); return; }
-    if (SKIP_FILES[rel] || SKIP_FILES[n] || /\.(md|zip)$/i.test(n)) return;
+    if (SKIP_FILES[rel] || SKIP_FILES[n] || SKIP_PATHS[rel] || /\.(md|zip|json)$/i.test(n) && /^courses\//.test(rel) || /\.(md|zip)$/i.test(n)) return;
     files.push(rel);
   });
 })(src);
@@ -145,7 +160,7 @@ for (var i = 0; i * PART_BYTES < gz.length; i++) {
   fs.writeFileSync(path.join(outSt, name), gz.subarray(i * PART_BYTES, (i + 1) * PART_BYTES));
   parts.push(name);
 }
-var manifest = { state: st, version: version, hash: hash, bytes: gz.length, files: files.length, parts: parts,
+var manifest = { state: st, course: COURSE || "CHM", version: version, hash: hash, bytes: gz.length, files: files.length, parts: parts,
   body: (bodyOpen.match(/class="([^"]*)"/) || [0, ""])[1], css: headCss, scripts: scripts };
 fs.writeFileSync(path.join(outSt, "manifest.json"), JSON.stringify(manifest, null, 1));
 

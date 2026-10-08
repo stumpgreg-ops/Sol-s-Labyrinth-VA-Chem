@@ -49,7 +49,8 @@
      script, so the v5.2 locked-state path below hides the gateway for good. The unit cards on the
      title screen are the families defined in js/content.js (HEIST_FAMILIES). */
   var STATE_DEFS = {
-    VA: { name: "Virginia EOC Chemistry", kicker: "Virginia EOC Chemistry SOL · 100 levels", families: (window.HEIST_FAMILIES || []).map(function (f) { return f.id; }), def: "ALL", hud: "SOL" }
+    /* History 1.0: a history course (courses/<ID>/course.js) names itself */
+    VA: { name: window.HEIST_COURSE ? window.HEIST_COURSE.name : "Virginia EOC Chemistry", kicker: window.HEIST_COURSE ? window.HEIST_COURSE.kicker : "Virginia EOC Chemistry SOL · 100 levels", families: (window.HEIST_FAMILIES || []).map(function (f) { return f.id; }), def: "ALL", hud: "SOL" }
   };
   /* v5.2: the New Jersey and Virginia games are separate builds. tools/build-games.js writes
      window.SOL_STATE into each build's index.html; that build never shows the gateway, never
@@ -3384,7 +3385,7 @@
       },
       {
         title: "Read the question",
-        body: "The lab notes and the question are in the panel on the left. Read them before you move — the answer is the only thing that gets you out."
+        body: "The " + ((window.HEIST_COURSE && window.HEIST_COURSE.source) || "lab notes") + " and the question are in the panel on the left. Read them before you move — the answer is the only thing that gets you out."
       },
       {
         title: "Go get your answer",
@@ -25905,7 +25906,7 @@
         var hint = document.getElementById("read-hint");
         var scroll = document.getElementById("read-scroll");
         if (kick) kick.textContent = (reason === "start" ? "Read first · Level " : "Next question · Level ") + this.night + " · " + (c.sol || "") + (c.isPartB ? " · Part B (evidence)" : c.partB ? " · Part A" : "") + (c.words ? " · " + c.words + " words" : "");
-        if (title) title.textContent = c.packTitle || "Lab notes";
+        if (title) title.textContent = c.packTitle || (window.HEIST_COURSE ? "Sources" : "Lab notes");
         if (pass) pass.innerHTML = c.passage || "";
         if (stem) stem.textContent = c.stem || c.doThis || "";
         if (ol) {
@@ -26784,7 +26785,7 @@
   }
   if (window.SolProgress) {
     SolProgress.hook({
-      state: function () { return "CHM"; },   /* Chemistry: its own progress record, code tag and teacher page (js/progress-code.js BUILDS.CHM) */
+      state: function () { return window.HEIST_COURSE_TAG || "CHM"; },   /* History 1.0: WHI, WHII, VUS or GOVT */   /* Chemistry: its own progress record, code tag and teacher page (js/progress-code.js BUILDS.CHM) */
       nick: function () { var n = document.getElementById("join-nick"); return n ? n.value : ""; },
       active: progressActive,
       modes: function () { return gameModeDefs().map(function (d) { return d.id; }); },

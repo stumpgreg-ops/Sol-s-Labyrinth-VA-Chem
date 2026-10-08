@@ -18,7 +18,18 @@ var fs = require("fs"), path = require("path"), cp = require("child_process");
 var root = path.join(__dirname, ".."), dist = path.join(root, "dist");
 var st = "CHM", lo = "va-chem", LABEL = "SOL Lab · VA Chemistry";
 var src = path.join(root, "appsscript"), outAll = path.join(dist, "canvas"), out = path.join(outAll, "VA-Chem");
-if (!fs.existsSync(path.join(src, "manifest.json"))) throw new Error("tools/build-canvas.js: run tools/build-appsscript.js first");
+/* History 1.0: node tools/build-canvas.js WHI (WHII, VUS, GOVT), after node tools/build-appsscript.js WHI, builds that
+   history game: dist/canvas/VA-WHI/, "SOL Lab VA WHI.zip" and "SOL Lab VA WHI update.zip", files SOLLab-VA-WHI*,
+   saves under solReading.va-whi: (so no two of the games on one Canvas share a save) */
+var COURSE = (process.argv[2] || "").toUpperCase();
+var HIST_LABEL = { WHI: "World History I", WHII: "World History II", VUS: "US History", GOVT: "US Government" };
+if (COURSE && COURSE !== "CHM") {
+  if (!HIST_LABEL[COURSE]) throw new Error("tools/build-canvas.js: no course " + COURSE + " (WHI, WHII, VUS, GOVT, or nothing for Chemistry)");
+  st = COURSE; lo = "va-" + COURSE.toLowerCase(); LABEL = "SOL Lab · VA " + HIST_LABEL[COURSE];
+  src = path.join(dist, "appsscript-" + COURSE); out = path.join(outAll, "VA-" + COURSE);
+}
+var HIST = st !== "CHM";
+if (!fs.existsSync(path.join(src, "manifest.json"))) throw new Error("tools/build-canvas.js: run tools/build-appsscript.js " + (HIST ? st + " " : "") + "first");
 
 var man = JSON.parse(fs.readFileSync(path.join(src, "manifest.json"), "utf8"));
 var gz = Buffer.concat(man.parts.map(function (p) { return fs.readFileSync(path.join(src, p)); }));
@@ -28,11 +39,11 @@ var page = fs.readFileSync(path.join(src, "loader.html"), "utf8");
 var m = page.match(/<script>([\s\S]*)<\/script>/);
 if (!m) throw new Error("tools/build-canvas.js: no loader script in loader.html");
 var loaderJs = m[1];
-var base = "SOLLab-VA-Chem";
+var base = HIST ? "SOLLab-VA-" + st : "SOLLab-VA-Chem";
 /* v5.13.1: the zips' own names. VA's are "SOL Lab VA Eng.zip" and "SOL Lab VA Eng update.zip"; the files inside keep
    their SOLLabyrinth-VA-* names, so an update still replaces the files already in Canvas. */
-var zipFull = "SOL Lab VA Chem.zip";
-var zipUpd = "SOL Lab VA Chem update.zip";
+var zipFull = HIST ? "SOL Lab VA " + st + ".zip" : "SOL Lab VA Chem.zip";
+var zipUpd = HIST ? "SOL Lab VA " + st + " update.zip" : "SOL Lab VA Chem update.zip";
 
 /* ── the data files: 576 KB of bundle each (768 KB of base64; Canvas has served an 800 KB one to a page) ── */
 var PIECE = 576 * 1024, files = [];
@@ -75,7 +86,8 @@ if (fs.existsSync(old)) fs.unlinkSync(old);
 
 /* v5.12.1: each zip carries a plain-text READ ME with the steps and the Canvas embed code, so a teacher never has
    to ask for them. It sits next to the game files in the zip (not in out/, which holds only what goes to Canvas). */
-var GAME_NAMES = { CHM: "SOL Lab (Virginia Chemistry)" };
+var GAME_NAMES = { CHM: "SOL Lab (Virginia Chemistry)", WHI: "SOL Lab (Virginia World History I)", WHII: "SOL Lab (Virginia World History II)",
+  VUS: "SOL Lab (Virginia & U.S. History)", GOVT: "SOL Lab (Virginia & U.S. Government)" };
 var gameName = GAME_NAMES[st] || ("Sol's Labyrinth (" + st + ")");
 /* v5.13: the teacher progress page (it reads the students' progress codes) */
 var teacherBuild = require("./build-teacher"), PB = require("../js/progress-code.js").BUILDS[st];
@@ -112,7 +124,7 @@ function S_setup() {
     sub("Step 1 - Upload the files"),
     ["1. Unzip this file on your computer.",
      "2. In Canvas, open your course, then Files.",
-     "3. Click + Folder and make a new folder for the game (for example: Chem Game).",
+     "3. Click + Folder and make a new folder for the game (for example: " + (HIST ? HIST_LABEL[st] : "Chem") + " Game).",
      "4. Open that folder, click Upload, and select ALL " + (files.length + 2) + " game files (" + base + ".html and every .js file).",
      "   If Canvas asks, choose Replace."],
     sub("Step 2 - Find your numbers"),
@@ -201,7 +213,7 @@ function S_grading() {
      "- Leaderboard: rank by levels won, highest level, questions, accuracy, badges, minutes or best streak.",
      "  Names: First name + last initial (the default, needs the class list), nicknames only, or no names.",
      "  \"Show to the class\" makes it full screen; \"Hide\" leaves a student off it.",
-     "- Standards report: a Class total page (every standard and key concept, like CH.4.b, with the class's % right, the",
+     "- Standards report: a Class total page (every standard and key concept, like " + (HIST ? st + ".4.b" : "CH.4.b") + ", with the class's % right, the",
      "  students at 80%+ / 60-79% / below 60%, and the weakest to reteach first) and a Student by student page, with its",
      "  own CSV download."],
     sub("4.5  Scoring criteria and the suggested grade"),

@@ -10,7 +10,11 @@ var { chromium } = require("/opt/node22/lib/node_modules/playwright");
 var st = "va", ID = "va-chem";   /* the game is the VA (Chemistry) build; its saves carry the va-chem prefix */
 var dir = path.join(__dirname, "..", "dist", "canvas", "VA-Chem");
 var K = st === "ody" ? "afterHours.ody." : "afterHours.v1.";   /* the game's own save keys (the Odyssey build has its own) */
-var start = "SOLLab-VA-Chem.html", uploaded = fs.readdirSync(dir), hide = null;
+var start = "SOLLab-VA-Chem.html";
+/* History 1.0: node tools/smoke-canvas.js WHI (WHII, VUS, GOVT) checks that course's Canvas build (tools/build-canvas.js WHI) */
+var COURSE = (process.argv[2] || "").toUpperCase();
+if (COURSE && COURSE !== "CHM") { ID = "va-" + COURSE.toLowerCase(); dir = path.join(__dirname, "..", "dist", "canvas", "VA-" + COURSE); start = "SOLLab-VA-" + COURSE + ".html"; }
+var uploaded = fs.readdirSync(dir), hide = null;
 var FOLDER = "/courses/1~2/files/1~3/course files/SOL Test/";
 var shots = path.join(__dirname, "shots");
 fs.mkdirSync(shots, { recursive: true });
@@ -64,7 +68,7 @@ var lms = http.createServer(function (req, res) {
   check(s1.logoOk > 0 && /^data:/.test(s1.logo), "the title logo comes from the file (as a data: URL)");
   check(s1.music === "none", "no music button");
   check(s1.night !== "57", "the other game's save is not this game's");
-  await page.screenshot({ path: path.join(shots, "cv-01-title.png") });
+  await page.screenshot({ path: path.join(shots, "cv-" + (COURSE ? COURSE + "-" : "") + "01-title.png") });
 
   var fam = "ALL";   /* Chemistry: Full review */
   await f.click('#title-screen .card[data-family="' + fam + '"]');
@@ -88,7 +92,7 @@ var lms = http.createServer(function (req, res) {
     return { n: tx ? tx.getTextureKeys().length : -1, bad: bad };
   });
   check(sprites.n > 10 && sprites.bad.length === 0, "the game's images loaded: " + sprites.n + " textures" + (sprites.bad.length ? ", empty: " + sprites.bad.join(",") : ""));
-  await page.screenshot({ path: path.join(shots, "cv-02-maze.png") });
+  await page.screenshot({ path: path.join(shots, "cv-" + (COURSE ? COURSE + "-" : "") + "02-maze.png") });
 
   /* the 3D castle */
   await f.evaluate(function (K) {
@@ -111,7 +115,7 @@ var lms = http.createServer(function (req, res) {
   var probe = await f.evaluate(function () { return SolBuild._probe(3, 2, 1); });
   check(probe && probe.use3d, "the castle draws in 3D");
   check(loads && loads.models === "ok" && loads.failed === 0 && loads.loaded === loads.total && loads.total > 3, "every 3D model loaded from the file: " + JSON.stringify(loads));
-  await page.screenshot({ path: path.join(shots, "cv-03-castle-3d.png") });
+  await page.screenshot({ path: path.join(shots, "cv-" + (COURSE ? COURSE + "-" : "") + "03-castle-3d.png") });
 
   /* saves: every key this game wrote carries its prefix; the other game's keys are untouched */
   var keys = await f.evaluate(function () { return Object.keys(localStorage); });

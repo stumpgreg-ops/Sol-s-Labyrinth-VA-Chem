@@ -571,19 +571,23 @@
   var STRAND = { RL: "Literary", RI: "Informational", RV: "Vocabulary", DSR: "Paired texts",
     INV: "Scientific Investigation", ATOM: "Atomic Structure & Periodic Table", RXN: "Formulas & Reactions", MOLE: "Molar Relationships", KMT: "Phases of Matter & KMT" };
   var UNITS = { 1: "INV", 2: "ATOM", 3: "RXN", 4: "MOLE", 5: "KMT" };   /* Chemistry: CH.3.b -> RXN */
+  if (window.SolStandards && window.SolStandards.UNIT_NAMES) Object.keys(window.SolStandards.UNIT_NAMES).forEach(function (k) { STRAND[k] = window.SolStandards.UNIT_NAMES[k]; });
   function strandOf(code) {
     var m = /^\d+\.(RL|RI|RV|DSR)\./.exec(code + ".");
     if (m) return m[1];
     var mc = /^CH\.(\d)/.exec(code);
     if (mc) return UNITS[mc[1]] || "";
+    /* History 1.0: a history course's page carries its units (tools/build-teacher.js): WHI.4.c -> CLASS */
+    var mh = /^([A-Z]+\.\d+)/.exec(code), SU = window.SolStandards && window.SolStandards.UNIT;
+    if (mh && SU) return SU[mh[1]] || "";
     if (/^L\./.test(code)) return "RV";
     if (/\.CT\./.test(code)) return "DSR";
     return /^RI\./.test(code) ? "RI" : /^RL\./.test(code) ? "RL" : "";
   }
   function stdOrder(a, b) {
     var pa = a.split("."), pb = b.split("."), ga = parseInt(pa[0], 10), gb = parseInt(pb[0], 10);
-    if (ga !== gb) return (isNaN(ga) ? 99 : ga) - (isNaN(gb) ? 99 : gb);
-    var so = ["RL", "RI", "RV", "DSR", "INV", "ATOM", "RXN", "MOLE", "KMT"], sa = so.indexOf(strandOf(a)), sb = so.indexOf(strandOf(b));
+    if (ga !== gb && !(isNaN(ga) && isNaN(gb))) return (isNaN(ga) ? 99 : ga) - (isNaN(gb) ? 99 : gb);
+    var so = ["RL", "RI", "RV", "DSR", "INV", "ATOM", "RXN", "MOLE", "KMT"].concat((window.SolStandards && window.SolStandards.UNIT_ORDER) || []), sa = so.indexOf(strandOf(a)), sb = so.indexOf(strandOf(b));
     return sa !== sb ? sa - sb : a.localeCompare(b, undefined, { numeric: true });
   }
   /* v5.17: Virginia's standards are split into SKILLS (js/standards-va.js, inlined in the Virginia page): one skill
