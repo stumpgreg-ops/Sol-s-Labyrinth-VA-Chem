@@ -27679,7 +27679,8 @@
     leaveOpen = true;
     leavePaused = null;
     try {
-      if (playScene && playScene.scene && !(playScene.scene.isPaused && playScene.scene.isPaused())) { playScene.scene.pause(); leavePaused = playScene; }
+      /* sys.pause() takes effect now; scene.pause() is queued until the game's next frame */
+      if (playScene && playScene.sys && !playScene.sys.isPaused()) { playScene.sys.pause(); leavePaused = playScene; }
     } catch (eP) {}
     var saved = readSavedNight(), here = (playScene && playScene.night) || cfg.night || saved;
     var msg = document.getElementById("leave-msg");
@@ -27693,7 +27694,7 @@
     if (ov) ov.classList.add("hidden");
     leaveOpen = false;
     var sc = leavePaused; leavePaused = null;
-    try { if (sc && sc === playScene && sc.scene && sc.scene.isPaused && sc.scene.isPaused()) sc.scene.resume(); } catch (eR) {}
+    try { if (sc && sc === playScene && sc.sys && sc.sys.isPaused()) sc.sys.resume(); } catch (eR) {}
   }
   function leaveToMenu() {
     var ov = document.getElementById("leave-overlay");
