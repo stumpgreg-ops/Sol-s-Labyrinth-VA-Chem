@@ -74,7 +74,7 @@ For a course in Canvas, where nothing may load from GitHub or any other outside 
 In Canvas:
 
 1. Upload the zip to one folder in **Files** and let Canvas expand it (or upload the eleven files into one folder).
-2. Embed the starter page in a Page: `<iframe src="/courses/<course>/files/<file id of SOLLab-VA-Chem.html>/preview" width="100%" height="700" allowfullscreen></iframe>`.
+2. Embed the starter page in a Page: `<iframe src="/courses/<course>/files/<file id of SOLLab-VA-Chem.html>/preview" width="500" height="100%" allowfullscreen="allowfullscreen"></iframe>`.
 3. `tools/canvas-check.html` is a tiny page that says whether a given spot in Canvas runs a page's code and can save; upload and embed it the same way if the game sticks on its loading screen.
 
 Saves live with the starter page's address under the prefix `solReading.va-chem:`, so an update that replaces only the `.js` files keeps every student's progress, and the Reading game's Canvas build (`solReading.va:`) on the same Canvas never shares saves with it. A missing or renamed data file is named on screen. Class sessions (the Apps Script teacher page) need the Apps Script server and are not in the Canvas files; the progress-code Teacher screen (1.4.0) is.
