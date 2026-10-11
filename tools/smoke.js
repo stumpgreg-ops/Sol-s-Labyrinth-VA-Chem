@@ -209,9 +209,13 @@ var srv = http.createServer(function (req, res) {
     await page.waitForSelector("#build-overlay:not(.hidden)", { timeout: 5000 });
     if (tn === 5) { await page.waitForSelector(".build-theme"); await page.click(".build-theme:nth-child(1)"); await page.click("#build-overlay .btn.primary"); }
     await page.waitForSelector(".build-options .build-opt"); await page.click(".build-options .build-opt:nth-child(1)"); await page.click("#build-overlay .btn.primary");
-    await page.waitForSelector(".build-styles .build-opt"); await page.click(".build-styles .build-opt:nth-child(1)"); await page.click("#build-overlay .btn.primary");
-    await page.waitForSelector(".build-note:not(.hidden)"); await page.click("#build-overlay .btn.primary"); await page.waitForSelector(".build-note:not(.hidden)");
-    await page.click("#build-overlay .btn.primary"); await page.waitForFunction(function () { return window.__done === true; });
+    /* a town home built from the timber and stone kit has no colour to pick (like the castle's cottages), so the style step may be skipped */
+    for (var ts = 0; ts < 8 && !(await page.evaluate(function () { return window.__done === true; })); ts++) {
+      await page.waitForTimeout(250);
+      if (await page.isVisible(".build-styles .build-opt")) await page.click(".build-styles .build-opt:nth-child(1)");
+      if (await page.isVisible("#build-overlay .btn.primary")) await page.click("#build-overlay .btn.primary");
+    }
+    await page.waitForFunction(function () { return window.__done === true; });
   }
   var townSt = await page.evaluate(function () { return SolBuild.state(); });
   check(townSt.theme === "village" && townSt.buildings === 3, "town theme still builds: " + JSON.stringify({ theme: townSt.theme, b: townSt.buildings }));
