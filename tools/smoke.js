@@ -209,7 +209,9 @@ var srv = http.createServer(function (req, res) {
     await page.waitForSelector("#build-overlay:not(.hidden)", { timeout: 5000 });
     if (tn === 5) { await page.waitForSelector(".build-theme"); await page.click(".build-theme:nth-child(1)"); await page.click("#build-overlay .btn.primary"); }
     await page.waitForSelector(".build-options .build-opt"); await page.click(".build-options .build-opt:nth-child(1)"); await page.click("#build-overlay .btn.primary");
-    await page.waitForSelector(".build-styles .build-opt"); await page.click(".build-styles .build-opt:nth-child(1)"); await page.click("#build-overlay .btn.primary");
+    /* engine 5.17: a 3D town piece asks for a colour only when its model comes in colours (as in the castle) */
+    await page.waitForSelector(".build-styles:not(.hidden) .build-opt, .build-note:not(.hidden)");
+    if (await page.isVisible(".build-styles:not(.hidden) .build-opt")) { await page.click(".build-styles .build-opt:nth-child(1)"); await page.click("#build-overlay .btn.primary"); }
     await page.waitForSelector(".build-note:not(.hidden)"); await page.click("#build-overlay .btn.primary"); await page.waitForSelector(".build-note:not(.hidden)");
     await page.click("#build-overlay .btn.primary"); await page.waitForFunction(function () { return window.__done === true; });
   }
@@ -229,7 +231,10 @@ var srv = http.createServer(function (req, res) {
   var tMoved = tB.pk.cx !== tA.pk.cx || tB.pk.cy !== tA.pk.cy;
   check(Math.abs(tMid.x2 - tA.g.x2) < 1 && Math.abs(tMid.y2 - tA.g.y2) < 1, "town: the ground holds still while a piece is dragged");
   check(!tMoved || Math.hypot(tB.pk.x - (tA.pk.x - 176), tB.pk.y - (tA.pk.y + 88)) < 60, "town: a dragged piece lands where it is let go: " + JSON.stringify({ moved: tMoved, from: [Math.round(tA.pk.x), Math.round(tA.pk.y)], to: [Math.round(tB.pk.x), Math.round(tB.pk.y)] }));
-  check(tB.r1 === 1 && tB.r2 === 0 && /faces the other way/.test(tB.note), "town: Turn flips a town building to face the other way and back: " + JSON.stringify({ r1: tB.r1, r2: tB.r2 }));
+  /* engine 5.17: the town is a kit theme in 3D like the castle, so Turn is a quarter turn */
+  check(tB.r1 === 1 && tB.r2 === 2 && /quarter turn/.test(tB.note), "town: Turn turns a town building a quarter turn at a time: " + JSON.stringify({ r1: tB.r1, r2: tB.r2 }));
+  var town3d = await page.evaluate(function () { return { probe: SolBuild._probe(0, 0, 0), loads: SolBuild._loads3d() }; });
+  check(town3d.probe && town3d.probe.use3d && town3d.loads && town3d.loads.models === "ok" && town3d.loads.failed === 0 && town3d.loads.total > 0, "town: drawn in 3D with the castle's models: " + JSON.stringify(town3d.loads));
   await page.evaluate(function () { SolBuild.close(); });
   await page.evaluate(function () { SolBuild.importCode(localStorage.getItem("smoke.castleCode")); });
   await page.reload({ waitUntil: "load" }); await page.waitForTimeout(800);

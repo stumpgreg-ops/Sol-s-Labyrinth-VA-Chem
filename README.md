@@ -41,6 +41,12 @@ its own game with its own page, saves, progress-code tag and Canvas zip; the Che
 - **Menu: leave a level.** The ☰ Menu button (top left of the play screen) or Esc pauses the level and asks "Leave
   this level?"; Leave goes back to the title screen and records the level as left (no win, no loss), Keep playing (or
   Esc) resumes. In every game, Chemistry included.
+- **The Town in 3D.** The Town builder uses the same 3D models as the Castle (`tools/make-town-kit.js` rebuilds the
+  "village" theme in `assets/build/pieces.json` from the castle's kit pieces): 136 pieces in seven tabs (homes that grow
+  a storey, buildings, market and yard, nature, monuments, animals, people), every one turning with the map, and a
+  fence with a gate that goes up around the town at the 8th building. The Town's old piece ids stay, so a town built
+  before is converted once (its colours become Red, Blue or Gold roofs and it is laid out on the cells) and old
+  progress codes still restore it. Castle-only pieces (towers, curtain walls, siege engines, flags) stay in the Castle.
 - **Progress codes and badges.** Four new games in `js/progress-code.js` (ids 5–8, own secrets); the standards report
   lists every key concept; one badge pair per unit (`u1-25` … `u7-100`, named after the course's units).
 - **Review.** `node tools/validate-content.js WHI` checks a course (and warns about any key concept without an item);
