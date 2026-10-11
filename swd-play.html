@@ -15,8 +15,12 @@
   <script>
   /* SWD: who is playing, the grade, subject and mode (from swd.html), and this player's own save space */
   (function () {
-    var q = new URLSearchParams(location.search), pid = (q.get("p") || "guest").replace(/[^A-Za-z0-9_-]/g, "");
-    var P = window.SWD_PLAY = { pid: pid, band: q.get("band") || "G2", subject: q.get("subject") || "math", mode: q.get("mode") || "maze", acc: {} };
+    var q = new URLSearchParams(location.search), g = {};
+    /* the Canvas build is one page: what to play comes in sessionStorage instead of the link */
+    if (!q.get("band")) { try { g = JSON.parse(sessionStorage.getItem("solSWD.play") || "{}") || {}; } catch (e) {} }
+    function v(k, d) { return q.get(k) || g[k] || d; }
+    var pid = String(v("p", "guest")).replace(/[^A-Za-z0-9_-]/g, "");
+    var P = window.SWD_PLAY = { pid: pid, band: v("band", "G2"), subject: v("subject", "math"), mode: v("mode", "maze"), acc: {} };
     if (!/^G[2-6]$/.test(P.band)) P.band = "G2";
     try { var d = JSON.parse(localStorage.getItem("swd.v1.p." + pid) || "{}"); P.acc = d.acc || {}; } catch (e) {}
     var prefix = "swd." + pid + ".", S = Storage.prototype, get = S.getItem, set = S.setItem, rem = S.removeItem, keyAt = S.key;

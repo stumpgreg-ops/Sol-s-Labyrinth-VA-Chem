@@ -42,6 +42,8 @@
     { group: "Sound and calm", id: "music", name: "Background music", type: "bool", def: false },
     { group: "Sound and calm", id: "calm", name: "Calm screen", what: "No shaking, flashing or bouncing; gentle colors.", type: "bool", def: false }
   ];
+  /* the Canvas build carries no music files */
+  if (window.SOL_NO_MUSIC) DEFS = DEFS.filter(function (d) { return d.id !== "music"; });
   var PRESETS = [
     { id: "p1", name: "Path 1 starter", what: "Read aloud, large text, huge buttons, 2 choices, 5 questions, hints right away, coin values.",
       set: { readAloud: true, textSize: "large", targetSize: "huge", choices: "2", perLevel: "5", hint: "1", coinValues: true, memory: "up", runningTotal: true } },

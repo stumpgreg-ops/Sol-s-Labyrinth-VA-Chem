@@ -199,7 +199,8 @@
         results.list.push(first);
         SWD.players.save();
       },
-      styleSprite: function (e) { e.style.backgroundImage = "url(assets/chars/" + (D().last.char || CHARS[0]) + "_sheet.png)"; },
+      /* through an <img>, so the Canvas build (which serves files from its bundle through img src) can map the address */
+      styleSprite: function (e) { var im = new Image(); im.src = "assets/chars/" + (D().last.char || CHARS[0]) + "_sheet.png"; e.style.backgroundImage = 'url("' + im.src + '")'; },
       walk: function (e, on) {
         if (e._walk) { clearInterval(e._walk); e._walk = null; }
         e.classList.toggle("walking", !!on);
@@ -264,7 +265,10 @@
       if (sp < 100) accE.slow = { on: true, pct: sp };
       localStorage.setItem(k, JSON.stringify(accE));
     } catch (e) {}
-    location.href = "swd-play.html?p=" + encodeURIComponent(SWD.players.id()) + "&band=" + l.band + "&subject=" + l.subject + "&mode=" + l.mode;
+    var go = { p: SWD.players.id(), band: l.band, subject: l.subject, mode: l.mode };
+    /* the Canvas build is one page: it reloads itself as the main game (tools/build-swd-canvas.js), told which by sessionStorage */
+    if (window.SOL_CANVAS) { try { sessionStorage.setItem("solSWD.play", JSON.stringify(go)); } catch (e) {} location.reload(); return; }
+    location.href = "swd-play.html?p=" + encodeURIComponent(go.p) + "&band=" + go.band + "&subject=" + go.subject + "&mode=" + go.mode;
   }
 
   /* ── windows: a name, the look, My Town, the progress report ── */

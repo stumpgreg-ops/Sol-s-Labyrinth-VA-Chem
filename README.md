@@ -39,7 +39,23 @@ A second game in this repository for **high-school students with disabilities in
 
 **Tests:** `node tools/validate-swd.js` runs every generator 300 times. It checks that each item has a prompt, 2 to 5 distinct choices, no answer repeated, and no "undefined" or "NaN"; that every pair and sort item is valid; that every band, subject and mode makes a full level; and that every Market Day amount can be paid from its wallet. `node tools/smoke-swd.js` runs 52 checks in a browser: the selection screen at three sizes, accommodations live, per player and saved, every mode played through a level, hints, Menu, 2 choices, hold to choose, scanning, face-down Rune Match, the report, and the main game's maze with three letters and its own saves.
 
-**Not done yet:** a Canvas or Apps Script build of the SWD edition (it runs from `swd.html` on the web), and scanning on the selection screen itself (an adult sets up the game, then scanning works in play). The reading passages are original but have not been checked by a reading specialist.
+**Canvas version (SWD 1.0.0).** `node tools/build-swd-canvas.js` writes `dist/canvas/SOL Lab SWD.zip` (first-time setup) and `SOL Lab SWD update.zip` (the `.js` files only). Run `node tools/build-swd-play.js` first if `index.html` changed. It uses the same Canvas set-up as the Chemistry game:
+- **The files:** a 2.7 KB starter page `SOLLab-SWD.html`, `SOLLab-SWD-game.js`, and ten `SOLLab-SWD-data-NN.js` files, about 5 MB in all with no music. Nothing loads from outside the school's Canvas.
+- **One page, one embed code.** The bundle holds both SWD pages. Links between Canvas files are not dependable, so choosing a main-game mode in Path 2 saves the choice in `sessionStorage` (`solSWD.play`) and reloads the same page, which then opens as the main game. "← SWD menu" clears the choice and reloads.
+- **Saves:** they carry the prefix `solReading.va-swd:`, so they never mix with the Chemistry or Reading game's saves on the same Canvas.
+- **The READ ME in each zip** covers uploading, the embed code (a Page is enough: there are no progress codes to turn in), players, accommodations with no PIN, and printing the progress report.
+- **Shared code:** the packing code that both Canvas builds use (WebP for PNGs, deltas for the 3D models) moved unchanged from `tools/build-appsscript.js` to `tools/pack-bundle.js`; the Chemistry bundle is byte-for-byte the same. The loader now takes the page markup's name from the manifest (`man.page`, default `__page.html`). The Chemistry bundle now leaves out the SWD files.
+- **Test:** `node tools/smoke-swd-canvas.js` (21 checks) frames the game 500 px tall from another origin, as Canvas does. It checks:
+  - the selection screen and pictures come only from the uploaded files;
+  - there is no music option;
+  - a Sol's Path level and a Market Day level play through;
+  - Path 2's maze opens in the same page with Grade 3 questions and three letters;
+  - Game speed carries over;
+  - "SWD menu" comes back with the levels and accommodations kept;
+  - the save prefix keeps another game's saves untouched;
+  - a missing data file is named on screen.
+
+**Not done yet:** an Apps Script version of the SWD edition, and scanning on the selection screen itself (an adult sets up the game, then scanning works in play). The reading passages are original but have not been checked by a reading specialist.
 
 ## Chemistry 1.5.0 (2026-10-08) — accommodations (SOL Labyrinth v5.18.0), a way out of a level, a one-card how-to-play
 

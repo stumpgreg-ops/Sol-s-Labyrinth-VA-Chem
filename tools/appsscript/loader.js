@@ -358,7 +358,8 @@
       }
       man.css.forEach(css);
       if (man.body) document.body.className = man.body;
-      document.body.insertAdjacentHTML("beforeend", text("__page.html"));
+      /* SWD 1.0: a bundle can hold two pages (the SWD Canvas build); the manifest names the one to show */
+      document.body.insertAdjacentHTML("beforeend", text(man.page || "__page.html"));
       [].forEach.call(document.querySelectorAll("img"), fixImg);
       runScripts(man.scripts);
       bootEl.parentNode.removeChild(bootEl);

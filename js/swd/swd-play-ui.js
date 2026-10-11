@@ -5,18 +5,28 @@
   "use strict";
   var P = window.SWD_PLAY || {};
   function $(id) { return document.getElementById(id); }
+  /* back to the SWD menu: swd.html, or in the Canvas build (one page) a reload without the main-game flag */
+  function backLink(a) {
+    a.href = "swd.html";
+    a.addEventListener("click", function (e) {
+      if (!window.SOL_CANVAS) return;
+      e.preventDefault();
+      try { sessionStorage.removeItem("solSWD.play"); } catch (x) {}
+      location.reload();
+    });
+  }
   ["btn-progress", "btn-restore", "btn-badges", "btn-progress-end"].forEach(function (id) { var e = $(id); if (e) e.classList.add("hidden"); });
   var jr = document.querySelector(".join-row"); if (jr) jr.classList.add("hidden");
   /* the way back, on the title, mode and skill screens and at the end of a level */
   ["title-screen", "mode-screen", "skill-screen"].forEach(function (id) {
     var scr = $(id); if (!scr) return;
     var a = document.createElement("a");
-    a.className = "btn swd-back"; a.href = "swd.html"; a.textContent = "← SWD menu";
+    a.className = "btn swd-back"; backLink(a); a.textContent = "← SWD menu";
     scr.insertBefore(a, scr.firstChild);
   });
   var again = $("btn-again");
   if (again && again.parentNode) {
-    var b = document.createElement("a"); b.className = "btn"; b.href = "swd.html"; b.textContent = "SWD menu";
+    var b = document.createElement("a"); b.className = "btn"; backLink(b); b.textContent = "SWD menu";
     again.parentNode.appendChild(b);
   }
   /* straight to this subject and mode */
