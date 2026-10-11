@@ -37,7 +37,7 @@
     host.appendChild(add);
     var cur = SWD.players.current();
     $("player-tools").innerHTML = "";
-    var look = el("button", "btn small", '<img src="assets/chars/' + (D().last.char || CHARS[0]) + '_preview.png" alt="" width="28" height="28"> Pick a look'); look.type = "button";
+    var look = el("button", "btn small", '<img src="assets/chars/' + (D().last.char || CHARS[0]) + '_preview.png" alt="" width="28" height="28"> Look'); look.type = "button";
     look.addEventListener("click", openLook);
     var ren = el("button", "btn small", "Rename"); ren.type = "button";
     ren.addEventListener("click", function () { askName("Rename", "New name for " + cur.name + ":", cur.name, function (n) { SWD.players.rename(cur.id, n); renderAll(); }); });
@@ -116,7 +116,11 @@
     var name = SWD.players.current().name;
     $("acc-title").textContent = "Accommodations for " + name;
     var sum = SWD.acc.summary();
-    $("acc-summary").innerHTML = sum.length ? sum.map(function (s) { return '<span class="pill">' + esc(s) + "</span>"; }).join("") : '<span class="dim">Standard settings.</span>';
+    /* the bottom bar shows the first few; the window has them all */
+    var MAXP = 4, shown = sum.slice(0, MAXP).map(function (s) { return '<span class="pill">' + esc(s) + "</span>"; });
+    if (sum.length > MAXP) shown.push('<button type="button" class="pill more" id="acc-more">+' + (sum.length - MAXP) + " more</button>");
+    $("acc-summary").innerHTML = sum.length ? shown.join("") : '<span class="dim">none (standard settings)</span>';
+    if ($("acc-more")) $("acc-more").addEventListener("click", openAcc);
     var pre = $("acc-presets"); pre.innerHTML = "";
     SWD.ACC_PRESETS.forEach(function (p) {
       var b = el("button", "btn small", esc(p.name)); b.type = "button"; b.title = p.what;
@@ -129,7 +133,10 @@
     var host = $("acc-groups"); host.innerHTML = "";
     var groups = {};
     SWD.ACC_DEFS.forEach(function (d) { (groups[d.group] = groups[d.group] || []).push(d); });
+    /* three columns: the short Sound and calm group goes under Hearing and seeing, so the window fits one screen */
+    var COLS = [["Hearing and seeing", "Sound and calm"], ["Moving and touching"], ["Thinking and pace"]], colEls = COLS.map(function () { var c = el("div", "acc-col"); host.appendChild(c); return c; });
     Object.keys(groups).forEach(function (g) {
+      var ci = 0; COLS.forEach(function (c, i) { if (c.indexOf(g) !== -1) ci = i; });
       var box = el("fieldset", "acc-group"); box.appendChild(el("legend", null, esc(g)));
       groups[g].forEach(function (d) {
         var row = el("div", "acc-row"), v = SWD.acc.get(d.id);
@@ -151,7 +158,7 @@
         }
         row.appendChild(ctl); box.appendChild(row);
       });
-      host.appendChild(box);
+      colEls[ci].appendChild(box);
     });
     if (!SWD.speech.ok()) $("acc-summary").insertAdjacentHTML("beforeend", '<span class="pill warn">This browser cannot read aloud.</span>');
   }
@@ -312,7 +319,8 @@
     location.href = "swd-play.html?p=" + encodeURIComponent(go.p) + "&band=" + go.band + "&subject=" + go.subject + "&mode=" + go.mode;
   }
 
-  /* ── windows: a name, the look, My Town, the progress report ── */
+  /* ── windows: the accommodations, a name, the look, My Town, the progress report ── */
+  function openAcc() { renderAcc(); $("acc-dlg").classList.remove("hidden"); setTimeout(function () { var b = $("acc-dlg").querySelector("[data-close]"); if (b) b.focus(); }, 30); }
   var nameCb = null;
   function askName(title, label, val, cb) {
     $("name-title").textContent = title; $("name-label").textContent = label;
@@ -405,7 +413,8 @@
       D().prog = { levels: {}, skills: {}, stars: 0, town: [], log: [] }; SWD.players.save(); openReport(); renderAll();
     });
     document.querySelectorAll("[data-close]").forEach(function (b) { b.addEventListener("click", function () { $(b.getAttribute("data-close")).classList.add("hidden"); }); });
-    ["town", "report", "look", "name-dlg"].forEach(closeOnBackdrop);
+    ["town", "report", "look", "name-dlg", "acc-dlg"].forEach(closeOnBackdrop);
+    $("btn-acc").addEventListener("click", openAcc);
     $("btn-name-ok").addEventListener("click", nameOk);
     $("name-input").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); nameOk(); } });
     $("leave").addEventListener("click", function (e) { if (e.target === $("leave")) stay(); });
@@ -413,7 +422,7 @@
       if (!$("launch").classList.contains("hidden")) return;   /* the start screen: only its button */
       if (e.key === "Escape") {
         if (!$("leave").classList.contains("hidden")) { stay(); e.preventDefault(); return; }
-        ["town", "report", "look", "name-dlg"].forEach(function (id) { $(id).classList.add("hidden"); });
+        ["town", "report", "look", "name-dlg", "acc-dlg"].forEach(function (id) { $(id).classList.add("hidden"); });
         if (!$("play").classList.contains("hidden") && $("results").classList.contains("hidden")) { askLeave(); e.preventDefault(); }
       }
       if ((e.key === "r" || e.key === "R") && run && !SWD.acc.get("scan") && !(e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName))) run.say();

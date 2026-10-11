@@ -119,6 +119,25 @@ async function playLevel(page, opts) {
     await pg.close();
   }
 
+  /* one screen, no scrolling: a Chromebook in full screen (1366 × 768), 1280 × 720 and a wide monitor; Path 1 and Path 2
+     (Path 2 has the main game's modes too); and the accommodations window */
+  for (var fit of [[1366, 768], [1280, 720], [1832, 1008], [1920, 1080]]) {
+    var fp = await newPage(fit[0], fit[1]);
+    await fp.goto(base + "swd.html"); await fp.waitForTimeout(300); await launch(fp);
+    var over = [];
+    for (var band of ["P1", "G3"]) {
+      over.push(await fp.evaluate(function (b) {
+        var l = SWD.players.data().last; l.band = b; l.subject = b === "P1" ? "money" : "math"; SWD.players.save(); SWDApp.renderAll();
+        var h = document.getElementById("home"), cols = [].map.call(document.querySelectorAll("#home .col"), function (c) { return c.scrollHeight - c.clientHeight; });
+        return Math.max.apply(null, [h.scrollHeight - h.clientHeight, document.getElementById("btn-play").getBoundingClientRect().bottom > innerHeight ? 99 : 0].concat(cols));
+      }, band));
+    }
+    await fp.click("#btn-acc"); await fp.waitForTimeout(100);
+    over.push(await fp.evaluate(function () { var b = document.querySelector(".acc-box"); return b.scrollHeight - b.clientHeight; }));
+    check(over.every(function (x) { return x <= 0; }), fit.join("×") + ": the selection screen (Path 1 and Path 2) and the accommodations window fit with no scrolling (" + over.join(",") + ")");
+    await fp.close();
+  }
+
   var page = await newPage(1280, 800);
   await page.goto(base + "swd.html"); await page.waitForTimeout(400);
   /* full screen: in, the Exit button back to the start screen, in again */
@@ -137,9 +156,12 @@ async function playLevel(page, opts) {
   await page.click('#path-cards .card[data-path="1"]'); await page.waitForTimeout(150);
   check(await page.evaluate(function () { return SWD.players.data().last.band === "P1" && document.getElementById("grade-chips").classList.contains("hidden") && document.getElementById("classic-wrap").classList.contains("hidden"); }), "Path 1: no grade chips and no main-game modes");
 
-  /* accommodations: no PIN, live, per player, saved */
+  /* accommodations: one button on the selection screen opens them all (no PIN); live, per player, saved */
+  await page.click("#btn-acc"); await page.waitForTimeout(100);
+  check(await page.isVisible('#acc-groups .toggle[aria-label="Read aloud"]'), "the Accommodations button opens every accommodation");
   await page.click('#acc-groups .seg[aria-label="Text size"] button:nth-child(3)');
   await page.click('#acc-groups .toggle[aria-label="High contrast"]');
+  await page.click('#acc-dlg [data-close="acc-dlg"]'); await page.waitForTimeout(100);
   var a1 = await page.evaluate(function () { return { xl: document.body.classList.contains("acc-xlarge"), hc: document.body.classList.contains("acc-hc"), sum: document.getElementById("acc-summary").textContent }; });
   check(a1.xl && a1.hc && /Extra large/.test(a1.sum) && /High contrast/.test(a1.sum), "accommodations change the page at once and show in the summary");
   await page.reload(); await page.waitForTimeout(400); await launch(page);
@@ -149,8 +171,11 @@ async function playLevel(page, opts) {
   check(a2.name === "Jay" && a2.n === 2 && !a2.xl, "a new player gets standard accommodations (the first player's stay with the first player)");
   await page.click("#player-chips .chip:first-child"); await page.waitForTimeout(100);
   check(await page.evaluate(function () { return document.body.classList.contains("acc-xlarge"); }), "switching back brings the first player's accommodations back");
+  await page.click("#btn-acc"); await page.waitForTimeout(100);
   await page.click('#acc-presets button:last-child'); await page.waitForTimeout(100);
   await page.click("#acc-presets button:first-child"); await page.waitForTimeout(100);
+  await page.keyboard.press("Escape"); await page.waitForTimeout(100);
+  check(!(await page.isVisible("#acc-dlg")), "Done or Esc closes the accommodations window");
   var pre = await page.evaluate(function () { return SWD.acc.all(); });
   check(pre.readAloud === true && pre.choices === "2" && pre.targetSize === "huge" && pre.perLevel === "5", "the Path 1 starter preset sets read aloud, 2 choices, huge buttons, 5 questions");
   await page.evaluate(function () { SWD.acc.set("readAloud", false); SWD.acc.set("sounds", false); });

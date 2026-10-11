@@ -88,9 +88,9 @@ var lms = http.createServer(function (req, res) {
   await f.click("#btn-launch"); await page.waitForTimeout(300);
   console.log("load " + (Date.now() - t0) + " ms, " + uploaded.length + " files, " + (uploaded.reduce(function (a, x) { return a + fs.statSync(path.join(dir, x)).size; }, 0) / 1048576).toFixed(1) + " MiB; the page " + (fs.statSync(path.join(dir, start)).size / 1024).toFixed(1) + " KiB");
   var s1 = await f.evaluate(function () {
-    var logo = document.querySelector(".home-head .logo");
+    var logo = document.querySelector(".home-bar .logo");
     return { canvas: !!window.SOL_CANVAS, boot: !!document.getElementById("sol-boot"), swd: !!(window.SWD && SWD.MODES && SWD.MODES.length), logo: logo.src.slice(0, 11), logoOk: logo.naturalWidth,
-      music: SWD.ACC_DEFS.some(function (d) { return d.id === "music"; }), players: SWD.players.list().map(function (p) { return p.name; }).join(","), css: getComputedStyle(document.querySelector(".step")).borderRadius };
+      music: SWD.ACC_DEFS.some(function (d) { return d.id === "music"; }), players: SWD.players.list().map(function (p) { return p.name; }).join(","), css: getComputedStyle(document.querySelector("#home .col")).borderRadius };
   });
   console.log(JSON.stringify(s1));
   check(s1.canvas && !s1.boot && s1.swd, "the starter page loads the SWD selection screen from the uploaded files");

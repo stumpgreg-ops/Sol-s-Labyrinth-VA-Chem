@@ -20,89 +20,87 @@
       <p id="launch-note" class="launch-note hidden"></p>
     </section>
 
-    <!-- the selection screen: who, path and grade, subject, game, with the accommodations beside it -->
+    <!-- the selection screen, one screen with no scrolling: a top bar (who is playing, Accommodations, the report, the
+         town, full screen), three columns (path and grade, subject, game) and a bottom bar (the accommodations that are
+         on, Practice, Play). The full list of accommodations opens in its own window (#acc-dlg). -->
     <section id="home" class="swd-screen">
-      <header class="home-head">
-        <img class="logo" src="assets/logo/sols-labyrinth-512.png" alt="" width="84" height="84" />
-        <div>
-          <p class="kicker">SWD Contained · Skills Path</p>
-          <h1>Sol's Labyrinth</h1>
-          <p class="ver">v1.0.0 · life skills, math and reading · Path 1 (K–1) and Path 2 (grades 2–6) · <span id="stars-line"></span></p>
+      <header class="home-bar">
+        <img class="logo" src="assets/logo/sols-labyrinth-512.png" alt="Sol's Labyrinth" width="52" height="52" />
+        <div class="who" role="group" aria-labelledby="h-player">
+          <span id="h-player" class="bar-label">Who is playing?</span>
+          <div id="player-chips" class="chips"></div>
+          <div id="player-tools" class="chips"></div>
         </div>
-        <button type="button" class="btn exit-full" id="btn-exit-full" title="Leave full screen and go back to the start screen">✕ Exit full screen</button>
-        <button type="button" class="btn primary enter-full" id="btn-enter-full" title="Play in full screen">⛶ Full screen</button>
+        <div class="bar-tools">
+          <span id="stars-line" class="stars-line"></span>
+          <button type="button" class="btn" id="btn-acc">⚙️ Accommodations</button>
+          <button type="button" class="btn" id="btn-report">📊 Progress</button>
+          <button type="button" class="btn" id="btn-town">🏘️ My Town</button>
+          <button type="button" class="btn exit-full" id="btn-exit-full" title="Leave full screen and go back to the start screen">✕ Exit full screen</button>
+          <button type="button" class="btn primary enter-full" id="btn-enter-full" title="Play in full screen">⛶ Full screen</button>
+        </div>
       </header>
 
-      <div class="home-grid">
-        <div class="home-main">
-          <section class="step" aria-labelledby="h-player">
-            <h2 id="h-player"><span class="num">1</span> Who is playing?</h2>
-            <div id="player-chips" class="chips"></div>
-            <div id="player-tools" class="row left"></div>
-          </section>
+      <div class="home-cols">
+        <section class="col col-path" aria-labelledby="h-path">
+          <h2 id="h-path"><span class="num">1</span> Path</h2>
+          <div id="path-cards" class="cards stack">
+            <button type="button" class="card path" data-path="1">
+              <span class="icon">🌱</span><span class="name">Path 1 · First Skills</span>
+              <span class="kind">Kindergarten – grade 1 skills</span>
+              <span class="meta">Money, math, reading and life skills with big buttons and pictures.</span>
+            </button>
+            <button type="button" class="card path" data-path="2">
+              <span class="icon">🧭</span><span class="name">Path 2 · Grades 2 – 6</span>
+              <span class="kind">One grade at a time</span>
+              <span class="meta">Math, reading and life skills for one grade.</span>
+            </button>
+          </div>
+          <div id="grade-chips" class="chips grades hidden" role="group" aria-label="Grade"></div>
+        </section>
 
-          <section class="step" aria-labelledby="h-path">
-            <h2 id="h-path"><span class="num">2</span> Pick a path</h2>
-            <div id="path-cards" class="cards two">
-              <button type="button" class="card path" data-path="1">
-                <span class="icon">🌱</span><span class="name">Path 1 · First Skills</span>
-                <span class="kind">Kindergarten – grade 1 skills</span>
-                <span class="meta">Counting money, numbers and math, letters and reading, and life skills. Big buttons, pictures, everything can be read aloud.</span>
-              </button>
-              <button type="button" class="card path" data-path="2">
-                <span class="icon">🧭</span><span class="name">Path 2 · Grades 2 – 6</span>
-                <span class="kind">One grade at a time</span>
-                <span class="meta">Math, reading and life skills for grade 2, 3, 4, 5 or 6, with the new games and the main game's modes.</span>
-              </button>
-            </div>
-            <div id="grade-chips" class="chips hidden" role="group" aria-label="Grade"></div>
-          </section>
+        <section class="col col-subject" aria-labelledby="h-subject">
+          <h2 id="h-subject"><span class="num">2</span> Subject</h2>
+          <div id="subject-cards" class="cards stack"></div>
+        </section>
 
-          <section class="step" aria-labelledby="h-subject">
-            <h2 id="h-subject"><span class="num">3</span> Pick a subject</h2>
-            <div id="subject-cards" class="cards"></div>
-          </section>
-
-          <section class="step" aria-labelledby="h-mode">
-            <h2 id="h-mode"><span class="num">4</span> Pick a game</h2>
-            <div id="mode-cards" class="cards"></div>
-            <div id="classic-wrap" class="hidden">
-              <p class="sub">From the main game (Path 2) · moving and aiming, for students who can use the keys or the on-screen pad</p>
-              <div id="classic-cards" class="cards"></div>
-            </div>
-          </section>
-
-          <section class="step play-step">
-            <p id="play-line" class="play-line"></p>
-            <div id="focus-row" class="focus-row">
-              <label for="focus-select">Practice:</label>
-              <select id="focus-select"></select>
-            </div>
-            <div class="row">
-              <button type="button" class="btn primary big" id="btn-play">▶ Play</button>
-              <button type="button" class="btn hidden" id="btn-restart" title="Start this game over at level 1">Start at level 1</button>
-            </div>
-          </section>
-        </div>
-
-        <aside class="home-side" aria-labelledby="acc-title">
-          <section class="acc-panel">
-            <h2 id="acc-title">Accommodations</h2>
-            <p class="dim small">Anyone can change these: the student, a teacher or a parent. They are saved for this player on this Chromebook.</p>
-            <div id="acc-summary" class="pills"></div>
-            <div id="acc-presets" class="row left"></div>
-            <details id="acc-details" open>
-              <summary>All accommodations</summary>
-              <div id="acc-groups"></div>
-            </details>
-          </section>
-          <section class="side-tools">
-            <button type="button" class="btn" id="btn-report">📊 Progress report</button>
-            <button type="button" class="btn" id="btn-town">🏘️ My Town</button>
-          </section>
-        </aside>
+        <section class="col col-mode" aria-labelledby="h-mode">
+          <h2 id="h-mode"><span class="num">3</span> Game</h2>
+          <div id="mode-cards" class="cards modes"></div>
+          <div id="classic-wrap" class="hidden">
+            <p class="sub">From the main game · moving and aiming (arrow keys or the on-screen pad)</p>
+            <div id="classic-cards" class="cards classics"></div>
+          </div>
+        </section>
       </div>
+
+      <footer class="home-foot">
+        <div class="foot-acc">
+          <span class="bar-label">Accommodations on:</span>
+          <div id="acc-summary" class="pills"></div>
+        </div>
+        <p id="play-line" class="play-line"></p>
+        <div id="focus-row" class="focus-row">
+          <label for="focus-select">Practice:</label>
+          <select id="focus-select"></select>
+        </div>
+        <button type="button" class="btn hidden" id="btn-restart" title="Start this game over at level 1">Start at level 1</button>
+        <button type="button" class="btn primary big" id="btn-play">▶ Play</button>
+      </footer>
     </section>
+
+    <!-- every accommodation, for this player (no PIN) -->
+    <div id="acc-dlg" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="acc-title">
+      <div class="box acc-box">
+        <div class="box-head">
+          <h2 id="acc-title">Accommodations</h2>
+          <button type="button" class="btn primary" data-close="acc-dlg">Done</button>
+        </div>
+        <p class="dim small">Anyone can change these: the student, a teacher or a parent. They are saved for this player on this Chromebook and work right away.</p>
+        <div class="acc-quick"><span class="bar-label">Quick start:</span><div id="acc-presets" class="chips"></div></div>
+        <div id="acc-groups" class="acc-cols"></div>
+      </div>
+    </div>
 
     <!-- playing -->
     <section id="play" class="hidden">
