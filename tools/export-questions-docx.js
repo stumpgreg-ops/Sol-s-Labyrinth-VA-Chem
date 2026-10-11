@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Exports the question bank as a Word document for teachers:
-     node tools/export-questions-docx.js [out.docx]       (default dist/SOL Lab VA Chem - question pool.docx)
+     node tools/export-questions-docx.js [out.docx]       (default dist/11th Grade Curriculum.docx)
    The same order as tools/export-questions.js: unit (reporting category), then level 1 → 2 → 3, then pack by the
    length of its lab notes. Every pack shows its lab notes (with their data tables), and every question its SOL key
    concept, the four choices and the key. Needs the docx package (npm install docx, or NODE_PATH pointing at one). */
@@ -16,8 +16,9 @@ fs.readdirSync(path.join(root, "js")).filter(function (f) { return /^content\d*\
 function num(f) { var m = f.match(/content(\d*)\.js/); return m[1] === "" ? 0 : parseInt(m[1], 10); }
 var PACKS = W.HEIST_PACKS, FAMILIES = W.HEIST_FAMILIES.filter(function (f) { return f.id !== "ALL"; }), STANDARDS = W.HEIST_STANDARDS;
 var ver = (fs.readFileSync(path.join(root, "index.html"), "utf8").match(/<p class="ver">([^<]*)<\/p>/) || [0, ""])[1];
-var out = process.argv[2] || path.join(root, "dist", "SOL Lab VA Chem - question pool.docx");
+var out = process.argv[2] || path.join(root, "dist", "11th Grade Curriculum.docx");
 
+var TITLE = "11th Grade Curriculum";
 var FONT = "Arial", PAGE_W = 12240, MARGIN = 1440, BODY_W = PAGE_W - 2 * MARGIN;
 var GREY = "666666", KEY = "0A7A3E", NOTE_FILL = "F3F4F6", HEAD_FILL = "E5E7EB", RULE = "9CA3AF";
 
@@ -97,8 +98,8 @@ function p(text, o) { o = o || {}; return new D.Paragraph({ children: [new D.Tex
 function meta(text) { return new D.Paragraph({ children: [new D.TextRun({ text: text, color: GREY, size: 18 })], spacing: { after: 100 }, keepNext: true }); }
 
 var body = [], total = PACKS.reduce(function (a, pk) { return a + pk.claims.length; }, 0);
-body.push(new D.Paragraph({ heading: D.HeadingLevel.TITLE, children: [new D.TextRun("SOL Lab · Virginia EOC Chemistry")] }));
-body.push(p("Question pool", { size: 32, color: "374151", spacing: { after: 240 } }));
+body.push(new D.Paragraph({ heading: D.HeadingLevel.TITLE, children: [new D.TextRun(TITLE)] }));
+body.push(p("SOL Lab · Virginia EOC Chemistry · question pool", { size: 32, color: "374151", spacing: { after: 240 } }));
 body.push(p(PACKS.length + " lab-note passages · " + total + " questions · " + FAMILIES.length + " units", { bold: true, spacing: { after: 80 } }));
 body.push(p("Build " + ver + ". Generated from the game's question bank (js/content*.js) by tools/export-questions-docx.js.", { color: GREY, size: 20, spacing: { after: 240 } }));
 body.push(new D.Paragraph({ children: [
@@ -162,7 +163,7 @@ FAMILIES.forEach(function (f) {
 });
 
 var doc = new D.Document({
-  creator: "SOL Lab", title: "SOL Lab · Virginia EOC Chemistry · question pool",
+  creator: "SOL Lab", title: TITLE, subject: "SOL Lab · Virginia EOC Chemistry · question pool",
   styles: {
     default: { document: { run: { font: FONT, size: 21 }, paragraph: { spacing: { after: 80, line: 264 } } } },
     paragraphStyles: [
@@ -176,7 +177,7 @@ var doc = new D.Document({
   numbering: { config: [{ reference: "units", levels: [{ level: 0, format: D.LevelFormat.DECIMAL, text: "%1.", alignment: D.AlignmentType.LEFT, style: { paragraph: { indent: { left: 720, hanging: 360 } } } }] }] },
   sections: [{
     properties: { page: { size: { width: PAGE_W, height: 15840 }, margin: { top: MARGIN, right: MARGIN, bottom: MARGIN, left: MARGIN } } },
-    headers: { default: new D.Header({ children: [new D.Paragraph({ alignment: D.AlignmentType.RIGHT, children: [new D.TextRun({ text: "SOL Lab · Virginia EOC Chemistry · question pool", color: GREY, size: 16 })] })] }) },
+    headers: { default: new D.Header({ children: [new D.Paragraph({ alignment: D.AlignmentType.RIGHT, children: [new D.TextRun({ text: TITLE + " · SOL Lab · Virginia EOC Chemistry", color: GREY, size: 16 })] })] }) },
     footers: { default: new D.Footer({ children: [new D.Paragraph({ style: "Footer", alignment: D.AlignmentType.CENTER, children: [new D.TextRun({ text: "Page ", color: GREY, size: 16 }), new D.TextRun({ children: [D.PageNumber.CURRENT], color: GREY, size: 16 }),
       new D.TextRun({ text: " of ", color: GREY, size: 16 }), new D.TextRun({ children: [D.PageNumber.TOTAL_PAGES], color: GREY, size: 16 })] })] }) },
     children: body
