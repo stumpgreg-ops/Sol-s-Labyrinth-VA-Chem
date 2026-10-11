@@ -229,7 +229,38 @@ var srv = http.createServer(function (req, res) {
   var tMoved = tB.pk.cx !== tA.pk.cx || tB.pk.cy !== tA.pk.cy;
   check(Math.abs(tMid.x2 - tA.g.x2) < 1 && Math.abs(tMid.y2 - tA.g.y2) < 1, "town: the ground holds still while a piece is dragged");
   check(!tMoved || Math.hypot(tB.pk.x - (tA.pk.x - 176), tB.pk.y - (tA.pk.y + 88)) < 60, "town: a dragged piece lands where it is let go: " + JSON.stringify({ moved: tMoved, from: [Math.round(tA.pk.x), Math.round(tA.pk.y)], to: [Math.round(tB.pk.x), Math.round(tB.pk.y)] }));
-  check(tB.r1 === 1 && tB.r2 === 0 && /faces the other way/.test(tB.note), "town: Turn flips a town building to face the other way and back: " + JSON.stringify({ r1: tB.r1, r2: tB.r2 }));
+  check(tB.r1 === 1 && tB.r2 === 2, "town: Turn gives a town building a quarter turn, like the castle's: " + JSON.stringify({ r1: tB.r1, r2: tB.r2 }));
+  /* Chemistry 1.6: the town is built from the castle's 3D models, and every model it asks for arrives */
+  await page.waitForTimeout(2500);
+  var town3d = await page.evaluate(function () { return { probe: SolBuild._probe(3, 2, 1), loads: SolBuild._loads3d() }; });
+  console.log("town 3d", JSON.stringify(town3d));
+  check(town3d.probe && town3d.probe.use3d && town3d.loads && town3d.loads.models === "ok" && town3d.loads.failed === 0 && town3d.loads.loaded === town3d.loads.total && town3d.loads.total >= 3,
+    "town: the 3D view is on and every 3D model the town needs loaded: " + JSON.stringify(town3d.loads));
+  await shot("09c2-town-3d");
+  await page.evaluate(function () { SolBuild.close(); });
+  /* a town saved when it was flat pictures keeps every piece and style, laid out again on the 3D grid */
+  var legacy = await page.evaluate(function () {
+    var old = { v: 4, theme: "village", salt: 4242, coins: 30, kit: 2, owned: { cottage: 1, bakery: 1, chapel: 1, well: 1, square: 1 }, rewards: { "5": "cottage", "10": "bakery", "15": "chapel" },
+      picks: [{ night: 5, piece: "cottage", style: "tile", src: "reward", deco: false, cx: 0, cy: 0, rot: 1 }, { night: 10, piece: "bakery", style: "slate", src: "reward", deco: false, cx: 2, cy: 0 },
+        { night: 15, piece: "chapel", style: "thatch", src: "reward", deco: false, cx: 0, cy: 3 }, { night: 15, piece: "square", style: "tile", src: "shop", deco: false, cx: -5, cy: 0 },
+        { night: 15, piece: "well", style: "", src: "shop", deco: true, cx: 3, cy: 3 }], view: { a: 90, z: 1, px: 0, py: 0 }, code: "" };
+    localStorage.setItem("afterHours.v1.build", JSON.stringify(old));
+    return old.picks.map(function (p) { return p.piece + ":" + p.style; }).join(" ");
+  });
+  await page.reload({ waitUntil: "load" }); await page.waitForTimeout(800);
+  await page.evaluate(function () { SolBuild.showGallery(); });
+  await page.waitForSelector("#build-overlay:not(.hidden)"); await page.waitForTimeout(2500);
+  var mig = await page.evaluate(function () {
+    var rec = JSON.parse(localStorage.getItem("afterHours.v1.build")), cells = {}, overlap = false;
+    rec.picks.forEach(function (p) { var k = p.cx + "," + p.cy; if (cells[k]) overlap = true; cells[k] = 1; });
+    return { kit: rec.kit, theme: rec.theme, pieces: rec.picks.map(function (p) { return p.piece + ":" + p.style; }).join(" "), placed: rec.picks.every(function (p) { return p.cx != null; }),
+      overlap: overlap, coins: rec.coins, rewards: Object.keys(rec.rewards).length, loads: SolBuild._loads3d(), probe: SolBuild._probe(0, 0, 0) };
+  });
+  console.log("town migration", JSON.stringify(mig));
+  await shot("09c3-town-migrated");
+  check(mig.theme === "village" && mig.kit === 3 && mig.pieces === legacy && mig.placed && !mig.overlap && mig.coins === 30 && mig.rewards === 3 &&
+    mig.probe && mig.probe.use3d && mig.loads.failed === 0 && mig.loads.loaded === mig.loads.total,
+    "town: a town saved as flat pictures keeps every piece, style, coin and reward, laid out again in 3D: " + JSON.stringify({ kit: mig.kit, pieces: mig.pieces, overlap: mig.overlap, loads: mig.loads }));
   await page.evaluate(function () { SolBuild.close(); });
   await page.evaluate(function () { SolBuild.importCode(localStorage.getItem("smoke.castleCode")); });
   await page.reload({ waitUntil: "load" }); await page.waitForTimeout(800);

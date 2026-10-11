@@ -15,7 +15,8 @@
  * piece). Walls, hedges and fences auto-tile from their neighbours; towers,
  * keeps and houses are sprite stacks; the keep grows a storey as the castle
  * grows (theme.growAt); a curtain wall rises by itself at the 8th building.
- * Town theme: the older Modular Village sprites on the same grid.
+ * Town theme (Chemistry 1.6): a kit theme too, built from the same 3D models (tools/make-town-kit.js): a home
+ * that grows a storey, town buildings, and a picket fence that rises by itself at the 8th building.
  *
  * Public API
  *   SolBuild.init()                     load assets/build/pieces.json + saved build
@@ -28,7 +29,7 @@
  *   SolBuild.close() / isOpen() / exportCode() / importCode(str) / state()
  *
  * Save record (localStorage "afterHours.v1.build"):
- *   {v:4, theme:"village"|"castle"|null, salt, coins, kit:2,
+ *   {v:4, theme:"village"|"castle"|null, salt, coins, kit:3,
  *    owned:{pieceId:1}, rewards:{"5":"keep", …},
  *    picks:[{piece, style, cx, cy, src:"reward"|"shop"|"auto"|"free", night, deco}],
  *    view:{r:0..3, z:1, px:0, py:0}, code:"…"}
@@ -64,7 +65,9 @@
 
   /* ── save record ─────────────────────────────────────────────────────────── */
   function freshView() { return { a: 0, z: 1, px: 0, py: 0 }; }
-  function freshSave() { return { v: 4, theme: null, salt: Math.floor(Math.random() * 900000000) + 1, coins: 0, kit: 2, owned: {}, rewards: {}, picks: [], view: freshView(), code: "" }; }
+  /* kit 3 (Chemistry 1.6): the Town is a kit theme; a town saved before that is laid out again on the kit grid */
+  var KIT = 3;
+  function freshSave() { return { v: 4, theme: null, salt: Math.floor(Math.random() * 900000000) + 1, coins: 0, kit: KIT, owned: {}, rewards: {}, picks: [], view: freshView(), code: "" }; }
   function cleanPicks(list) {
     var out = [], order = 0;
     (Array.isArray(list) ? list : []).forEach(function (p) {
@@ -156,7 +159,7 @@
     if (!save || !data) return;
     var changed = false;
     if (save.theme && !themeDef(save.theme)) { save.theme = null; save.picks = []; save.owned = {}; changed = true; }
-    if (save.theme === "castle" && isKit() && save.kit !== 2) {                /* v4.9.5: the old scattered castle becomes a kit castle */
+    if (save.theme === "castle" && isKit() && !(save.kit >= 2)) {              /* v4.9.5: the old scattered castle becomes a kit castle */
       var MAP = { keep: "keep", storehouse: "watch-keep", hall: "round-keep", "lodge-wing": "wall", "tower-short": "round-tower", gate: "gate", "hall-wing": "wall",
         "keep-wing": "square-tower", watchtower: "watchtower", gatehouse: "gate", "tower-pair": "roof-tower", "royal-hall": "grand-tower", "great-gate": "gate",
         "fortress-corner": "corner-tower", "grand-keep": "great-tower", citadel: "royal-tower" };
@@ -172,6 +175,13 @@
       }
       save.kit = 2; changed = true;
     }
+    /* Chemistry 1.6: a town built from flat pictures keeps every piece and style (the ids are the same), but its spots
+       were on the old picture grid, so its pieces are laid out again on the kit grid, buildings first */
+    if (save.theme === "village" && isKit() && !(save.kit >= KIT)) {
+      save.picks.forEach(function (p) { delete p.cx; delete p.cy; p.rot = 0; });
+      save.view = freshView(); changed = true;
+    }
+    if (save.kit !== KIT) { save.kit = KIT; changed = true; }
     var keep = [];
     save.picks.forEach(function (p) {
       var pc = pieceById(p.piece);
@@ -209,6 +219,8 @@
     for (i = 0; i < p.length; i++) if (p[i].id === id) { if (!th || p[i].theme === th) return p[i]; if (!other) other = p[i]; }
     return other;
   }
+  /* a piece of the current theme only (pieceById falls back to the other theme's piece of that id) */
+  function themePiece(id) { var p = pieceById(id); return p && p.theme === save.theme ? p : null; }
   function piecesOf(theme, role) { return ((data && data.pieces) || []).filter(function (p) { return p.theme === theme && (!role || p.role === role); }); }
   function catOf(p) { return p.cat || (p.role === "deco" ? "deco" : p.role === "core" ? "core" : "module"); }
   function themeTabs() {
@@ -233,6 +245,11 @@
   function bandFor(k) { return Math.max(1, Math.min(4, Math.ceil(k / 5))); }   /* reward 1-5 → tier 1 … 16-20 → tier 4 */
   function nextRewardNight() { var n; for (n = EVERY; n <= EVERY * TOTAL; n += EVERY) if (!save.rewards[n]) return n; return null; }
   function wallLevel() { var t = themeDef(save.theme); return (t && t.wallLevel) || 8; }
+  /* the wall that rises by itself and its gate: the castle's curtain wall, the town's picket fence (theme.autoWall) */
+  function autoWallIds() { var t = themeDef(save.theme); return (t && t.autoWall) || ["wall", "gate"]; }
+  function themeMsg(key, dflt) { var t = themeDef(save.theme); return (t && t[key]) || dflt; }
+  function wallsMsg() { return themeMsg("wallsMsg", "The curtain walls went up around your castle — drag any wall to reshape them!"); }
+  function grewMsg() { return themeMsg("grewMsg", "Your keep grew a storey") + " — " + grownCount() + " pieces strong!"; }
   function wallsUp() { return !!save.theme && (isKit() ? save.picks.some(function (p) { return p.src === "auto"; }) : buildingPicks().length >= wallLevel()); }
   /* The style the student has used most (ties → the first building's style). */
   function dominantStyle() {
@@ -1149,8 +1166,8 @@
     persist();
     if (cur) { cur.sel = pk; fillPieceBar(); }
     redraw();
-    ui.note.textContent = walls ? "The curtain walls went up around your castle — drag any wall to reshape them!"
-      : grew ? "Your keep grew a storey — " + grownCount() + " pieces strong!"
+    ui.note.textContent = walls ? wallsMsg()
+      : grew ? grewMsg()
       : (p.name || "Piece") + " placed — drag it anywhere, or tap it to recolour, copy or remove it.";
     if (step === "gallery") ui.badge.textContent = galleryBadge();
     return pk;
@@ -1483,8 +1500,8 @@
       ui.title.textContent = name + (cur.stylePick && styleable(cur.piece) ? " built in " + styleName(cur.stylePick) : " built") + "!" + (isKit() ? " " + rating().rank + " · " + rating().score + " pts" : "");
       ui.sub.textContent = cur.shop ? "Bought for " + priceOf(cur.piece) + " coins. " + coinLabel() + " left. It is unlocked — place more copies from your palette any time."
         : "Reward " + cur.k + " of " + TOTAL + " is in place and unlocked in your palette." + (cur.k < TOTAL ? " Next reward after level " + (cur.night + EVERY) + "." : " Every reward earned!");
-      ui.note.textContent = cur.wallsRaised ? "The curtain walls went up around your castle — drag any wall to reshape them!"
-        : cur.keepGrew ? "Your keep grew a storey — " + grownCount() + " pieces strong!"
+      ui.note.textContent = cur.wallsRaised ? wallsMsg()
+        : cur.keepGrew ? grewMsg()
         : nb === wallLevel() - 1 && isKit() ? "One more building and the walls go up."
         : "Added to your " + tn + "! Open My " + tn + " from the title screen to keep building.";
       setButtons(cur.shop ? [{ label: "Back to shop", primary: true, onTap: function () { cur.piece = null; cur.stylePick = null; showStep("shop"); } }]
@@ -1526,7 +1543,7 @@
   /* Castle: at the wall level a curtain wall (real, movable wall picks with one gate) goes up one cell out from everything built so far. */
   function raiseCastleWalls() {
     if (!isKit() || grownCount() < wallLevel() || save.picks.some(function (pk) { return pk.src === "auto"; })) return false;
-    var b = bboxCells(), wall = pieceById("wall"), gate = pieceById("gate"), dom = dominantStyle(), u, v, n = 0;
+    var aw = autoWallIds(), wall = themePiece(aw[0]), gate = themePiece(aw[1]), b = bboxCells(), dom = dominantStyle(), u, v, n = 0;
     if (!b || !wall) return false;
     var u0 = b.u0 - 1, v0 = b.v0 - 1, u1 = b.u1, v1 = b.v1, gateAt = Math.floor((v0 + v1) / 2);
     function add(cx, cy, piece) {
@@ -1535,7 +1552,7 @@
     }
     for (u = u0; u <= u1; u++) { add(u, v0, wall); add(u, v1, wall); }
     for (v = v0 + 1; v < v1; v++) { add(u0, v, wall); add(u1, v, (gate && v === gateAt) ? gate : wall); }
-    if (n) { unlock("wall"); if (gate) unlock("gate"); }
+    if (n) { unlock(wall.id); if (gate) unlock(gate.id); }
     return n > 0;
   }
   function coinLabel() { return (save.coins || 0) + " coin" + (save.coins === 1 ? "" : "s"); }
@@ -1578,8 +1595,9 @@
     var band = shopBand(), t = themeDef(save.theme), builds, decos;
     var order = function (a, b) { return ((a.tier || 1) - (b.tier || 1)) || (priceOf(a) - priceOf(b)) || (a.name > b.name ? 1 : -1); };
     if (isKit()) {
-      builds = [pieceById("wall"), pieceById("gate")].filter(Boolean)
-        .concat(piecesOf(save.theme, "module").filter(function (p) { return p.id !== "wall" && p.id !== "gate" && (p.tier || 1) <= band; }).sort(order))
+      var aw = autoWallIds();
+      builds = aw.map(themePiece).filter(Boolean)
+        .concat(piecesOf(save.theme, "module").filter(function (p) { return aw.indexOf(p.id) === -1 && (p.tier || 1) <= band; }).sort(order))
         .concat(piecesOf(save.theme, "core").filter(function (p) { return !owned(p.id); }));
       decos = piecesOf(save.theme, "deco").filter(function (p) { return (p.tier || 1) <= band && !isTrophy(p); }).sort(order);
     } else {
@@ -1654,7 +1672,7 @@
         });
       });
     } else if (tab === "deco") {
-      ui.note.textContent = ui.note.textContent || (isKit() ? "Flags fly from towers. Trees, flowers, statues, animals and village life go anywhere on the field." : "Decorations go in the yard between your buildings.");
+      ui.note.textContent = ui.note.textContent || (isKit() ? themeMsg("decoMsg", "Flags fly from towers. Trees, flowers, statues, animals and village life go anywhere on the field.") : "Decorations go in the yard between your buildings.");
       off.decos.forEach(function (p) {
         if (isKit()) heading(p);
         card(p, isKit() ? dom : "", p.name, p.desc, priceOf(p), owned(p.id), function () { if (buyDeco(p)) { if (!owned(p.id)) ui.note.textContent = p.name + " added and unlocked. " + coinLabel() + " left."; fillShop(true); } });

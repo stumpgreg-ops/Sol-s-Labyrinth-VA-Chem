@@ -8,6 +8,13 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## Chemistry 1.6.0 (2026-10-11) — the Town is built from the castle's 3D models
+
+- **The Town draws in 3D, with the castle's models.** It used to be one flat picture per piece that could only face two ways. It is now a kit theme like the castle (`tools/make-town-kit.js` writes it into `assets/build/pieces.json`), so every town building is the same 3D model the castle uses and turns with the view by the degree. Its homes (cottage, stone cottage, two-storey house) are stacks of the castle's timber and stone walls and roofs and grow a storey as the town grows (up to three). Its buildings are the castle's houses, tavern, windmill, watermill, market, shipyard (the harbour), town hall, church, shrine, blacksmith, lumber mill, stables, workshop and mine. Its market and yard pieces, fences and hedges, trees and flowers, statues, animals and Fenrir's monuments are the castle's too: 135 pieces, the same ones in 3D as the castle's (trees, flowers, animals and a few statues and lamps stand upright as pictures in both, because the model kits have no 3D version of them).
+- **Same names, same perks.** The Town's 32 pieces keep their ids, so saved towns, build codes, progress codes and the maze perks still work. A town saved before 1.6 keeps every piece, style, coin and reward and is laid out again on the 3D grid the first time it opens. Styles keep their names (Red Tile, Slate, Golden Thatch) and recolour the models' roofs, doors and trim.
+- **Town details:** a picket fence (with a gate) rises around the town at the 8th building, as the castle's curtain wall does; Turn gives a piece a quarter turn; town ranks run Homestead, Hamlet, Village, Town, Market Town, City, Capital; town shop packs (fences, homes, market, mills, farm, harbour, garden, monuments). A town can now also win Fenrir's monuments, which before went only to castles.
+- Tests: `tools/smoke.js` checks the town draws in 3D with every model loaded, turns a quarter turn, and that a town saved as flat pictures keeps everything when it moves to 3D.
+
 ## Chemistry 1.5.0 (2026-10-08) — accommodations (SOL Labyrinth v5.18.0), a way out of a level, a one-card how-to-play
 
 - **Accommodations for one student** (`js/accommodations.js`, from SOL Labyrinth v5.18.0). On the student's Chromebook a teacher types `accommodations` in the nickname box, enters the PIN (**4826** to start; change it in the panel), ticks what the student needs and saves. The title screen then says which are on. Each one can have an end date, and nothing is on for anyone else.
