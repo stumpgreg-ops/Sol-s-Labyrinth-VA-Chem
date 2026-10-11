@@ -73,7 +73,19 @@ var lms = http.createServer(function (req, res) {
   var t0 = Date.now();
   await page.goto(course);
   var f = await frame();
+  await f.waitForSelector("#launch:not(.hidden) #btn-launch", { timeout: 60000 });
+  var ls = await f.evaluate(function () { var b = document.getElementById("btn-launch"), r = b.getBoundingClientRect(), top = document.elementFromPoint(innerWidth / 2, innerHeight / 2);
+    return { text: b.textContent, inView: r.top >= 0 && r.bottom <= innerHeight, covers: document.getElementById("launch").contains(top), h: innerHeight }; });
+  check(/Click here for full screen mode/.test(ls.text) && ls.inView && ls.covers, "in the 500 px Canvas frame the first screen is only the Click here for full screen mode button (" + JSON.stringify(ls) + ")");
+  await page.screenshot({ path: path.join(shots, "swdcv-00-launch.png") });
+  await f.click("#btn-launch");
   await f.waitForSelector("#home:not(.hidden) #player-chips .chip", { timeout: 60000 });
+  await page.waitForTimeout(300);
+  var fs1 = await f.evaluate(function () { return { full: !!document.fullscreenElement, exit: getComputedStyle(document.getElementById("btn-exit-full")).display }; });
+  check(fs1.full && fs1.exit !== "none", "the button puts the game in full screen inside Canvas, with an Exit full screen button");
+  await f.click("#btn-exit-full"); await page.waitForTimeout(300);
+  check(await f.isVisible("#btn-launch"), "Exit full screen goes back to the Click here for full screen mode button");
+  await f.click("#btn-launch"); await page.waitForTimeout(300);
   console.log("load " + (Date.now() - t0) + " ms, " + uploaded.length + " files, " + (uploaded.reduce(function (a, x) { return a + fs.statSync(path.join(dir, x)).size; }, 0) / 1048576).toFixed(1) + " MiB; the page " + (fs.statSync(path.join(dir, start)).size / 1024).toFixed(1) + " KiB");
   var s1 = await f.evaluate(function () {
     var logo = document.querySelector(".home-head .logo");
@@ -115,6 +127,7 @@ var lms = http.createServer(function (req, res) {
     music: getComputedStyle(document.getElementById("music-pick")).display, slow: JSON.parse(localStorage.getItem("afterHours.v1.acc.VA") || "{}") }; });
   check(/Grade 3/.test(cl.kicker) && /Labyrinth/.test(cl.kicker) && cl.fam === "ALL,G3MATH,G3READ,G3LIFE" && cl.back, "Path 2 · Grade 3 · Math · The Labyrinth opens in the same Canvas page on the grade's questions (" + cl.kicker + ")");
   check(cl.music === "none", "the main game's music picker is hidden");
+  check(await f.isVisible("#skill-screen .swd-fs-corner"), "the main game's start screen has a Full screen button (the reload left full screen)");
   check(cl.slow.slow && cl.slow.slow.pct === 75, "Game speed 75 % reaches the main game");
   await f.click("#btn-skill-start");
   await page.waitForTimeout(400);
@@ -140,6 +153,8 @@ var lms = http.createServer(function (req, res) {
   await f.click("#title-screen .swd-back");
   await page.waitForTimeout(1500);
   f = await frame();
+  await f.waitForSelector("#launch:not(.hidden) #btn-launch", { timeout: 60000 });
+  await f.click("#btn-launch");
   await f.waitForSelector("#home:not(.hidden) #player-chips .chip", { timeout: 60000 });
   var after = await f.evaluate(function () { return { levels: SWD.players.data().prog.levels, perLevel: SWD.acc.get("perLevel"), mode: SWD.players.data().last.mode }; });
   check(JSON.stringify(after.levels) === JSON.stringify(lv) && after.perLevel === "5", "\"SWD menu\" comes back to the selection screen with the levels and accommodations kept");

@@ -29,6 +29,37 @@
     var b = document.createElement("a"); b.className = "btn"; backLink(b); b.textContent = "SWD menu";
     again.parentNode.appendChild(b);
   }
+  /* full screen: whenever the page is not full screen, a "Full screen" button is on screen. The main game hides its
+     own button (#btn-fs) when not full screen; here it stays, as "⛶ Full screen", and new ones sit on the start
+     screens and the end-of-level box (a reload from the SWD menu always starts out of full screen) */
+  function isFull() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+  function goFull() {
+    var el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) { try { var p = req.call(el); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+  }
+  function fsButton(cls) {
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "btn primary swd-fs " + (cls || ""); b.textContent = "⛶ Full screen";
+    b.addEventListener("click", function (e) { e.stopPropagation(); goFull(); });
+    return b;
+  }
+  ["title-screen", "mode-screen", "skill-screen"].forEach(function (id) { var scr = $(id); if (scr) scr.insertBefore(fsButton("swd-fs-corner"), scr.firstChild); });
+  var endRow = again && again.parentNode;
+  if (endRow) endRow.appendChild(fsButton());
+  var fsb = $("btn-fs");
+  function syncFs() {
+    var full = isFull();
+    document.body.classList.toggle("swd-full", full);
+    if (fsb && !full) { if (fsb.classList.contains("hidden")) fsb.classList.remove("hidden"); if (fsb.textContent !== "⛶ Full screen") fsb.textContent = "⛶ Full screen"; }
+  }
+  if (fsb) {
+    fsb.addEventListener("click", function () { if (!isFull()) goFull(); });
+    if (window.MutationObserver) new MutationObserver(syncFs).observe(fsb, { attributes: true, attributeFilter: ["class"], childList: true });
+  }
+  document.addEventListener("fullscreenchange", syncFs);
+  document.addEventListener("webkitfullscreenchange", syncFs);
+  syncFs();
+
   /* straight to this subject and mode */
   var fam = (P.band || "G2") + ({ math: "MATH", reading: "READ", life: "LIFE" }[P.subject] || "MATH");
   setTimeout(function () {

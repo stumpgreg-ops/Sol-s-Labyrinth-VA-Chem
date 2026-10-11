@@ -12,6 +12,14 @@
 </head>
 <body>
   <div id="swd-app">
+    <!-- the start screen: one button that opens the game in full screen (a Canvas frame is only 500 px tall);
+         leaving full screen comes back here -->
+    <section id="launch" role="dialog" aria-modal="true" aria-label="Sol's Labyrinth">
+      <img class="launch-logo" src="assets/logo/sols-labyrinth-512.png" alt="Sol's Labyrinth" width="220" height="220" />
+      <button type="button" class="btn primary launch-btn" id="btn-launch">⛶ Click here for full screen mode</button>
+      <p id="launch-note" class="launch-note hidden"></p>
+    </section>
+
     <!-- the selection screen: who, path and grade, subject, game, with the accommodations beside it -->
     <section id="home" class="swd-screen">
       <header class="home-head">
@@ -21,6 +29,8 @@
           <h1>Sol's Labyrinth</h1>
           <p class="ver">v1.0.0 · life skills, math and reading · Path 1 (K–1) and Path 2 (grades 2–6) · <span id="stars-line"></span></p>
         </div>
+        <button type="button" class="btn exit-full" id="btn-exit-full" title="Leave full screen and go back to the start screen">✕ Exit full screen</button>
+        <button type="button" class="btn primary enter-full" id="btn-enter-full" title="Play in full screen">⛶ Full screen</button>
       </header>
 
       <div class="home-grid">
@@ -101,6 +111,8 @@
         <span id="hud-title" class="hud-title"></span>
         <span id="hud-dots" class="hud-dots" role="img"></span>
         <button type="button" class="btn no-scan" id="btn-say" aria-label="Read it again" title="Read it again (R)">🔊 Again</button>
+        <button type="button" class="btn no-scan exit-full" id="btn-exit-full-play" title="Leave full screen (the level waits)">✕ Exit full screen</button>
+        <button type="button" class="btn primary no-scan enter-full" id="btn-enter-full-play" title="Play in full screen">⛶ Full screen</button>
       </div>
       <div id="stage" class="stage"></div>
 

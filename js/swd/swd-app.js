@@ -252,6 +252,47 @@
     $("leave").classList.remove("hidden");
     setTimeout(function () { $("btn-leave-stay").focus(); }, 30);
   }
+  /* ── full screen: the start screen's one button goes in; leaving full screen (the Exit button or Esc) comes back to it ── */
+  function fsEl() { return document.fullscreenElement || document.webkitFullscreenElement || null; }
+  var fsWorks = true;
+  function showLaunch() {
+    if (!fsWorks) return;
+    SWD.speech.stop();
+    if (run && !$("play").classList.contains("hidden") && $("results").classList.contains("hidden") && $("leave").classList.contains("hidden")) askLeave();
+    SWD.input.pauseAll(true);
+    $("launch").classList.remove("hidden");
+    setTimeout(function () { $("btn-launch").focus(); }, 30);
+  }
+  function hideLaunch() {
+    $("launch").classList.add("hidden");
+    if ($("leave").classList.contains("hidden")) SWD.input.pauseAll(false);
+  }
+  function noFullScreen() {
+    /* not allowed here (a frame without allowfullscreen) or not supported: play in the page; the Full screen
+       buttons stay on screen to try again */
+    fsWorks = false;
+    hideLaunch();
+    document.body.classList.remove("is-full");
+  }
+  function enterFull() {
+    var el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+    fsWorks = true;
+    hideLaunch();
+    if (!req || document.fullscreenEnabled === false) { noFullScreen(); return; }
+    try { var p = req.call(el); if (p && p.catch) p.catch(noFullScreen); } catch (e) { noFullScreen(); }
+  }
+  function exitFull() {
+    var ex = document.exitFullscreen || document.webkitExitFullscreen;
+    if (fsEl() && ex) { try { var p = ex.call(document); if (p && p.catch) p.catch(function () {}); } catch (e) {} }
+    else showLaunch();
+  }
+  function onFullChange() {
+    var full = !!fsEl();
+    document.body.classList.toggle("is-full", full);
+    if (full) hideLaunch(); else showLaunch();
+  }
+  window.SWDFull = { enter: enterFull, exit: exitFull };
+
   function stay() { $("leave").classList.add("hidden"); SWD.input.pauseAll(false); if (run) run.pause(false); }
 
   /* ── the main game's modes ── */
@@ -344,6 +385,14 @@
     $("btn-play").addEventListener("click", function () { if (last().band !== "P1") last().lastGrade = last().band; SWD.players.save(); startPlay(); });
     $("btn-restart").addEventListener("click", function () { startPlay(1); });
     $("btn-menu").addEventListener("click", askLeave);
+    $("btn-launch").addEventListener("click", enterFull);
+    $("btn-exit-full").addEventListener("click", exitFull);
+    $("btn-exit-full-play").addEventListener("click", exitFull);
+    $("btn-enter-full").addEventListener("click", enterFull);
+    $("btn-enter-full-play").addEventListener("click", enterFull);
+    document.addEventListener("fullscreenchange", onFullChange);
+    document.addEventListener("webkitfullscreenchange", onFullChange);
+    SWD.input.pauseAll(true);   /* nothing behind the start screen takes keys */
     $("btn-say").addEventListener("click", function () { if (run) run.say(); });
     $("btn-leave-stay").addEventListener("click", stay);
     $("btn-leave-go").addEventListener("click", goHome);
@@ -361,6 +410,7 @@
     $("name-input").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); nameOk(); } });
     $("leave").addEventListener("click", function (e) { if (e.target === $("leave")) stay(); });
     document.addEventListener("keydown", function (e) {
+      if (!$("launch").classList.contains("hidden")) return;   /* the start screen: only its button */
       if (e.key === "Escape") {
         if (!$("leave").classList.contains("hidden")) { stay(); e.preventDefault(); return; }
         ["town", "report", "look", "name-dlg"].forEach(function (id) { $(id).classList.add("hidden"); });

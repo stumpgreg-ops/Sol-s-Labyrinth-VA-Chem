@@ -28,6 +28,9 @@ async function tap(page, sel) {
     b.dispatchEvent(new PointerEvent("pointerdown", o)); b.dispatchEvent(new PointerEvent("pointerup", o));
   }, sel);
 }
+/* the start screen: its one button goes into full screen */
+async function launch(page) { await page.click("#btn-launch"); await page.waitForTimeout(300); }
+function shown(page, sel) { return page.evaluate(function (sel) { var e = document.querySelector(sel); return !!e && getComputedStyle(e).display !== "none" && !e.closest(".hidden") && e.getBoundingClientRect().width > 0; }, sel); }
 async function choose(page, band, subject, mode, acc) {
   await page.evaluate(function (a) {
     Object.keys(a.acc || {}).forEach(function (k) { SWD.acc.set(k, a.acc[k]); });
@@ -98,6 +101,12 @@ async function playLevel(page, opts) {
   for (var size of [[1280, 800], [900, 500], [420, 500]]) {
     var pg = await newPage(size[0], size[1]);
     await pg.goto(base + "swd.html"); await pg.waitForTimeout(400);
+    var ls = await pg.evaluate(function () {
+      var l = document.getElementById("launch"), b = document.getElementById("btn-launch"), r = b.getBoundingClientRect(), top = document.elementFromPoint(innerWidth / 2, innerHeight / 2);
+      return { on: !l.classList.contains("hidden"), text: b.textContent, inView: r.top >= 0 && r.bottom <= innerHeight && r.left >= 0 && r.right <= innerWidth, covers: l.contains(top) };
+    });
+    check(ls.on && /Click here for full screen mode/.test(ls.text) && ls.inView && ls.covers, size.join("×") + ": the first screen is only the Click here for full screen mode button, in view (" + JSON.stringify(ls) + ")");
+    await launch(pg);
     var s = await pg.evaluate(function () {
       var se = document.querySelector("#home");
       return { players: document.querySelectorAll("#player-chips .chip").length, paths: document.querySelectorAll("#path-cards .card").length, subjects: document.querySelectorAll("#subject-cards .card").length,
@@ -112,6 +121,13 @@ async function playLevel(page, opts) {
 
   var page = await newPage(1280, 800);
   await page.goto(base + "swd.html"); await page.waitForTimeout(400);
+  /* full screen: in, the Exit button back to the start screen, in again */
+  await launch(page);
+  var f1 = await page.evaluate(function () { return { full: !!document.fullscreenElement, cls: document.body.classList.contains("is-full") }; });
+  check(f1.full && f1.cls && await shown(page, "#btn-exit-full") && !(await shown(page, "#btn-enter-full")), "the button opens full screen, with an Exit full screen button on the selection screen");
+  await page.click("#btn-exit-full"); await page.waitForTimeout(300);
+  check(!(await page.evaluate(function () { return !!document.fullscreenElement; })) && await shown(page, "#btn-launch"), "Exit full screen goes back to the start screen, whose button goes back in");
+  await launch(page);
   /* Path 2: five separate grades, three subjects each, and the main game's modes */
   await page.click('#path-cards .card[data-path="2"]'); await page.waitForTimeout(150);
   var g = await page.evaluate(function () { return { grades: [].map.call(document.querySelectorAll("#grade-chips .chip"), function (c) { return c.textContent; }).join(","), subjects: document.querySelectorAll("#subject-cards .card").length, classic: document.querySelectorAll("#classic-cards .card").length }; });
@@ -126,7 +142,7 @@ async function playLevel(page, opts) {
   await page.click('#acc-groups .toggle[aria-label="High contrast"]');
   var a1 = await page.evaluate(function () { return { xl: document.body.classList.contains("acc-xlarge"), hc: document.body.classList.contains("acc-hc"), sum: document.getElementById("acc-summary").textContent }; });
   check(a1.xl && a1.hc && /Extra large/.test(a1.sum) && /High contrast/.test(a1.sum), "accommodations change the page at once and show in the summary");
-  await page.reload(); await page.waitForTimeout(400);
+  await page.reload(); await page.waitForTimeout(400); await launch(page);
   check(await page.evaluate(function () { return document.body.classList.contains("acc-xlarge") && document.body.classList.contains("acc-hc"); }), "accommodations survive a reload");
   await page.click("#player-chips .chip.add"); await page.fill("#name-input", "Jay"); await page.click("#btn-name-ok"); await page.waitForTimeout(150);
   var a2 = await page.evaluate(function () { return { name: SWD.players.current().name, n: SWD.players.list().length, xl: document.body.classList.contains("acc-xlarge") }; });
@@ -164,6 +180,13 @@ async function playLevel(page, opts) {
   await page.waitForTimeout(400);
   var wr = await page.evaluate(function () { return { out: document.querySelectorAll("#stage .answer.out").length, hint: document.querySelector("#stage .hint-line").textContent, glow: !!document.querySelector("#stage [data-test-answer].glow") }; });
   check(wr.out === 2 && /Hint|Try/.test(wr.hint) && wr.glow, "two wrong answers: both crossed out, a hint, and the right answer glows (" + JSON.stringify(wr) + ")");
+
+  /* leaving full screen in a level: the start screen, and the level waits behind "Leave this level?" */
+  await page.click("#btn-exit-full-play"); await page.waitForTimeout(300);
+  check(await shown(page, "#btn-launch") && await page.isVisible("#leave"), "Exit full screen in a level shows the start screen and pauses the level");
+  await launch(page);
+  check(await page.isVisible("#leave") && await page.isVisible("#stage .answer"), "back in full screen, the level is still there behind Leave this level?");
+  await page.click("#btn-leave-stay"); await page.waitForTimeout(100);
 
   /* Menu: pause and ask */
   await page.click("#btn-menu"); await page.waitForTimeout(100);
@@ -212,6 +235,17 @@ async function playLevel(page, opts) {
   check(await playLevel(page), "Rune Match face down plays a whole level");
   await page.click("#btn-res-home"); await page.waitForTimeout(150);
 
+  /* full screen refused (a frame without allowfullscreen): the game plays in the page, with a Full screen button always there */
+  var nf = await newPage(1000, 500);
+  await nf.addInitScript(function () { Element.prototype.requestFullscreen = function () { return Promise.reject(new Error("not allowed")); }; });
+  await nf.goto(base + "swd.html"); await nf.waitForTimeout(300);
+  await launch(nf);
+  check(!(await shown(nf, "#btn-launch")) && await shown(nf, "#btn-enter-full") && !(await shown(nf, "#btn-exit-full")), "full screen refused: the selection screen shows, with a Full screen button to try again");
+  await nf.evaluate(function () { var l = SWD.players.data().last; l.band = "P1"; l.subject = "math"; l.mode = "path"; SWD.players.save(); SWDApp.renderAll(); });
+  await nf.click("#btn-play"); await nf.waitForTimeout(300);
+  check(await shown(nf, "#btn-enter-full-play"), "and a Full screen button in the game's top bar");
+  await nf.close();
+
   /* the progress report */
   await page.click("#btn-report"); await page.waitForTimeout(150);
   var rep = await page.evaluate(function () { return { rows: document.querySelectorAll("#report-body table.rep tbody tr").length, txt: document.getElementById("report-body").textContent }; });
@@ -229,6 +263,7 @@ async function playLevel(page, opts) {
       fam: HEIST_FAMILIES.map(function (f) { return f.id; }).join(","), back: !!document.querySelector("#skill-screen .swd-back"), mine: mine };
   }, pid);
   check(cl.skill && /Grade 3/.test(cl.kicker) && /Labyrinth/.test(cl.kicker) && cl.fam === "ALL,G3MATH,G3READ,G3LIFE" && cl.packs > 300 && cl.back, "Path 2 · Grade 3 · Math · The Labyrinth opens swd-play.html on the Start screen with the grade's questions (" + JSON.stringify(cl) + ")");
+  check(await shown(page, "#skill-screen .swd-fs-corner"), "the main game's start screens have a Full screen button (the page reloaded out of full screen)");
   await page.click("#btn-skill-start"); await page.waitForTimeout(400);
   if (await page.isVisible("#btn-char-confirm")) await page.click("#btn-char-confirm");
   for (var i = 0; i < 50; i++) { await page.mouse.move(200 + i, 300); await page.waitForTimeout(150); if (await page.evaluate(function () { return !!(window.SolScene && SolScene.sys && SolScene.sys.isActive() && SolScene.claim); })) break; }
@@ -237,7 +272,10 @@ async function playLevel(page, opts) {
   var mz = await page.evaluate(function () { return { slips: SolScene.slips.length, choices: SolScene.claim.choices.length, sol: SolScene.claim.sol, panel: document.querySelectorAll("#eoc-choices li").length }; });
   check(mz.slips === 3 && mz.choices === 3 && mz.panel === 3 && /^G3\./.test(mz.sol), "the maze places only as many letters as answer choices (3) and asks Grade 3 questions (" + JSON.stringify(mz) + ")");
   await page.screenshot({ path: path.join(shots, "swd-play-maze.png") });
-  await page.goto(base + "swd.html"); await page.waitForTimeout(300);
+  if (await page.evaluate(function () { return !!document.fullscreenElement; })) { await page.evaluate(function () { return document.exitFullscreen(); }); await page.waitForTimeout(400); }
+  var fsb = await page.evaluate(function () { var b = document.getElementById("btn-fs"); return { text: b.textContent, hidden: b.classList.contains("hidden") }; });
+  check(!fsb.hidden && /Full screen/.test(fsb.text) && !/Exit/.test(fsb.text), "out of full screen in a main-game level, its Full screen button stays on screen (" + JSON.stringify(fsb) + ")");
+  await page.goto(base + "swd.html"); await page.waitForTimeout(300); await launch(page);
   var sep = await page.evaluate(function (pid) {
     var ks = Object.keys(localStorage);
     return { prefixed: ks.filter(function (k) { return k.indexOf("swd." + pid + ".afterHours.") === 0; }).length, bare: ks.filter(function (k) { return k.indexOf("afterHours.") === 0; }).length,

@@ -292,6 +292,20 @@ body.tgt-huge .rv-sign { min-height: 80px; padding: 10px 18px 10px 40px; }
 .answer.raven.caught { transition: transform .8s ease-in; }
 .rv-pause { position: absolute; right: 8px; bottom: 8px; z-index: 3; }
 
+/* ── the start screen: one button into full screen ── */
+#launch { position: fixed; inset: 0; z-index: 80; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 16px;
+  background: radial-gradient(ellipse at 50% 35%, rgba(245, 200, 66, .14), transparent 60%), linear-gradient(180deg, #0b0d14, #07080d); }
+body.acc-hc #launch { background: #000; }
+.launch-logo { width: min(220px, 42vh); height: auto; filter: drop-shadow(0 6px 18px rgba(245, 200, 66, .25)); }
+.launch-btn { min-height: 96px; padding: 18px 34px; font-size: clamp(20px, 3.4vw, 30px); border-width: 3px; border-radius: 18px; }
+.launch-note { color: var(--dim); max-width: 520px; text-align: center; margin: 0; font-size: .9em; }
+/* the Exit full screen buttons show only while the game is full screen */
+.exit-full { display: none !important; }
+body.is-full .exit-full { display: inline-flex !important; }
+/* and whenever it is not full screen, a button back in (the start screen has one too) */
+body.is-full .enter-full { display: none !important; }
+.home-head .exit-full, .home-head .enter-full { margin-left: auto; }
+
 /* ── windows ── */
 .overlay { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(4, 5, 9, .78); padding: 12px; overflow: auto; }
 .overlay .box { background: var(--panel); border: 2px solid var(--gold); border-radius: 18px; padding: 16px 20px; max-width: 560px; width: 100%; text-align: center; max-height: calc(100vh - 24px); overflow: auto; }

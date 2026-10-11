@@ -35,6 +35,8 @@ rep(/<script>window\.SOL_STATE = "VA";<\/script>/, [
   "</script>",
   "<style>",
   "  .swd-back { position: absolute; left: 12px; top: 12px; z-index: 30; text-decoration: none; }",
+  "  .swd-fs-corner { position: absolute; right: 12px; top: 12px; z-index: 30; }",
+  "  body.swd-full .swd-fs { display: none !important; }",
   "  #eoc-passage .swd-visual { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 6px 0; }",
   "  #eoc-passage .swd-visual svg, #read-passage .swd-visual svg { max-width: 100%; height: auto; }",
   "  #eoc-passage .swd-q, #read-passage .swd-q { font-weight: 700; }",
