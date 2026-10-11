@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <title>Sol's Labyrinth · Skills Path (SWD)</title>
+  <link rel="stylesheet" href="css/swd.css?v=1.0.0" />
+  <link rel="stylesheet" href="css/build.css?v=1.0.0" />
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/logo/favicon-64.png?v=1.0.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/favicon-180.png?v=1.0.0" />
+</head>
+<body>
+  <div id="swd-app">
+    <!-- the start screen: one button that opens the game in full screen (a Canvas frame is only 500 px tall);
+         leaving full screen comes back here -->
+    <section id="launch" role="dialog" aria-modal="true" aria-label="Sol's Labyrinth">
+      <img class="launch-logo" src="assets/logo/sols-labyrinth-512.png" alt="Sol's Labyrinth" width="220" height="220" />
+      <button type="button" class="btn primary launch-btn" id="btn-launch">⛶ Click here for full screen mode</button>
+      <p id="launch-note" class="launch-note hidden"></p>
+    </section>
+
+    <!-- the selection screen, one screen with no scrolling: a top bar (who is playing, Accommodations, the report, the
+         town, full screen), three columns (path and grade, subject, game) and a bottom bar (the accommodations that are
+         on, Practice, Play). The full list of accommodations opens in its own window (#acc-dlg). -->
+    <section id="home" class="swd-screen">
+      <header class="home-bar">
+        <img class="logo" src="assets/logo/sols-labyrinth-512.png" alt="Sol's Labyrinth" width="52" height="52" />
+        <div class="who" role="group" aria-labelledby="h-player">
+          <span id="h-player" class="bar-label">Who is playing?</span>
+          <div id="player-chips" class="chips"></div>
+          <div id="player-tools" class="chips"></div>
+        </div>
+        <div class="bar-tools">
+          <span id="stars-line" class="stars-line"></span>
+          <button type="button" class="btn" id="btn-acc">⚙️ Accommodations</button>
+          <button type="button" class="btn" id="btn-report">📊 Progress</button>
+          <button type="button" class="btn" id="btn-town">🏘️ My Town</button>
+          <button type="button" class="btn" id="btn-shop">🛒 Shop</button>
+          <button type="button" class="btn exit-full" id="btn-exit-full" title="Leave full screen and go back to the start screen">✕ Exit full screen</button>
+          <button type="button" class="btn primary enter-full" id="btn-enter-full" title="Play in full screen">⛶ Full screen</button>
+        </div>
+      </header>
+
+      <div class="home-cols">
+        <section class="col col-path" aria-labelledby="h-path">
+          <h2 id="h-path"><span class="num">1</span> Path</h2>
+          <div id="path-cards" class="cards stack">
+            <button type="button" class="card path" data-path="1">
+              <span class="icon">🌱</span><span class="name">Path 1 · First Skills</span>
+              <span class="kind">Kindergarten – grade 1 skills</span>
+              <span class="meta">Money, math, reading and life skills with big buttons and pictures.</span>
+            </button>
+            <button type="button" class="card path" data-path="2">
+              <span class="icon">🧭</span><span class="name">Path 2 · Grades 2 – 6</span>
+              <span class="kind">One grade at a time</span>
+              <span class="meta">Math, reading and life skills for one grade.</span>
+            </button>
+          </div>
+          <div id="grade-chips" class="chips grades hidden" role="group" aria-label="Grade"></div>
+        </section>
+
+        <section class="col col-subject" aria-labelledby="h-subject">
+          <h2 id="h-subject"><span class="num">2</span> Subject</h2>
+          <div id="subject-cards" class="cards stack"></div>
+        </section>
+
+        <section class="col col-mode" aria-labelledby="h-mode">
+          <h2 id="h-mode"><span class="num">3</span> Game</h2>
+          <div id="mode-cards" class="cards modes"></div>
+          <div id="classic-wrap" class="hidden">
+            <p class="sub">From the main game · moving and aiming (arrow keys or the on-screen pad)</p>
+            <div id="classic-cards" class="cards classics"></div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="home-foot">
+        <div class="foot-acc">
+          <span class="bar-label">Accommodations on:</span>
+          <div id="acc-summary" class="pills"></div>
+        </div>
+        <p id="play-line" class="play-line"></p>
+        <div id="focus-row" class="focus-row">
+          <label for="focus-select">Practice:</label>
+          <select id="focus-select"></select>
+        </div>
+        <button type="button" class="btn hidden" id="btn-restart" title="Start this game over at level 1">Start at level 1</button>
+        <button type="button" class="btn primary big" id="btn-play">▶ Play</button>
+      </footer>
+    </section>
+
+    <!-- every accommodation, for this player (no PIN) -->
+    <div id="acc-dlg" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="acc-title">
+      <div class="box acc-box">
+        <div class="box-head">
+          <h2 id="acc-title">Accommodations</h2>
+          <button type="button" class="btn primary" data-close="acc-dlg">Done</button>
+        </div>
+        <p class="dim small">Anyone can change these: the student, a teacher or a parent. They are saved for this player on this Chromebook and work right away.</p>
+        <div class="acc-quick"><span class="bar-label">Quick start:</span><div id="acc-presets" class="chips"></div></div>
+        <div id="acc-groups" class="acc-cols"></div>
+      </div>
+    </div>
+
+    <!-- playing -->
+    <section id="play" class="hidden">
+      <div class="hud">
+        <button type="button" class="btn no-scan" id="btn-menu" aria-label="Menu: leave this level" title="Leave this level (Esc)">☰ Menu</button>
+        <span id="hud-title" class="hud-title"></span>
+        <span id="hud-dots" class="hud-dots" role="img"></span>
+        <button type="button" class="btn no-scan" id="btn-say" aria-label="Read it again" title="Read it again (R)">🔊 Again</button>
+        <button type="button" class="btn no-scan exit-full" id="btn-exit-full-play" title="Leave full screen (the level waits)">✕ Exit full screen</button>
+        <button type="button" class="btn primary no-scan enter-full" id="btn-enter-full-play" title="Play in full screen">⛶ Full screen</button>
+      </div>
+      <div id="stage" class="stage"></div>
+
+      <div id="results" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="res-title">
+        <div class="box">
+          <h2 id="res-title">Level done!</h2>
+          <div id="res-stars" class="stars"></div>
+          <p id="res-msg"></p>
+          <div class="row">
+            <button type="button" class="btn primary big" id="btn-res-next">▶ Next level</button>
+            <button type="button" class="btn" id="btn-res-again">Play this level again</button>
+            <button type="button" class="btn" id="btn-res-home">Main menu</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="leave" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="leave-title">
+        <div class="box">
+          <h2 id="leave-title">Leave this level?</h2>
+          <p>The game is paused.</p>
+          <div class="row">
+            <button type="button" class="btn primary big" id="btn-leave-stay">Keep playing</button>
+            <button type="button" class="btn" id="btn-leave-go">Main menu</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- windows -->
+    <div id="report" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="report-title">
+      <div class="box wide">
+        <div class="box-head"><h2 id="report-title">Progress</h2><button type="button" class="btn" data-close="report">Close</button></div>
+        <div id="report-body" class="report-body"></div>
+        <div class="row">
+          <button type="button" class="btn" id="btn-print">🖨️ Print or save as PDF</button>
+          <button type="button" class="btn danger" id="btn-reset-prog">Erase this player's progress</button>
+        </div>
+      </div>
+    </div>
+    <div id="look" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="look-title">
+      <div class="box">
+        <div class="box-head"><h2 id="look-title">Pick a look</h2><button type="button" class="btn" data-close="look">Close</button></div>
+        <div id="look-grid" class="look-grid"></div>
+      </div>
+    </div>
+    <div id="name-dlg" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="name-title">
+      <div class="box">
+        <h2 id="name-title">Add a player</h2>
+        <label class="name-label"><span id="name-label">Name:</span>
+          <input id="name-input" maxlength="20" autocomplete="off" spellcheck="false" />
+        </label>
+        <div class="row">
+          <button type="button" class="btn primary" id="btn-name-ok">OK</button>
+          <button type="button" class="btn" data-close="name-dlg">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/swd/swd-core.js?v=1.0.0"></script>
+  <script src="js/swd/swd-art.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-p1.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-math.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-reading.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-life.js?v=1.0.0"></script>
+  <script src="js/swd/swd-acc.js?v=1.0.0"></script>
+  <!-- the town and castle builder from the main game (My Town, Shop, a new piece every 2 levels) -->
+  <script src="js/vendor/three.min.js?v=1.0.0"></script>
+  <script src="js/build3d.js?v=1.0.0"></script>
+  <script src="js/build.js?v=1.0.0"></script>
+  <script src="js/swd/swd-modes.js?v=1.0.0"></script>
+  <script src="js/swd/swd-app.js?v=1.0.0"></script>
+</body>
+</html>

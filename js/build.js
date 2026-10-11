@@ -47,6 +47,17 @@
   var SHOP_TABS = [["build", "Buildings"], ["deco", "Decorations"], ["pack", "Packs"]];
   var KIND_HINT = { side: "This piece joins the side of your building.", back: "This piece goes behind your building.",
     front: "This piece goes out front, by the entrance.", far: "This piece stands at the back of the estate." };
+  /* SWD 1.0: the words that name levels, so a game that gives rewards on another schedule can say so (SolBuild.setText) */
+  var TX = {
+    rewardKicker: function (night, k, total) { return "Level " + night + " reward · piece " + k + " of " + total; },
+    firstKicker: function (night) { return "Level " + night + " reward · your first building"; },
+    shopKicker: function (night) { return "Level " + night + " · shop"; },
+    every: "every 5 levels, all the way to level 100",
+    everyShort: "every 5 levels",
+    firstFree: "win Level 5 for your first free piece",
+    nextReward: function (night) { return "next reward after level " + night; },
+    coinsFrom: function (e) { return "correct answers (" + e.answer + " each), a perfect level (+" + e.perfectNight + ") and bonus pickups"; }
+  };
   var DUP_FULL = 4;                       /* copies of one piece that score in full; later copies score a quarter */
   var ZMIN = 0.35, ZMAX = 4;
 
@@ -1409,9 +1420,9 @@
     var next = nextRewardNight(), n = rewardsTaken();
     ui.kicker.textContent = "My build · full-screen editor"; ui.title.textContent = save.theme ? "My " + themeName(save.theme) : "My build";
     ui.sub.textContent = loadState !== "ok" ? "Build data could not be loaded on this page." :
-      !save.theme ? "Tap Shop to choose a Town or a Castle and start building — or win Level 5 for your first free piece." :
+      !save.theme ? "Tap Shop to choose a Town or a Castle and start building — or " + TX.firstFree + "." :
       save.picks.length + " pieces on the field · " + Object.keys(save.owned).length + " kinds unlocked · " + n + " of " + TOTAL + " rewards" +
-      (styleSummary() ? " (" + styleSummary() + ")" : "") + " · " + (next ? "next reward after level " + next : "every reward earned!");
+      (styleSummary() ? " (" + styleSummary() + ")" : "") + " · " + (next ? TX.nextReward(next) : "every reward earned!");
     fillPerks();
     ui.codeOut.value = exportCode(); ui.codeIn.value = ""; ui.codeMsg.textContent = ""; ui.loadBtn.textContent = "Load";
     ui.badge.textContent = galleryBadge();
@@ -1445,12 +1456,12 @@
     if (s === "shop") { fillShop(); return; }
     tn = themeName(save.theme || (cur && cur.themePick) || "village");
     ui.badge.textContent = cur.shop ? coinLabel() : "REWARD";
-    ui.kicker.textContent = cur.shop ? "Level " + cur.night + " · shop" : "Level " + cur.night + " reward · piece " + cur.k + " of " + TOTAL;
+    ui.kicker.textContent = cur.shop ? TX.shopKicker(cur.night) : TX.rewardKicker(cur.night, cur.k, TOTAL);
     if (s === "theme") {
-      ui.kicker.textContent = cur.shop ? "Level " + cur.night + " · shop" : "Level " + cur.night + " reward · your first building";
+      ui.kicker.textContent = cur.shop ? TX.shopKicker(cur.night) : TX.firstKicker(cur.night);
       ui.title.textContent = "Build a Town or a Castle?";
-      ui.sub.textContent = cur.shop ? "Your coins buy pieces for one build, and you earn a free reward piece every 5 levels, all the way to level 100. This choice is permanent."
-        : "You add a new piece every 5 levels, all the way to level 100. This choice is permanent.";
+      ui.sub.textContent = cur.shop ? "Your coins buy pieces for one build, and you earn a free reward piece " + TX.every + ". This choice is permanent."
+        : "You add a new piece " + TX.every + ". This choice is permanent.";
       var themeBtns = [{ label: "Tap one to choose", primary: true, disabled: true, onTap: function () {
         if (!cur.themePick) return; save.theme = cur.themePick; save.kit = 2; save.view = freshView(); persist();
         if (cur.shop) { cur.tab = "build"; showStep("shop"); } else beginPick();
@@ -1624,9 +1635,9 @@
   function fillShop(keepNote) {
     var off = shopOffers(), tab = cur.tab || "build", tn = themeName(save.theme), lastCat = null;
     ui.badge.textContent = coinLabel();
-    ui.kicker.textContent = "Level " + cur.night + " · shop";
+    ui.kicker.textContent = TX.shopKicker(cur.night);
     ui.title.textContent = "Spend coins on your " + tn;
-    ui.sub.textContent = "Buy a piece once and place it as often as you like. Coins come from correct answers (" + economy().answer + " each), a perfect level (+" + economy().perfectNight + ") and bonus pickups. Free reward pieces still come every 5 levels.";
+    ui.sub.textContent = "Buy a piece once and place it as often as you like. Coins come from " + TX.coinsFrom(economy()) + ". Free reward pieces still come " + TX.everyShort + ".";
     if (!keepNote) ui.note.textContent = "";
     ui.tabs.innerHTML = "";
     SHOP_TABS.forEach(function (t) {
@@ -1824,6 +1835,13 @@
     exportCode: exportCode, importCode: importCode, state: state,
     perks: activePerks, perkOf: perkOf, perkTable: function () { return PERKS.slice(); },
     LS_KEY: LS_KEY, version: 5,
+    /* SWD 1.0: a game with several players on one Chromebook keeps one build per player (js/swd/swd-app.js) */
+    setText: function (o) { Object.keys(o || {}).forEach(function (k) { if (k in TX) TX[k] = o[k]; }); },
+    useKey: function (key) {
+      if (!key || key === LS_KEY) return;
+      if (mode) closeOverlay();
+      LS_KEY = key; save = loadSave(); try { migrateIfNeeded(); } catch (e) {} refreshButton();
+    },
     /* test hooks (tools/smoke.js) */
     _offer: function (night) { return offerFor(night, night / EVERY).map(function (p) { return p.id; }); },
     _coreStage: function () { return isKit() ? coreStage() : null; },

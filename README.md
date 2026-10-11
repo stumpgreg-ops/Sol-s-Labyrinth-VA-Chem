@@ -8,6 +8,71 @@ Play: `index.html`. Teacher monitor: `admin.html` (PIN lock; FERPA nicknames onl
 
 Progress saves in this browser profile (`afterHours.v1.night`). Itch login does not store progress.
 
+## SWD Contained edition 1.0.0 (2026-10-11): `swd.html`
+
+A second game in this repository for **high-school students with disabilities in a self-contained class**. It teaches early-grade skills with teen-respectful content: money, jobs, groceries, phones, buses, signs and sports, never baby themes. Play: `swd.html`. The Chemistry game (`index.html`) is unchanged.
+
+**Full screen first.** A Canvas frame is only 500 px tall, so the first screen is only the logo and **Click here for full screen mode**. In full screen, an **✕ Exit full screen** button sits on the selection screen and in every game's top bar. It (or Esc) goes back to that first screen. In a level, the level pauses: going back in shows "Leave this level?". Whenever the game is not full screen, a button to go back in is always on screen:
+- the first screen's button;
+- where full screen is refused (a frame without `allowfullscreen`), a **⛶ Full screen** button on the selection screen and in the game's top bar;
+- on the main game's page (Path 2), which a reload always opens out of full screen, a **⛶ Full screen** button on its start screens, its end-of-level box and, during play, in place of its own full-screen button.
+
+**Two paths, one selection screen with no scrolling.** The screen fits a Chromebook in full screen (1366 × 768), 1280 × 720 and larger monitors:
+- **Top bar:** who is playing, ⚙️ Accommodations, 📊 Progress, 🏘️ My Town, Exit full screen.
+- **Three columns:** 1 Path and grade, 2 Subject, 3 Game.
+- **Bottom bar:** the accommodations that are on, Practice, ▶ Play.
+
+⚙️ Accommodations opens every setting in one window, three columns wide, which also fits the screen.
+- **Path 1 · First Skills (kindergarten to grade 1 skills)** for students who need life skills: **Money** (name coins and bills, coin values, count pennies, nickels, dimes, quarters and dollar bills, "do I have enough?", the next-dollar way), **Math** (count to 5, 10 and 20, find the number, more and fewer, what comes next, one more and one less, add and take away with pictures, shapes), **Reading** (letters, capital and small letters, first sounds, sign words such as STOP and EXIT, three Dolch sight-word lists, picture words, rhymes, sound blending, short sentences) and **Life Skills** (sign meanings, find the sign, clocks to the hour and half hour, days of the week, weather and what to wear, places in the community, what comes first, emergencies and 911, safe to eat or not, food, clothes or cleaning, hot or cold, feelings).
+- **Path 2 · Grades 2 – 6**, each grade its own choice with its own levels: **Math**, **Reading** and **Life Skills** for grade 2, 3, 4, 5 or 6. Math follows the grade's usual order, roughly the Virginia Mathematics SOL: grade 2 place value and adding to 100, grade 3 facts, fractions and area, grade 4 multi-digit work, decimals and conversions, grade 5 decimals, fractions, volume and averages, grade 6 ratios, percents, integers and equations. Reading covers sight words, vowel teams, compound words, contractions, prefixes, suffixes, roots, context clues, figurative language, fact and opinion, author's purpose and point of view, plus original high-interest, easy-to-read passages: stories, a menu, a job ad, a workplace notice and an apartment ad. Life Skills covers coins, bills and making change, the next-dollar way, schedules, calendars, recipes and measuring, thermometers, phones and scams, better buys, totals and budgets, food and medicine labels, hours and pay, pay stubs, receipts, bank balances, time cards, maps, sales tax, tips and discounts, phone plans, renting, job-application words, credit and debit.
+- 165 skills. Math and money questions are **generated**, so the numbers change every time and every answer is computed. A skill opens by difficulty step: a new step every 3 levels, 5 steps in all. "Practice" on the selection screen narrows a game to one skill.
+
+**New game modes for poor or normal manual dexterity.** In every mode the student chooses an answer: there is no steering, aiming or timing. There are no lives and no timers. A wrong answer is crossed out and the student tries again. After a wrong answer or two, a hint shows and the right answer glows.
+- **Sol's Path**: Sol walks the labyrinth, and at each gate the door with the right answer opens.
+- **Market Day**: tap coins and bills onto the counter to pay the exact amount, pay the next-dollar way, or give change. A running total and a "Try: 2 × dime, 3 × penny" hint are available.
+- **Rune Match**: match pairs, such as a coin and its value, 6 × 7 and 42, a word and its picture, or a sign and its meaning. The stones can be face up (no memory needed) or face down (a memory game).
+- **Sort It**: put each thing in the right bin, such as coins and bills, safe to eat or not, even and odd, needs and wants, or deposits and withdrawals.
+- **Raven Catch**: ravens fly slowly across with the answers, and the student taps the right one. The targets move, so this mode is for normal dexterity. The ravens turn at the edges, so every answer stays on screen. There is a Pause button.
+- **Path 2 also offers the main game's modes**: The Labyrinth, Eagle Swoop, Rune Rocks, Sun Chariot, Wolf Ring and Root Worms, played with the grade's questions. `swd-play.html` is built from `index.html` by `node tools/build-swd-play.js`; run that after `index.html` changes. It uses the same engine, its accommodations (read aloud, larger text, a slower game) and its 100 levels. Questions whose answers are only pictures stay in the new modes.
+- A level is 5, 8 or 10 questions. Getting 60 % right on the first try moves that game's level up one.
+- **My Town is the main game's town and castle builder** (`js/build.js`):
+  - Right answers earn coins for the 🛒 Shop: 10 for each answer right on the first try, 2 after a hint, and +25 for a perfect level.
+  - Every 2 levels finished (any path, subject or game), the builder's reward window opens over the results. The student picks a Town or a Castle the first time, then one of three pieces, which joins their build.
+  - 🏘️ My Town opens the full editor: place, drag, turn, recolour, copy and delete pieces; zoom and turn the view.
+  - Each player has their own build, under the same save key the main game's modes use for that player, so coins and town are shared with Path 2's Labyrinth and shooters.
+  - `SolBuild.useKey()` picks the player's save. `SolBuild.setText()` lets the builder say "every 2 levels you finish" instead of the main game's "every 5 levels". The Chemistry game is unchanged.
+
+**Accommodations: no PIN and no teacher page.** The student, a teacher or a parent opens Accommodations on the selection screen and changes them. Each player on the Chromebook has their own settings. Presets: *Path 1 starter*, *Path 2 starter*, *Switch user*, *Shaky hands*.
+- Hearing and seeing: read aloud (the Chromebook's own voice: every question and answer, plus the 🔊 button and the R key at any time), voice speed, text size (normal, large, extra large), high contrast, extra letter and line spacing, coin values printed on the coins.
+- Moving and touching: button size (large is the default, huge for limited fine-motor control), hold to choose (a short or long hold fills a bar before the answer counts), ignore extra taps (on by default), hover to choose (1 or 2 seconds, for head pointers, eye gaze and joystick mice), and **switch scanning** (the answers light up one at a time; a switch, Space, Enter or a tap anywhere picks the lit one; four speeds). Number keys 1 to 5 also choose.
+- Thinking and pace: 2, 3 or 4 answer choices; 5, 8 or 10 questions in a level; game speed (100 down to 50 %, for Raven Catch and the main game's modes); hints after 1 or 2 wrong answers, or never; Rune Match face up or face down; the Market Day running total.
+- Sound and calm: sound effects, background music (off by default) and a calm screen with no shaking, flashing or bouncing.
+- The main game's modes take read aloud, larger text, game speed and the number of answer choices. For that, the maze places only as many letters as the question has answers (`js/game.js` `placeSlips`). Chemistry questions always have four, so nothing changes in the Chemistry game.
+
+**Players and progress.** "Who is playing?" holds any number of players on one Chromebook (first names or nicknames only), each with a look and their own progress. **Progress report**: each skill played, grouped by path, grade and subject, shows right on the first try out of answered, with a bar. It also lists every game's level and the last 12 levels played, and has **Print or save as PDF** for IEP progress notes. Everything stays in this browser profile: `swd.v1.*`, and for the main game's modes `swd.<player>.afterHours.v1.*`, so these saves never mix with each other or with the Chemistry game's.
+
+**Files:** `swd.html`, `css/swd.css`, and `js/swd/`: `swd-core.js` (paths, bands, the skill registry, level building), `swd-art.js` (real photos of coins, both sides, and of $1 to $100 bills from `assets/money/`; drawn clocks, signs, ten-frames, base-ten blocks, fraction pictures, number lines, rulers, thermometers, graphs, tables and calendars, as SVG). Bills are shown one side only and well under three-fourths of their real size, as US rules on pictures of currency require, `swd-bank-p1.js`, `swd-bank-math.js`, `swd-bank-reading.js` and `swd-bank-life.js` (the skills), `swd-acc.js` (players, accommodations, read aloud, sounds and the one input layer: tap, hold, hover, keys and scanning), `swd-modes.js`, `swd-app.js`, plus `swd-engine.js` and `swd-play-ui.js` for `swd-play.html`.
+
+**Tests:** `node tools/validate-swd.js` runs every generator 300 times. It checks that each item has a prompt, 2 to 5 distinct choices, no answer repeated, and no "undefined" or "NaN"; that every pair and sort item is valid; that every band, subject and mode makes a full level; and that every Market Day amount can be paid from its wallet. `node tools/smoke-swd.js` runs the SWD checks in a browser, including the town builder, the one-screen layout at four screen sizes, the full-screen start screen, Exit full screen in a level, full screen refused, and the main game's Full screen buttons: the selection screen at three sizes, accommodations live, per player and saved, every mode played through a level, hints, Menu, 2 choices, hold to choose, scanning, face-down Rune Match, the report, and the main game's maze with three letters and its own saves.
+
+**Canvas version (SWD 1.0.0).** `node tools/build-swd-canvas.js` writes `dist/canvas/SOL Lab SWD.zip` (first-time setup) and `SOL Lab SWD update.zip` (the `.js` files only). Run `node tools/build-swd-play.js` first if `index.html` changed. It uses the same Canvas set-up as the Chemistry game:
+- **The files:** a 2.7 KB starter page `SOLLab-SWD.html`, `SOLLab-SWD-game.js`, and ten `SOLLab-SWD-data-NN.js` files, about 5 MB in all with no music. Nothing loads from outside the school's Canvas.
+- **One page, one embed code.** The bundle holds both SWD pages. Links between Canvas files are not dependable, so choosing a main-game mode in Path 2 saves the choice in `sessionStorage` (`solSWD.play`) and reloads the same page, which then opens as the main game. "← SWD menu" clears the choice and reloads.
+- **Saves:** they carry the prefix `solReading.va-swd:`, so they never mix with the Chemistry or Reading game's saves on the same Canvas.
+- **The READ ME in each zip** covers uploading, the embed code (a Page is enough: there are no progress codes to turn in), players, accommodations with no PIN, and printing the progress report.
+- **Shared code:** the packing code that both Canvas builds use (WebP for PNGs, deltas for the 3D models) moved unchanged from `tools/build-appsscript.js` to `tools/pack-bundle.js`; the Chemistry bundle is byte-for-byte the same. The loader now takes the page markup's name from the manifest (`man.page`, default `__page.html`). The Chemistry bundle now leaves out the SWD files.
+- **Test:** `node tools/smoke-swd-canvas.js` (27 checks, including the full-screen start screen in the 500 px frame and the town builder in Canvas) frames the game 500 px tall from another origin, as Canvas does. It checks:
+  - the selection screen and pictures come only from the uploaded files;
+  - there is no music option;
+  - a Sol's Path level and a Market Day level play through;
+  - Path 2's maze opens in the same page with Grade 3 questions and three letters;
+  - Game speed carries over;
+  - "SWD menu" comes back with the levels and accommodations kept;
+  - the save prefix keeps another game's saves untouched;
+  - a missing data file is named on screen.
+
+**Not done yet:** an Apps Script version of the SWD edition, and scanning on the selection screen itself (an adult sets up the game, then scanning works in play). The reading passages are original but have not been checked by a reading specialist.
+
 ## Chemistry 1.5.0 (2026-10-08) — accommodations (SOL Labyrinth v5.18.0), a way out of a level, a one-card how-to-play
 
 - **Accommodations for one student** (`js/accommodations.js`, from SOL Labyrinth v5.18.0). On the student's Chromebook a teacher types `accommodations` in the nickname box, enters the PIN (**4826** to start; change it in the panel), ticks what the student needs and saves. The title screen then says which are on. Each one can have an end date, and nothing is on for anyone else.

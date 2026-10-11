@@ -7308,7 +7308,9 @@
       var letters = ["A", "B", "C", "D"];
       var used = [];
       var nodes = shuffle(((MAZE && MAZE.slipNodes) || []).map(function (n) { return [n.x, n.y]; }));
-      for (i = 0; i < 4; i++) {
+      /* SWD 1.0: a question with two or three answers (the SWD "Answer choices" accommodation) gets only those letters */
+      var nLetters = this.claim && this.claim.choices && this.claim.choices.length >= 2 ? Math.min(4, this.claim.choices.length) : 4;
+      for (i = 0; i < nLetters; i++) {
         var p = null, ni;
         for (ni = 0; ni < nodes.length; ni++) {
           if (!this.slipSpotBad(nodes[ni][0], nodes[ni][1], used)) { p = nodes[ni]; break; }

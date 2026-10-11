@@ -30,8 +30,8 @@ var REPO_PAGES = "https://stumpgreg-ops.github.io/Sol-s-Labyrinth-VA-Chem/appssc
 var PART_BYTES = 3 * 1024 * 1024;
 var TITLE = "SOL Lab · Virginia EOC Chemistry";
 /* left out of the bundle: the tooling, the build output itself, docs, and the files the page does not load */
-var SKIP_DIRS = { "tools": 1, "dist": 1, "docs": 1, "appsscript": 1, ".git": 1, "node_modules": 1, ".claude": 1, "assets/music": 1 };
-var SKIP_FILES = { "index.html": 1, "admin.html": 1, ".gitignore": 1, ".DS_Store": 1, "Thumbs.db": 1 };
+var SKIP_DIRS = { "tools": 1, "dist": 1, "docs": 1, "appsscript": 1, ".git": 1, "node_modules": 1, ".claude": 1, "assets/music": 1, "js/swd": 1 };
+var SKIP_FILES = { "index.html": 1, "admin.html": 1, ".gitignore": 1, ".DS_Store": 1, "Thumbs.db": 1, "swd.html": 1, "swd-play.html": 1, "css/swd.css": 1 };
 
 var html = fs.readFileSync(path.join(src, "index.html"), "utf8");
 var version = (html.match(/\?v=([0-9.]+)/) || [0, "0"])[1];
@@ -41,15 +41,8 @@ fs.mkdirSync(path.join(root, "teacher"), { recursive: true });
 fs.writeFileSync(path.join(root, "teacher", "CHM.html"), require("./build-teacher").build("CHM", version));
 
 /* ── the files: everything the built game has except music, docs and the page itself ── */
-var files = [];
-(function walk(d) {
-  fs.readdirSync(d).sort().forEach(function (n) {
-    var p = path.join(d, n), rel = path.relative(src, p).split(path.sep).join("/");
-    if (fs.statSync(p).isDirectory()) { if (!SKIP_DIRS[rel]) walk(p); return; }
-    if (SKIP_FILES[rel] || SKIP_FILES[n] || /\.(md|zip)$/i.test(n)) return;
-    files.push(rel);
-  });
-})(src);
+var PB = require("./pack-bundle");
+var files = PB.listFiles(src, SKIP_DIRS, function (rel, n) { return SKIP_FILES[rel] || SKIP_FILES[n] || /\.(md|zip)$/i.test(n); });
 
 /* ── the page: head styles and body markup; scripts run by the loader in their original order ── */
 var scripts = [];
@@ -73,69 +66,13 @@ body = body.replace(/<img([^>]*?) src="((?:assets|js|css)\/[^"]+)"/g, '<img$1 da
 scripts.forEach(function (s) { if (s.src && files.indexOf(s.src) === -1) throw new Error("tools/build-appsscript.js: " + s.src + " is not in the repository"); });
 headCss.forEach(function (c) { if (files.indexOf(c) === -1) throw new Error("tools/build-appsscript.js: " + c + " is not in the repository"); });
 
-/* ── pack: the files, plus the body markup as __page.html (so page and scripts always come from one bundle) ── */
-var header = [], bufs = [], off = 0;
-function add(f, b, base) { header.push(base ? [f, off, b.length, base] : [f, off, b.length]); bufs.push(b); off += b.length; }
-add("__page.html", Buffer.from(body.trim()));
-/* v5.8: the teacher page (?admin=1) — run by the loader after the content files, instead of the game */
-add("__admin.js", fs.readFileSync(path.join(__dirname, "appsscript", "admin.js")));
-add("__admin.css", fs.readFileSync(path.join(__dirname, "appsscript", "admin.css")));
-/* v5.8.1: the castle's 3D models come in four colours that are nearly the same bytes, but each is ~140 KB and
-   gzip only looks 32 KB back, so it can't see that. A model whose name differs from an earlier one's only by a
-   word (blue → red) is stored as a delta of it (see delta()); header entry [path, offset, length, base path]. */
-/* v5.8.1: PNGs travel as lossless WebP when that is smaller (same pixels; the loader gives the blob the right
-   type). tools/webp-cache.py does the encoding once per image and keeps it in dist/.webp-cache. */
-var WEBP = path.join(dist, ".webp-cache"), pngs = files.filter(function (f) { return /\.png$/i.test(f); });
-try {
-  require("child_process").execFileSync("python3", [path.join(__dirname, "webp-cache.py"), WEBP].concat(pngs.map(function (f) { return path.join(src, f); })), { stdio: "inherit" });
-} catch (e) { console.warn("tools/build-appsscript.js: no WebP (" + e.message.split("\n")[0] + "); PNGs stay PNG"); }
-function smaller(f, b) {
-  if (!/\.png$/i.test(f)) return b;
-  var w = path.join(WEBP, crypto.createHash("sha1").update(b).digest("hex") + ".webp");
-  if (!fs.existsSync(w)) return b;
-  var wb = fs.readFileSync(w);
-  return wb.length < b.length ? wb : b;
-}
-var plain = {};
-files.forEach(function (f) {
-  var b = smaller(f, fs.readFileSync(path.join(src, f)));
-  if (!/\.(glb|gltf|obj)$/i.test(f)) { add(f, b); return; }
-  var dir = f.replace(/[^/]*$/, ""), stem = f.slice(dir.length).replace(/[^a-z]+/gi, " ").split(" ");
-  var best = null;
-  (plain[dir] || []).forEach(function (o) {
-    var same = 0, n = Math.max(stem.length, o.stem.length);
-    for (var i = 0; i < n; i++) if (stem[i] === o.stem[i]) same++;
-    if (same < n - 1 || stem.length !== o.stem.length) return;   /* one word apart */
-    var d = delta(o.b, b);
-    if (d.length < b.length / 3 && (!best || d.length < best.d.length)) best = { f: o.f, d: d };
-  });
-  if (best) { add(f, best.d, best.f); return; }
-  (plain[dir] = plain[dir] || []).push({ f: f, b: b, stem: stem });
-  add(f, b);
-});
-/* b as runs copied from a plus new bytes: [varint new-length, new bytes, varint copy-length, varint copy-offset]…
-   (tools/appsscript/loader.js undelta() reverses it) */
-function delta(a, b) {
-  var K = 24, map = new Map(), out = [], lit = 0, i = 0, j;
-  for (j = 0; j + K <= a.length; j += 4) { var k = a.toString("latin1", j, j + K); if (!map.has(k)) map.set(k, j); }
-  function v(n) { while (n > 127) { out.push((n & 127) | 128); n = Math.floor(n / 128); } out.push(n); }
-  function flush(copyLen, copyOff) { v(i - lit); for (var q = lit; q < i; q++) out.push(b[q]); v(copyLen); v(copyOff); }
-  while (i < b.length) {
-    var at = i + K <= b.length ? map.get(b.toString("latin1", i, i + K)) : undefined;
-    if (at === undefined) { i++; continue; }
-    var s = i, t = at;
-    while (s > lit && t > 0 && b[s - 1] === a[t - 1]) { s--; t--; }   /* reach back into the new bytes */
-    var e = i + K, u = at + K;
-    while (e < b.length && u < a.length && b[e] === a[u]) { e++; u++; }
-    var save = i; i = s; flush(e - s, t); i = e; lit = e;
-  }
-  if (lit < b.length || !out.length) { i = b.length; flush(0, 0); }
-  return Buffer.from(out);
-}
-var hj = Buffer.from(JSON.stringify(header)), hl = Buffer.alloc(4); hl.writeUInt32BE(hj.length, 0);
-var raw = Buffer.concat([hl, hj].concat(bufs));
-var gz = zlib.gzipSync(raw, { level: 9 });
-var hash = crypto.createHash("sha1").update(gz).digest("hex").slice(0, 12);
+/* ── pack: the files, plus the body markup as __page.html (so page and scripts always come from one bundle) ──
+   v5.8: the teacher page (?admin=1) runs __admin.js after the content files, instead of the game.
+   The packing itself (WebP for PNGs, deltas for near-copies of 3D models) is tools/pack-bundle.js. */
+var packed = PB.pack(src, files, [["__page.html", Buffer.from(body.trim())],
+  ["__admin.js", fs.readFileSync(path.join(__dirname, "appsscript", "admin.js"))],
+  ["__admin.css", fs.readFileSync(path.join(__dirname, "appsscript", "admin.css"))]]);
+var raw = packed.raw, gz = packed.gz, hash = packed.hash;
 fs.mkdirSync(outSt, { recursive: true });
 /* the old version's parts go (one version per commit keeps the branch small) */
 fs.readdirSync(outSt).forEach(function (n) { if (/^sol-[0-9a-f]+-\d+\.bin$/.test(n)) fs.unlinkSync(path.join(outSt, n)); });
