@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <title>Sol's Labyrinth · Skills Path (SWD)</title>
+  <link rel="stylesheet" href="css/swd.css?v=1.0.0" />
+  <link rel="icon" type="image/png" sizes="64x64" href="assets/logo/favicon-64.png?v=1.0.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/favicon-180.png?v=1.0.0" />
+</head>
+<body>
+  <div id="swd-app">
+    <!-- the selection screen: who, path and grade, subject, game, with the accommodations beside it -->
+    <section id="home" class="swd-screen">
+      <header class="home-head">
+        <img class="logo" src="assets/logo/sols-labyrinth-512.png" alt="" width="84" height="84" />
+        <div>
+          <p class="kicker">SWD Contained · Skills Path</p>
+          <h1>Sol's Labyrinth</h1>
+          <p class="ver">v1.0.0 · life skills, math and reading · Path 1 (K–1) and Path 2 (grades 2–6) · <span id="stars-line"></span></p>
+        </div>
+      </header>
+
+      <div class="home-grid">
+        <div class="home-main">
+          <section class="step" aria-labelledby="h-player">
+            <h2 id="h-player"><span class="num">1</span> Who is playing?</h2>
+            <div id="player-chips" class="chips"></div>
+            <div id="player-tools" class="row left"></div>
+          </section>
+
+          <section class="step" aria-labelledby="h-path">
+            <h2 id="h-path"><span class="num">2</span> Pick a path</h2>
+            <div id="path-cards" class="cards two">
+              <button type="button" class="card path" data-path="1">
+                <span class="icon">🌱</span><span class="name">Path 1 · First Skills</span>
+                <span class="kind">Kindergarten – grade 1 skills</span>
+                <span class="meta">Counting money, numbers and math, letters and reading, and life skills. Big buttons, pictures, everything can be read aloud.</span>
+              </button>
+              <button type="button" class="card path" data-path="2">
+                <span class="icon">🧭</span><span class="name">Path 2 · Grades 2 – 6</span>
+                <span class="kind">One grade at a time</span>
+                <span class="meta">Math, reading and life skills for grade 2, 3, 4, 5 or 6, with the new games and the main game's modes.</span>
+              </button>
+            </div>
+            <div id="grade-chips" class="chips hidden" role="group" aria-label="Grade"></div>
+          </section>
+
+          <section class="step" aria-labelledby="h-subject">
+            <h2 id="h-subject"><span class="num">3</span> Pick a subject</h2>
+            <div id="subject-cards" class="cards"></div>
+          </section>
+
+          <section class="step" aria-labelledby="h-mode">
+            <h2 id="h-mode"><span class="num">4</span> Pick a game</h2>
+            <div id="mode-cards" class="cards"></div>
+            <div id="classic-wrap" class="hidden">
+              <p class="sub">From the main game (Path 2) · moving and aiming, for students who can use the keys or the on-screen pad</p>
+              <div id="classic-cards" class="cards"></div>
+            </div>
+          </section>
+
+          <section class="step play-step">
+            <p id="play-line" class="play-line"></p>
+            <div id="focus-row" class="focus-row">
+              <label for="focus-select">Practice:</label>
+              <select id="focus-select"></select>
+            </div>
+            <div class="row">
+              <button type="button" class="btn primary big" id="btn-play">▶ Play</button>
+              <button type="button" class="btn hidden" id="btn-restart" title="Start this game over at level 1">Start at level 1</button>
+            </div>
+          </section>
+        </div>
+
+        <aside class="home-side" aria-labelledby="acc-title">
+          <section class="acc-panel">
+            <h2 id="acc-title">Accommodations</h2>
+            <p class="dim small">Anyone can change these: the student, a teacher or a parent. They are saved for this player on this Chromebook.</p>
+            <div id="acc-summary" class="pills"></div>
+            <div id="acc-presets" class="row left"></div>
+            <details id="acc-details" open>
+              <summary>All accommodations</summary>
+              <div id="acc-groups"></div>
+            </details>
+          </section>
+          <section class="side-tools">
+            <button type="button" class="btn" id="btn-report">📊 Progress report</button>
+            <button type="button" class="btn" id="btn-town">🏘️ My Town</button>
+          </section>
+        </aside>
+      </div>
+    </section>
+
+    <!-- playing -->
+    <section id="play" class="hidden">
+      <div class="hud">
+        <button type="button" class="btn no-scan" id="btn-menu" aria-label="Menu: leave this level" title="Leave this level (Esc)">☰ Menu</button>
+        <span id="hud-title" class="hud-title"></span>
+        <span id="hud-dots" class="hud-dots" role="img"></span>
+        <button type="button" class="btn no-scan" id="btn-say" aria-label="Read it again" title="Read it again (R)">🔊 Again</button>
+      </div>
+      <div id="stage" class="stage"></div>
+
+      <div id="results" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="res-title">
+        <div class="box">
+          <h2 id="res-title">Level done!</h2>
+          <div id="res-stars" class="stars"></div>
+          <p id="res-msg"></p>
+          <div class="row">
+            <button type="button" class="btn primary big" id="btn-res-next">▶ Next level</button>
+            <button type="button" class="btn" id="btn-res-again">Play this level again</button>
+            <button type="button" class="btn" id="btn-res-home">Main menu</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="leave" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="leave-title">
+        <div class="box">
+          <h2 id="leave-title">Leave this level?</h2>
+          <p>The game is paused.</p>
+          <div class="row">
+            <button type="button" class="btn primary big" id="btn-leave-stay">Keep playing</button>
+            <button type="button" class="btn" id="btn-leave-go">Main menu</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- windows -->
+    <div id="report" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="report-title">
+      <div class="box wide">
+        <div class="box-head"><h2 id="report-title">Progress</h2><button type="button" class="btn" data-close="report">Close</button></div>
+        <div id="report-body" class="report-body"></div>
+        <div class="row">
+          <button type="button" class="btn" id="btn-print">🖨️ Print or save as PDF</button>
+          <button type="button" class="btn danger" id="btn-reset-prog">Erase this player's progress</button>
+        </div>
+      </div>
+    </div>
+    <div id="town" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="town-title">
+      <div class="box wide">
+        <div class="box-head"><h2 id="town-title">My Town</h2><button type="button" class="btn" data-close="town">Close</button></div>
+        <p class="dim">Every level you finish adds a building.</p>
+        <div id="town-grid" class="town-grid"></div>
+      </div>
+    </div>
+    <div id="look" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="look-title">
+      <div class="box">
+        <div class="box-head"><h2 id="look-title">Pick a look</h2><button type="button" class="btn" data-close="look">Close</button></div>
+        <div id="look-grid" class="look-grid"></div>
+      </div>
+    </div>
+    <div id="name-dlg" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="name-title">
+      <div class="box">
+        <h2 id="name-title">Add a player</h2>
+        <label class="name-label"><span id="name-label">Name:</span>
+          <input id="name-input" maxlength="20" autocomplete="off" spellcheck="false" />
+        </label>
+        <div class="row">
+          <button type="button" class="btn primary" id="btn-name-ok">OK</button>
+          <button type="button" class="btn" data-close="name-dlg">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/swd/swd-core.js?v=1.0.0"></script>
+  <script src="js/swd/swd-art.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-p1.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-math.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-reading.js?v=1.0.0"></script>
+  <script src="js/swd/swd-bank-life.js?v=1.0.0"></script>
+  <script src="js/swd/swd-acc.js?v=1.0.0"></script>
+  <script src="js/swd/swd-modes.js?v=1.0.0"></script>
+  <script src="js/swd/swd-app.js?v=1.0.0"></script>
+</body>
+</html>
