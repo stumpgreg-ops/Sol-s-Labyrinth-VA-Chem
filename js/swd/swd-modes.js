@@ -358,7 +358,7 @@
 
   /* ════════ Raven Catch ════════ */
   var RAVEN = '<svg viewBox="0 0 90 46" width="90" height="46" aria-hidden="true"><path d="M8 26 Q22 6 40 18 Q52 4 70 14 Q60 20 58 24 L80 22 L64 30 Q52 40 34 34 Q20 36 8 26Z" fill="#1d1f29" stroke="#4a5068" stroke-width="2"/><circle cx="66" cy="20" r="2.4" fill="#f5c842"/><path d="M76 21 L88 19 L77 25Z" fill="#e8b04a"/></svg>';
-  MODES.push({ id: "raven", name: "Raven Catch", icon: "🐦‍⬛", kind: "Catch the right raven", dex: "move",
+  MODES.push({ id: "raven", name: "Raven Catch", icon: "🐦", kind: "Catch the right raven", dex: "move",
     meta: "Hugin's ravens fly across carrying answers. Tap the raven with the right one. Slow, big targets; change Game speed in Accommodations.",
     fits: function (band, subject) { return SWD.levelSkills(band, subject, 99, "raven").length > 0; },
     start: function (ctx) {
