@@ -342,9 +342,10 @@ async function playLevel(page, opts) {
   var mz = await page.evaluate(function () { return { slips: SolScene.slips.length, choices: SolScene.claim.choices.length, sol: SolScene.claim.sol, panel: document.querySelectorAll("#eoc-choices li").length }; });
   check(mz.slips === mz.choices && mz.choices >= 2 && mz.choices <= 3 && mz.panel === mz.choices && /^G3\./.test(mz.sol), "the maze places only as many letters as the question has answers (3 choices at most) and asks Grade 3 questions (" + JSON.stringify(mz) + ")");
   await page.screenshot({ path: path.join(shots, "swd-play-maze.png") });
+  await page.waitForTimeout(800);                                          /* Start asks for full screen: let that request settle first */
   if (await page.evaluate(function () { return !!document.fullscreenElement; })) { await page.evaluate(function () { return document.exitFullscreen(); }); }
   await page.waitForFunction(function () { return !document.fullscreenElement; }); await page.waitForTimeout(300);
-  var fsb = await page.evaluate(function () { var b = document.getElementById("btn-fs"); return { text: b.textContent, hidden: b.classList.contains("hidden") }; });
+  var fsb = await page.evaluate(function () { var b = document.getElementById("btn-fs"); return { text: b.textContent, hidden: b.classList.contains("hidden"), fs: !!document.fullscreenElement }; });
   check(!fsb.hidden && /Full screen/.test(fsb.text) && !/Exit/.test(fsb.text), "out of full screen in a main-game level, its Full screen button stays on screen (" + JSON.stringify(fsb) + ")");
   await page.goto(base + "swd.html"); await page.waitForTimeout(300); await launch(page);
   var sep = await page.evaluate(function (pid) {
