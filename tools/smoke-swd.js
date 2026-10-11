@@ -345,6 +345,8 @@ async function playLevel(page, opts) {
   await page.waitForTimeout(800);                                          /* Start asks for full screen: let that request settle first */
   if (await page.evaluate(function () { return !!document.fullscreenElement; })) { await page.evaluate(function () { return document.exitFullscreen(); }); }
   await page.waitForFunction(function () { return !document.fullscreenElement; }); await page.waitForTimeout(300);
+  /* the fullscreenchange event can come a moment after fullscreenElement clears on a busy machine */
+  await page.waitForFunction(function () { return !/Exit/.test(document.getElementById("btn-fs").textContent); }, null, { timeout: 4000 }).catch(function () {});
   var fsb = await page.evaluate(function () { var b = document.getElementById("btn-fs"); return { text: b.textContent, hidden: b.classList.contains("hidden"), fs: !!document.fullscreenElement }; });
   check(!fsb.hidden && /Full screen/.test(fsb.text) && !/Exit/.test(fsb.text), "out of full screen in a main-game level, its Full screen button stays on screen (" + JSON.stringify(fsb) + ")");
   await page.goto(base + "swd.html"); await page.waitForTimeout(300); await launch(page);
