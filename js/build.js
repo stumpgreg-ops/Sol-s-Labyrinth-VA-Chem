@@ -479,7 +479,13 @@
   function view() { if (!save.view) save.view = freshView(); if (save.view.a == null) save.view.a = 0; return save.view; }
   /* v5.1: the view turns by any angle. Positions rotate continuously on the ground plane; sprites (which only
      exist in four orientations) snap to the nearest quarter turn, rot(), which also drives wall auto-tiling. */
-  function ang() { return ((view().a || 0) % 360 + 360) % 360; }
+  /* v6.1: a Town picture can't turn by the degree (turning moved a wing around its house while both pictures stood
+     still, and joined buildings came apart), so without the 3D view the Town turns a quarter at a time and its
+     pictures mirror on the odd quarters. */
+  function ang() { var a = ((view().a || 0) % 360 + 360) % 360; return townFlat() ? (Math.round(a / 90) * 90) % 360 : a; }
+  /* v6.1: the Town draws its pieces as 3D models (js/build3d.js) and turns by the degree like the castle; only when
+     WebGL is missing does it fall back to its pictures, which can't turn, and then it turns a quarter at a time */
+  function townFlat() { var td = window.SolBuild3D; return !isKit() && (!!redraw.force2d || !(td && td.ready())); }
   function rot() { return Math.round(ang() / 90) % 4; }
   function rotPt(x, y) { var t = ang() * Math.PI / 180, c = Math.cos(t), sn = Math.sin(t); return { u: x * c - y * sn, v: x * sn + y * c }; }
   function unrotPt(u, v) { var t = -ang() * Math.PI / 180, c = Math.cos(t), sn = Math.sin(t); return { x: u * c - v * sn, y: u * sn + v * c }; }
@@ -668,7 +674,8 @@
         key: keyOf(pk) || ("g" + cx + "," + cy), prot: pk ? (pk.rot || 0) : 0, run: isRun(p), hostKey: host ? keyOf(host) : "" };
     } else {
       /* v5.7.9: a town piece is one picture, so it has two ways to face: its turn mirrors it */
-      it = { p: p, pk: pk, style: style, x: c.x, y: c.y, a: 1, depth: ctr.u + ctr.v + n, cx: cx, cy: cy, n: n, flip: !!(pk && (pk.rot || 0) % 2) };
+      it = { p: p, pk: pk, style: style, x: c.x, y: c.y, a: 1, depth: ctr.u + ctr.v + n, cx: cx, cy: cy, n: n, flip: !!(((pk ? pk.rot || 0 : 0) + rot()) % 2),
+        town: true, key: keyOf(pk) || ("g" + cx + "," + cy), prot: pk ? (pk.rot || 0) : 0 };
     }
     if (extra) for (k in extra) it[k] = extra[k];
     return it;
@@ -700,7 +707,8 @@
     gateAt = Math.floor(nseg / 2);
     function push(p, cx, cy, flip, key, front) {
       var pv = rotPt(cx, cy); c = cellXY(pv.u, pv.v);
-      items.push({ p: p, style: style, x: c.x, y: c.y, a: front ? 0.94 : 1, depth: pv.u + pv.v, flip: flip !== odd, key: key, ring: true });
+      items.push({ p: p, style: style, x: c.x, y: c.y, a: front ? 0.94 : 1, depth: pv.u + pv.v, flip: flip !== odd, key: key, ring: true,
+        town: true, wx: cx, wy: cy, n: len, axis: flip ? "x" : "y" });
     }
     for (i = 0; i < nseg; i++) {
       var f = Math.min(u0 + i * len + len / 2, u1 - len / 2), g = Math.min(v0 + i * len + len / 2, v1 - len / 2);
@@ -940,6 +948,7 @@
     ctx.setTransform(cv._dpr || 1, 0, 0, cv._dpr || 1, 0, 0);
     ctx.clearRect(0, 0, W, H);
     paintBg(ctx, W, H, save.theme || "village");
+    if (ui.turnBtns) ui.turnBtns.forEach(function (b) { var tip = b._tips[townFlat() ? 1 : 0]; if (b.title !== tip) { b.title = tip; b.setAttribute("aria-label", tip); } });
     if (!save.theme) { banner(ctx, W, H, loadState === "ok" ? "Choose a Town or a Castle to start building" : "Build data not available"); lastFit = null; return; }
     items = sceneItems();
     /* v5.7.9: the view fits the pieces, so a dragged piece used to pull the whole view along with it (a lone
@@ -947,9 +956,9 @@
     fit = lastFit = (cur && cur.drag && cur.drag.fit) ? cur.drag.fit : fitScene(items, W, H);
     drawGround(ctx, fit);
     /* v5.5: a kit theme draws its pieces in 3D when it can (js/build3d.js), so they turn with the map by the degree */
-    var td = window.SolBuild3D, use3d = isKit() && td && td.ready() && !redraw.force2d;
+    var td = window.SolBuild3D, use3d = td && td.ready() && !redraw.force2d;
     if (use3d) {
-      items.forEach(function (it) { if (it.kit && (it.ghost || it.sel)) { ctx.save(); ctx.globalAlpha = it.a; drawFootprint(ctx, it, fit); ctx.restore(); } });
+      items.forEach(function (it) { if ((it.kit || (it.town && !it.ring)) && (it.ghost || it.sel)) { ctx.save(); ctx.globalAlpha = it.a; drawFootprint(ctx, it, fit); ctx.restore(); } });
       var drawn = false;
       try { drawn = td.render({ canvas: ui.canvas3d, W: W, H: H, dpr: cv._dpr || 1, fit: fit, items: items }); } catch (err) { drawn = false; if (window.console) console.warn("build3d", err); }
       if (drawn) { ui.canvas3d.style.display = ""; return; }
@@ -1003,6 +1012,8 @@
       } else {
         sc = fit.s * unitScale(p) / fit.base; w = (p.w || 60) * sc; h = (p.h || 60) * sc; ax = p.ax != null ? p.ax : 0.5; ay = p.ay != null ? p.ay : 1;
       }
+      var sb = !it.kit && ui.canvas3d.style.display !== "none" && window.SolBuild3D && window.SolBuild3D.screenBox ? window.SolBuild3D.screenBox(it.key) : null;   /* v6.1: a Town model's own outline */
+      if (sb) { if (pt.sx >= sb.x0 && pt.sx <= sb.x1 && pt.sy >= sb.y0 && pt.sy <= sb.y1 && depth > bbd) { bbd = depth; bestBox = r.pk; } return; }
       if (pt.sx >= x - w * ax && pt.sx <= x - w * ax + w && pt.sy >= y - h * ay && pt.sy <= y - h * ay + h && depth > bbd) { bbd = depth; bestBox = r.pk; }
     });
     return bestFoot || bestBox;
@@ -1074,7 +1085,12 @@
     if (!cur || !dragStep() || !save.theme) return;
     e.preventDefault();
     if (e.ctrlKey || e.metaKey) { zoomBy(e.deltaY < 0 ? 1.12 : 1 / 1.12); return; }
-    var notch = e.deltaMode === 1 ? 1 : (Math.abs(e.deltaY) / 100);
+    var notch = e.deltaMode === 1 ? 1 : (Math.abs(e.deltaY) / 100), now = Date.now();
+    if (townFlat()) {                                         /* Town pictures: one quarter turn per wheel gesture */
+      var quiet = now - (onWheel.last || 0) > 350; onWheel.last = now;
+      if (quiet && e.deltaY) rotateView(e.deltaY > 0 ? 1 : -1);
+      return;
+    }
     rotateView((e.deltaY > 0 ? 1 : -1) * Math.max(1, Math.round(3 * Math.min(4, notch))));   /* about 3° per wheel notch: fast turning */
     settleView();
   }
@@ -1093,7 +1109,7 @@
   var TWO_WAY = { wall: 1, gate: 1, doorway: 1, hedge: 1, "hedge-gate": 1, "c-fence": 1, "fence-gate": 1, "rail-fence": 1 };
   function turnPick(pk) {
     if (!pk) return;
-    var p = pieceById(pk.piece), two = !!(p && p.auto && TWO_WAY[p.id]), pic = !isKit();
+    var p = pieceById(pk.piece), two = !!(p && p.auto && TWO_WAY[p.id]) || !!(p && !isKit() && p.id === "fence"), pic = townFlat();
     pk.rot = (two || pic) ? ((pk.rot || 0) + 1) & 1 : ((pk.rot || 0) + 1) & 3;
     cur.sel = pk; persist(); fillPieceBar(); redraw();
     var joined = two && isRun(p) && runDirs(p, pk.cx, pk.cy, pk).length > 0;
@@ -1112,7 +1128,13 @@
   }
 
   /* ── view controls ───────────────────────────────────────────────────────── */
-  function rotateView(deg) { view().a = ((ang() + (deg || 0)) % 360 + 360) % 360; persist(); redraw(); }
+  function rotateView(deg) {
+    if (townFlat() && deg) {                                    /* Town: a quarter turn, whichever control asked */
+      deg = deg > 0 ? 90 : -90;
+      if (ui.note && cur) ui.note.textContent = "The town turned a quarter turn. Town buildings are pictures, so the whole town turns a quarter at a time and joined buildings stay joined.";
+    }
+    view().a = ((ang() + (deg || 0)) % 360 + 360) % 360; persist(); redraw();
+  }
   var settleTimer = null;
   /* after fast turning (wheel, held button) a view within 4° of a quarter turn settles onto it, where every wall and hedge lines up */
   function settleView() {
@@ -1206,8 +1228,9 @@
      ["−", "Zoom out (Ctrl + wheel)", function () { zoomBy(1 / 1.25); }], ["+", "Zoom in (Ctrl + wheel)", function () { zoomBy(1.25); }], ["⤢", "Fit the whole build and face front", resetView]]
       .forEach(function (t) {
         var b = btn("build-tool", t[0], t[1]), timer = null, held = false; b.setAttribute("aria-label", t[1]);
+        if (t[3]) { b._tips = [t[1], t[0] === "⟲" ? "Turn the town left a quarter turn" : "Turn the town right a quarter turn"]; (ui.turnBtns = ui.turnBtns || []).push(b); }
         if (t[3]) {                                                             /* press and hold: keeps turning about 40° a second */
-          b.addEventListener("pointerdown", function (e) { e.preventDefault(); held = false; timer = setTimeout(function () { held = true; timer = setInterval(function () { t[2](); }, 25); }, 260); });
+          b.addEventListener("pointerdown", function (e) { e.preventDefault(); held = false; timer = setTimeout(function () { if (townFlat()) { timer = null; return; } held = true; timer = setInterval(function () { t[2](); }, 25); }, 260); });   /* Town pictures: no holding, each click is a quarter turn */
           var stop = function () { if (timer) { clearTimeout(timer); clearInterval(timer); timer = null; if (held) settleView(); } };
           b.addEventListener("pointerup", stop); b.addEventListener("pointerleave", stop); b.addEventListener("pointercancel", stop);
           b.addEventListener("click", function (e) { e.preventDefault(); if (!held) t[2](); held = false; });

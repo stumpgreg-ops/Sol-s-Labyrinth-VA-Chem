@@ -299,6 +299,17 @@ async function playLevel(page, opts) {
   await tp.click("#btn-res-home"); await tp.waitForTimeout(200);
   await tp.click("#btn-town"); await tp.waitForTimeout(800);
   check(await tp.isVisible("#build-overlay .build-scene canvas") && /pieces on the field/.test(await tp.textContent(".build-sub")), "My Town opens the builder's editor with the student's town");
+  /* the Town is drawn in 3D like the castle, so it turns by the degree and joined buildings turn together;
+     without WebGL its pictures can't turn, so it turns a quarter at a time */
+  await tp.waitForTimeout(800);
+  var tq = await tp.evaluate(function () {
+    var r = {}; SolBuild._rotate(37); r.deg = SolBuild._angle(); r.probe = SolBuild._probe(1, 1, 0);
+    SolBuild._force2d(true); SolBuild._rotate(1); r.flat = SolBuild._angle(); r.tip = document.querySelector("#build-overlay .build-tool").title;
+    SolBuild._force2d(false); SolBuild._rotate(-SolBuild._angle()); r.back = SolBuild._angle();
+    return r;
+  });
+  check(tq.deg === 37 && tq.probe.use3d && Math.abs(tq.probe.p3.x - tq.probe.x2) < 0.5 && Math.abs(tq.probe.p3.y - tq.probe.y2) < 0.5 && tq.flat % 90 === 0 && /quarter/.test(tq.tip) && tq.back === 0,
+    "the Town is 3D and turns by the degree like the castle (pictures without WebGL turn a quarter at a time): " + JSON.stringify({ deg: tq.deg, use3d: tq.probe.use3d, flat: tq.flat }));
   await tp.evaluate(function () { SolBuild.close(); });
   await tp.click("#player-chips .chip.add"); await tp.fill("#name-input", "Kai"); await tp.click("#btn-name-ok"); await tp.waitForTimeout(200);
   var t3 = await tp.evaluate(function () { return { coins: SolBuild.coins(), theme: SolBuild.state().theme }; });
