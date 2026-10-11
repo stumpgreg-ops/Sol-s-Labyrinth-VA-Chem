@@ -217,7 +217,7 @@ var srv = http.createServer(function (req, res) {
   check(townSt.theme === "village" && townSt.buildings === 3, "town theme still builds: " + JSON.stringify({ theme: townSt.theme, b: townSt.buildings }));
   await shot("09c-town");
   /* v5.7.9: dragging a town piece holds the view still (the ground used to slide under a lone house), the piece
-     lands where it is let go, and Turn mirrors a town picture (two ways to face) */
+     lands where it is let go; v6.1: the town is 3D, so Turn gives a building four ways to face (its pictures, without WebGL, still flip two ways) */
   await page.evaluate(function () { SolBuild.showGallery(); });
   await page.waitForSelector("#build-overlay:not(.hidden)"); await page.waitForTimeout(600);
   var tA = await page.evaluate(function () { return { pk: SolBuild._pickScreen(0), g: SolBuild._probe(0, 0, 0) }; });
@@ -225,11 +225,13 @@ var srv = http.createServer(function (req, res) {
   for (var tk = 1; tk <= 8; tk++) { await page.mouse.move(tA.pk.x - tk * 22, tA.pk.y - 30 + tk * 11); await page.waitForTimeout(25); }
   var tMid = await page.evaluate(function () { return SolBuild._probe(0, 0, 0); });
   await page.mouse.up(); await page.waitForTimeout(150);
-  var tB = await page.evaluate(function () { var o = { pk: SolBuild._pickScreen(0) }; SolBuild._select(0); o.r1 = SolBuild._turn(); o.note = document.querySelector(".build-note").textContent; o.r2 = SolBuild._turn(); return o; });
+  var tB = await page.evaluate(function () { var o = { pk: SolBuild._pickScreen(0) }; SolBuild._select(0); o.r1 = SolBuild._turn(); o.note = document.querySelector(".build-note").textContent; o.r2 = SolBuild._turn(); o.use3d = SolBuild._probe(0, 0, 0).use3d;
+    SolBuild._force2d(true); o.f1 = SolBuild._turn(); o.fnote = document.querySelector(".build-note").textContent; o.f2 = SolBuild._turn(); SolBuild._force2d(false); return o; });
   var tMoved = tB.pk.cx !== tA.pk.cx || tB.pk.cy !== tA.pk.cy;
   check(Math.abs(tMid.x2 - tA.g.x2) < 1 && Math.abs(tMid.y2 - tA.g.y2) < 1, "town: the ground holds still while a piece is dragged");
   check(!tMoved || Math.hypot(tB.pk.x - (tA.pk.x - 176), tB.pk.y - (tA.pk.y + 88)) < 60, "town: a dragged piece lands where it is let go: " + JSON.stringify({ moved: tMoved, from: [Math.round(tA.pk.x), Math.round(tA.pk.y)], to: [Math.round(tB.pk.x), Math.round(tB.pk.y)] }));
-  check(tB.r1 === 1 && tB.r2 === 0 && /faces the other way/.test(tB.note), "town: Turn flips a town building to face the other way and back: " + JSON.stringify({ r1: tB.r1, r2: tB.r2 }));
+  check(tB.use3d && tB.r1 === 1 && tB.r2 === 2 && /turned/.test(tB.note), "town: the town is 3D and Turn gives a building a quarter turn each time: " + JSON.stringify({ r1: tB.r1, r2: tB.r2, use3d: tB.use3d }));
+  check(tB.f1 === 1 && tB.f2 === 0 && /faces the other way/.test(tB.fnote), "town: as pictures (no WebGL), Turn flips a town building to face the other way and back: " + JSON.stringify({ f1: tB.f1, f2: tB.f2 }));
   await page.evaluate(function () { SolBuild.close(); });
   await page.evaluate(function () { SolBuild.importCode(localStorage.getItem("smoke.castleCode")); });
   await page.reload({ waitUntil: "load" }); await page.waitForTimeout(800);
