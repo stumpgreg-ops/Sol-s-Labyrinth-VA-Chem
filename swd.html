@@ -7,6 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache" />
   <title>Sol's Labyrinth · Skills Path (SWD)</title>
   <link rel="stylesheet" href="css/swd.css?v=1.0.0" />
+  <link rel="stylesheet" href="css/build.css?v=1.0.0" />
   <link rel="icon" type="image/png" sizes="64x64" href="assets/logo/favicon-64.png?v=1.0.0" />
   <link rel="apple-touch-icon" sizes="180x180" href="assets/logo/favicon-180.png?v=1.0.0" />
 </head>
@@ -36,6 +37,7 @@
           <button type="button" class="btn" id="btn-acc">⚙️ Accommodations</button>
           <button type="button" class="btn" id="btn-report">📊 Progress</button>
           <button type="button" class="btn" id="btn-town">🏘️ My Town</button>
+          <button type="button" class="btn" id="btn-shop">🛒 Shop</button>
           <button type="button" class="btn exit-full" id="btn-exit-full" title="Leave full screen and go back to the start screen">✕ Exit full screen</button>
           <button type="button" class="btn primary enter-full" id="btn-enter-full" title="Play in full screen">⛶ Full screen</button>
         </div>
@@ -150,13 +152,6 @@
         </div>
       </div>
     </div>
-    <div id="town" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="town-title">
-      <div class="box wide">
-        <div class="box-head"><h2 id="town-title">My Town</h2><button type="button" class="btn" data-close="town">Close</button></div>
-        <p class="dim">Every level you finish adds a building.</p>
-        <div id="town-grid" class="town-grid"></div>
-      </div>
-    </div>
     <div id="look" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="look-title">
       <div class="box">
         <div class="box-head"><h2 id="look-title">Pick a look</h2><button type="button" class="btn" data-close="look">Close</button></div>
@@ -184,6 +179,10 @@
   <script src="js/swd/swd-bank-reading.js?v=1.0.0"></script>
   <script src="js/swd/swd-bank-life.js?v=1.0.0"></script>
   <script src="js/swd/swd-acc.js?v=1.0.0"></script>
+  <!-- the town and castle builder from the main game (My Town, Shop, a new piece every 2 levels) -->
+  <script src="js/vendor/three.min.js?v=1.0.0"></script>
+  <script src="js/build3d.js?v=1.0.0"></script>
+  <script src="js/build.js?v=1.0.0"></script>
   <script src="js/swd/swd-modes.js?v=1.0.0"></script>
   <script src="js/swd/swd-app.js?v=1.0.0"></script>
 </body>

@@ -339,6 +339,9 @@ body.is-full .exit-full { display: inline-flex !important; }
 body.is-full .enter-full { display: none !important; }
 
 
+/* the main game's builder (css/build.css) uses this heading style */
+.tut-kicker { letter-spacing: .14em; text-transform: uppercase; color: var(--gold); font-size: 12px; margin: 0 0 4px; }
+
 /* ── windows ── */
 .overlay { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(4, 5, 9, .78); padding: 12px; overflow: auto; }
 .overlay .box { background: var(--panel); border: 2px solid var(--gold); border-radius: 18px; padding: 16px 20px; max-width: 560px; width: 100%; text-align: center; max-height: calc(100vh - 24px); overflow: auto; }

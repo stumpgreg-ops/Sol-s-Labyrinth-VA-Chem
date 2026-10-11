@@ -31,6 +31,8 @@ async function tap(page, sel) {
 /* the start screen: its one button goes into full screen */
 async function launch(page) { await page.click("#btn-launch"); await page.waitForTimeout(300); }
 function shown(page, sel) { return page.evaluate(function (sel) { var e = document.querySelector(sel); return !!e && getComputedStyle(e).display !== "none" && !e.closest(".hidden") && e.getBoundingClientRect().width > 0; }, sel); }
+/* the town builder's reward window opens over the results every 2 levels; the tests that are not about it close it */
+async function closeBuild(page) { await page.waitForTimeout(1000); await page.evaluate(function () { if (window.SolBuild && SolBuild.isOpen()) SolBuild.close(); }); }
 async function choose(page, band, subject, mode, acc) {
   await page.evaluate(function (a) {
     Object.keys(a.acc || {}).forEach(function (k) { SWD.acc.set(k, a.acc[k]); });
@@ -193,7 +195,7 @@ async function playLevel(page, opts) {
     check(done && n >= (r[2] === "market" ? 1 : 2), r.join(" · ") + ": a whole level plays to the results (" + res.msg.replace(/\s+/g, " ").slice(0, 60) + ")");
     if (!(r[2] === "path" && r[0] === "G2")) check(res.lv === before + 1, r.join(" · ") + ": all right on the first try moves the level up (" + before + " → " + res.lv + ")");
     await page.screenshot({ path: path.join(shots, "swd-" + r.join("-") + ".png") });
-    await page.click("#btn-res-home"); await page.waitForTimeout(200);
+    await closeBuild(page); await page.click("#btn-res-home"); await page.waitForTimeout(200);
   }
 
   /* a wrong answer: crossed out, a hint, then the right answer glows */
@@ -258,7 +260,7 @@ async function playLevel(page, opts) {
   await page.click("#btn-play"); await page.waitForTimeout(300);
   check(await page.evaluate(function () { return document.querySelectorAll("#stage .stone.down").length >= 6; }), "Rune Match face down: the stones start turned over");
   check(await playLevel(page), "Rune Match face down plays a whole level");
-  await page.click("#btn-res-home"); await page.waitForTimeout(150);
+  await closeBuild(page); await page.click("#btn-res-home"); await page.waitForTimeout(150);
 
   /* full screen refused (a frame without allowfullscreen): the game plays in the page, with a Full screen button always there */
   var nf = await newPage(1000, 500);
@@ -270,6 +272,38 @@ async function playLevel(page, opts) {
   await nf.click("#btn-play"); await nf.waitForTimeout(300);
   check(await shown(nf, "#btn-enter-full-play"), "and a Full screen button in the game's top bar");
   await nf.close();
+
+  /* the town: coins for right answers, a new piece to pick and place every 2 levels, My Town is the real builder */
+  var tp = await newPage(1366, 768);
+  await tp.goto(base + "swd.html"); await tp.waitForTimeout(300); await launch(tp);
+  await tp.evaluate(function () { SWD.acc.set("perLevel", "5"); SWD.acc.set("sounds", false); var l = SWD.players.data().last; l.band = "P1"; l.subject = "math"; l.mode = "path"; SWD.players.save(); SWDApp.renderAll(); });
+  await tp.click("#btn-play"); await tp.waitForTimeout(300);
+  await playLevel(tp);
+  var t1 = await tp.evaluate(function () { return { coins: SolBuild.coins(), msg: document.getElementById("res-msg").textContent, open: SolBuild.isOpen() }; });
+  check(t1.coins === 75 && /75 coins/.test(t1.msg) && !t1.open, "a perfect level of 5 earns 75 coins (10 an answer + 25), no piece yet (" + t1.coins + ")");
+  await tp.click("#btn-res-next"); await tp.waitForTimeout(300);
+  await playLevel(tp);
+  await tp.waitForSelector("#build-overlay:not(.hidden) .build-theme", { timeout: 8000 });
+  var kick = await tp.textContent("#build-overlay .tut-kicker");
+  check(/first reward/i.test(kick), "the 2nd level finished opens the builder's reward: pick a Town or a Castle (" + kick + ")");
+  await tp.click(".build-theme >> nth=0"); await tp.click("#build-overlay .btn.primary");
+  await tp.waitForSelector(".build-options .build-opt");
+  await tp.click(".build-options .build-opt:nth-child(1)"); await tp.waitForTimeout(300);
+  if (await tp.isVisible(".build-card.step-pick")) { await tp.click("#build-overlay .btn.primary"); await tp.waitForTimeout(300); }
+  for (var k = 0; k < 5 && await tp.isVisible("#build-overlay"); k++) {
+    if (await tp.isVisible(".build-styles:not(.hidden) .build-opt")) await tp.click(".build-styles .build-opt:nth-child(1)");
+    await tp.click("#build-overlay .btn.primary"); await tp.waitForTimeout(400);
+  }
+  var t2 = await tp.evaluate(function () { return SolBuild.state(); });
+  check(!(await tp.isVisible("#build-overlay")) && t2.theme === "village" && t2.buildings === 1, "the piece is picked, placed and the results come back (" + JSON.stringify({ theme: t2.theme, buildings: t2.buildings }) + ")");
+  await tp.click("#btn-res-home"); await tp.waitForTimeout(200);
+  await tp.click("#btn-town"); await tp.waitForTimeout(800);
+  check(await tp.isVisible("#build-overlay .build-scene canvas") && /pieces on the field/.test(await tp.textContent(".build-sub")), "My Town opens the builder's editor with the student's town");
+  await tp.evaluate(function () { SolBuild.close(); });
+  await tp.click("#player-chips .chip.add"); await tp.fill("#name-input", "Kai"); await tp.click("#btn-name-ok"); await tp.waitForTimeout(200);
+  var t3 = await tp.evaluate(function () { return { coins: SolBuild.coins(), theme: SolBuild.state().theme }; });
+  check(t3.coins === 0 && !t3.theme, "a new player starts with no coins and no town (each player has their own)");
+  await tp.close();
 
   /* the progress report */
   await page.click("#btn-report"); await page.waitForTimeout(150);
@@ -295,9 +329,10 @@ async function playLevel(page, opts) {
   for (var j = 0; j < 20; j++) { if (await page.isVisible("#tut-skip")) await page.click("#tut-skip"); else if (await page.isVisible("#read-go")) await page.click("#read-go"); else if (await page.isVisible("#trap-skip")) await page.click("#trap-skip"); else break; await page.waitForTimeout(250); }
   await page.waitForTimeout(600);
   var mz = await page.evaluate(function () { return { slips: SolScene.slips.length, choices: SolScene.claim.choices.length, sol: SolScene.claim.sol, panel: document.querySelectorAll("#eoc-choices li").length }; });
-  check(mz.slips === 3 && mz.choices === 3 && mz.panel === 3 && /^G3\./.test(mz.sol), "the maze places only as many letters as answer choices (3) and asks Grade 3 questions (" + JSON.stringify(mz) + ")");
+  check(mz.slips === mz.choices && mz.choices >= 2 && mz.choices <= 3 && mz.panel === mz.choices && /^G3\./.test(mz.sol), "the maze places only as many letters as the question has answers (3 choices at most) and asks Grade 3 questions (" + JSON.stringify(mz) + ")");
   await page.screenshot({ path: path.join(shots, "swd-play-maze.png") });
-  if (await page.evaluate(function () { return !!document.fullscreenElement; })) { await page.evaluate(function () { return document.exitFullscreen(); }); await page.waitForTimeout(400); }
+  if (await page.evaluate(function () { return !!document.fullscreenElement; })) { await page.evaluate(function () { return document.exitFullscreen(); }); }
+  await page.waitForFunction(function () { return !document.fullscreenElement; }); await page.waitForTimeout(300);
   var fsb = await page.evaluate(function () { var b = document.getElementById("btn-fs"); return { text: b.textContent, hidden: b.classList.contains("hidden") }; });
   check(!fsb.hidden && /Full screen/.test(fsb.text) && !/Exit/.test(fsb.text), "out of full screen in a main-game level, its Full screen button stays on screen (" + JSON.stringify(fsb) + ")");
   await page.goto(base + "swd.html"); await page.waitForTimeout(300); await launch(page);

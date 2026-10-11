@@ -114,7 +114,16 @@ var lms = http.createServer(function (req, res) {
   await f.click("#btn-play");
   await f.waitForSelector("#stage .money-btn");
   check(await playLevel(f), "a Market Day level plays through in Canvas");
+  /* the 2nd level finished: the town builder's reward opens over the results, with its pictures from the files */
+  await f.waitForSelector("#build-overlay:not(.hidden) .build-theme", { timeout: 10000 }).catch(function () {});
+  var rw = await f.evaluate(function () { var c = document.querySelector("#build-overlay .build-theme canvas"); return { open: !!(window.SolBuild && SolBuild.isOpen()), canvas: !!c, coins: SolBuild.coins() }; });
+  check(rw.open && rw.canvas && rw.coins > 0, "the town builder's reward opens in Canvas after 2 levels, with coins earned (" + JSON.stringify(rw) + ")");
+  await f.evaluate(function () { SolBuild.close(); });
   await f.click("#btn-res-home");
+  await f.click("#btn-town"); await page.waitForTimeout(1500);
+  var tw = await f.evaluate(function () { return { open: SolBuild.isOpen(), loaded: SolBuild.state().loaded }; });
+  check(tw.open && tw.loaded === "ok", "My Town opens the builder in Canvas with its pieces loaded from the files (" + JSON.stringify(tw) + ")");
+  await f.evaluate(function () { SolBuild.close(); });
   var lv = await f.evaluate(function () { return SWD.players.data().prog.levels; });
 
   /* Path 2: a main-game mode opens in the same page (reload) */

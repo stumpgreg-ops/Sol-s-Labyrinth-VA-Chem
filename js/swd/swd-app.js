@@ -10,9 +10,24 @@
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
   function D() { return SWD.players.data(); }
   var CHARS = ["sol_a", "sol_b", "sol_c", "sol_d", "sol_e", "sol_f", "sol_g", "sol_h"];
-  var TOWN = ["village-cottage", "village-well", "village-house", "village-lamp", "village-bakery", "village-fence", "village-stall", "village-barrels", "village-signpost", "village-crates",
-    "village-stone-cottage", "village-hay-cart", "village-chapel", "village-windmill", "village-tavern", "village-square", "village-dock", "village-watermill", "village-bell-tower", "village-manor",
-    "village-town-hall", "village-grand-mill", "village-harbour", "village-arch", "village-steps", "village-haystacks", "village-barrel-cart", "village-lamp-path", "village-cobbles"];
+  /* the town or castle: the main game's builder (js/build.js), one build per player. The key is the one the main game's
+     modes use for this player (swd-play.html gives its saves the prefix "swd.<player>."), so both share coins and town. */
+  function buildKey() { return "swd." + SWD.players.id() + ".afterHours.v1.build"; }
+  function B() { return window.SolBuild || null; }
+  function useBuild() { if (B()) { B().useKey(buildKey()); B().init(); } }
+  /* the builder's words for this game: a piece every 2 levels finished (any path, subject or game) */
+  if (window.SolBuild && SolBuild.setText) SolBuild.setText({
+    rewardKicker: function (night, k, total) { return "Reward " + k + " of " + total; },
+    firstKicker: function () { return "Your first reward · your first building"; },
+    shopKicker: function () { return "Shop"; },
+    every: "every 2 levels you finish",
+    everyShort: "every 2 levels you finish",
+    firstFree: "finish 2 levels for your first free piece",
+    nextReward: function (night) { return "next free piece after " + (night / 5 * 2) + " levels finished"; },
+    coinsFrom: function (e) { return "right answers (" + e.answer + " each on the first try) and a perfect level (+" + e.perfectNight + ")"; }
+  });
+  /* a new piece to choose every 2 levels finished: the builder's reward n is "level" 5n */
+  var REWARD_EVERY = 2;
 
   /* ── state of the selection ── */
   function last() { var l = D().last; l.band = l.band || "P1"; l.subject = l.subject || SWD.SUBJECTS[l.band][0]; l.mode = l.mode || "path"; return l; }
@@ -44,7 +59,11 @@
     var del = el("button", "btn small", "Remove"); del.type = "button";
     del.addEventListener("click", function () {
       if (SWD.players.list().length <= 1) { window.alert("There must be at least one player."); return; }
-      if (window.confirm("Remove " + cur.name + " and all of " + cur.name + "'s progress from this Chromebook?")) { SWD.players.remove(cur.id); renderAll(); }
+      if (window.confirm("Remove " + cur.name + " and all of " + cur.name + "'s progress from this Chromebook?")) {
+        var gone = cur.id;
+        if (SWD.players.remove(gone)) { try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("swd." + gone + ".") === 0) localStorage.removeItem(k); }); } catch (e) {} }
+        renderAll();
+      }
     });
     $("player-tools").appendChild(look); $("player-tools").appendChild(ren); $("player-tools").appendChild(del);
   }
@@ -164,8 +183,9 @@
   }
   function renderAll() {
     SWD.acc.apply();
+    useBuild();
     renderPlayers(); renderPath(); renderSubjects(); renderModes(); renderPlay(); renderAcc();
-    $("stars-line").textContent = "★ " + (D().prog.stars || 0) + " · 🏠 " + (D().prog.town || []).length + " buildings";
+    $("stars-line").textContent = "★ " + (D().prog.stars || 0) + (B() ? " · 🪙 " + B().coins() + " coins" : "");
   }
 
   /* ── playing ── */
@@ -204,6 +224,8 @@
         var code = it.skill || "misc", st = D().prog.skills[code] = D().prog.skills[code] || { r: 0, n: 0, name: it.skillName || code };
         st.n++; if (first) st.r++; st.t = Date.now(); st.name = it.skillName || st.name;
         results.list.push(first);
+        /* coins for the shop: the main game's rate for a right answer on the first try, a few after a hint */
+        if (B()) { var c = first ? B().economy().answer : 2; B().addCoins(c, "answer"); results.coins = (results.coins || 0) + c; }
         SWD.players.save();
       },
       /* through an <img>, so the Canvas build (which serves files from its bundle through img src) can map the address */
@@ -214,7 +236,7 @@
         if (on) { var c = 0; e._walk = setInterval(function () { c = (c + 1) % 6; e.style.setProperty("--fx", c); }, 110); cleanups.push(function () { clearInterval(e._walk); }); }
         else e.style.setProperty("--fx", 0);
       },
-      finish: function (res) { if (gone) return; run.leave(); showResults(l, m, level, res); }
+      finish: function (res) { if (gone) return; run.leave(); res.coins = results.coins || 0; showResults(l, m, level, res); }
     };
     SWD.music.wanted = true; SWD.music.sync();
     m.start(ctx);
@@ -224,9 +246,11 @@
     var stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : 1, up = pct >= 0.6, prog = D().prog, key = levelKey(l.band, l.subject, m.id);
     if (up && (prog.levels[key] || 1) <= level) prog.levels[key] = level + 1;
     prog.stars = (prog.stars || 0) + stars;
-    prog.town = prog.town || [];
-    var piece = TOWN[prog.town.length % TOWN.length];
-    prog.town.push(piece);
+    /* the town: a perfect level's bonus coins, and a new piece to pick every REWARD_EVERY levels */
+    var coins = res.coins || 0;
+    if (B() && total && right === total) { var bonus = B().economy().perfectNight; B().addCoins(bonus, "perfect"); coins += bonus; }
+    prog.done = (prog.done || 0) + 1;
+    var night = prog.done % REWARD_EVERY === 0 ? prog.done / REWARD_EVERY * 5 : 0, reward = !!(B() && night && B().rewardDue(night));
     prog.log = (prog.log || []).concat([{ d: new Date().toISOString().slice(0, 16).replace("T", " "), b: l.band, s: l.subject, m: m.id, lv: level, r: right, n: total }]).slice(-60);
     SWD.players.save();
     SWD.sound("done");
@@ -234,7 +258,8 @@
     $("res-title").textContent = up ? "Level " + level + " done!" : "Good work!";
     $("res-stars").innerHTML = [1, 2, 3].map(function (k) { return '<span class="star' + (k <= stars ? " on" : "") + '">★</span>'; }).join("");
     $("res-msg").innerHTML = (total ? right + " of " + total + " right on the first try." : "") + (up ? " Level " + (level + 1) + " is next." : " Let's practice this level once more.") +
-      '<span class="res-town"><img src="assets/build/' + piece + '.png" alt="" height="70"> A new building for your town!</span>';
+      '<span class="res-town">' + (coins ? "🪙 +" + coins + " coins for the shop" + (B() ? " (" + B().coins() + " in all)" : "") + ". " : "") +
+      (reward ? "🏰 You earned a new piece for your town!" : B() ? "Build with them in My Town." : "") + "</span>";
     $("btn-res-next").textContent = up ? "▶ Next level" : "▶ Play again";
     $("btn-res-next").onclick = function () { box.classList.add("hidden"); startPlay(up ? level + 1 : level); };
     $("btn-res-again").classList.toggle("hidden", !up);
@@ -242,6 +267,8 @@
     box.classList.remove("hidden");
     if (SWD.acc.get("readAloud")) SWD.speech.say(SWD.strip($("res-title").textContent + ". " + $("res-msg").innerHTML));
     setTimeout(function () { $("btn-res-next").focus(); }, 50);
+    /* the reward: the builder's own window (pick one of three pieces and place it), over the results */
+    if (reward) setTimeout(function () { B().showReward(night, function () { $("btn-res-next").focus(); }); }, 900);
   }
   function goHome() {
     if (run) { run.leave(); run = null; }
@@ -339,12 +366,14 @@
     });
     $("look").classList.remove("hidden");
   }
+  /* My Town: the builder's editor (place, move, turn, recolour and delete pieces); the Shop spends the coins */
   function openTown() {
-    var t = D().prog.town || [];
-    $("town-title").textContent = SWD.players.current().name + "'s town";
-    $("town-grid").innerHTML = t.length ? t.map(function (p) { return '<img src="assets/build/' + p + '.png" alt="" loading="lazy">'; }).join("") : '<p class="dim">Finish a level to get your first building.</p>';
-    $("town").classList.remove("hidden");
+    if (!B()) return;
+    useBuild();
+    if (!B().state().theme) { B().showShop(Math.max(5, (D().prog.done || 0) * 5), renderAll); return; }
+    B().showGallery(renderAll);
   }
+  function openShop() { if (!B()) return; useBuild(); B().showShop(Math.max(5, (D().prog.done || 0) * 5), renderAll); }
   function openReport() {
     var p = D().prog, h = "", name = SWD.players.current().name;
     h += "<p>" + esc(name) + " · ★ " + (p.stars || 0) + " stars · " + (p.log || []).length + " levels played (last 60 kept)</p>";
@@ -407,13 +436,17 @@
     $("btn-res-home").addEventListener("click", goHome);
     $("btn-report").addEventListener("click", openReport);
     $("btn-town").addEventListener("click", openTown);
+    $("btn-shop").addEventListener("click", openShop);
     $("btn-print").addEventListener("click", function () { window.print(); });
     $("btn-reset-prog").addEventListener("click", function () {
       if (!window.confirm("Erase all of " + SWD.players.current().name + "'s levels, stars, town and skill results on this Chromebook? (Accommodations stay.)")) return;
-      D().prog = { levels: {}, skills: {}, stars: 0, town: [], log: [] }; SWD.players.save(); openReport(); renderAll();
+      D().prog = { levels: {}, skills: {}, stars: 0, log: [] }; SWD.players.save();
+      try { localStorage.removeItem(buildKey()); } catch (e) {}
+      if (B() && B()._reload) B()._reload();
+      openReport(); renderAll();
     });
     document.querySelectorAll("[data-close]").forEach(function (b) { b.addEventListener("click", function () { $(b.getAttribute("data-close")).classList.add("hidden"); }); });
-    ["town", "report", "look", "name-dlg", "acc-dlg"].forEach(closeOnBackdrop);
+    ["report", "look", "name-dlg", "acc-dlg"].forEach(closeOnBackdrop);
     $("btn-acc").addEventListener("click", openAcc);
     $("btn-name-ok").addEventListener("click", nameOk);
     $("name-input").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); nameOk(); } });
@@ -422,7 +455,7 @@
       if (!$("launch").classList.contains("hidden")) return;   /* the start screen: only its button */
       if (e.key === "Escape") {
         if (!$("leave").classList.contains("hidden")) { stay(); e.preventDefault(); return; }
-        ["town", "report", "look", "name-dlg", "acc-dlg"].forEach(function (id) { $(id).classList.add("hidden"); });
+        ["report", "look", "name-dlg", "acc-dlg"].forEach(function (id) { $(id).classList.add("hidden"); });
         if (!$("play").classList.contains("hidden") && $("results").classList.contains("hidden")) { askLeave(); e.preventDefault(); }
       }
       if ((e.key === "r" || e.key === "R") && run && !SWD.acc.get("scan") && !(e.target && /INPUT|SELECT|TEXTAREA/.test(e.target.tagName))) run.say();

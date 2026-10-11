@@ -67,7 +67,7 @@
   function load() {
     data = lsGet(LS_P + curId, null) || {};
     data.acc = Object.assign(defaults(), data.acc || {});
-    data.prog = data.prog || { levels: {}, skills: {}, stars: 0, town: [], log: [] };
+    data.prog = data.prog || { levels: {}, skills: {}, stars: 0, log: [] };
     data.last = data.last || {};
   }
   function save() { lsSet(LS_P + curId, data); lsSet(LS_CUR, curId); }
