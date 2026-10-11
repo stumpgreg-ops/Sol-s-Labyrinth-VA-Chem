@@ -172,7 +172,7 @@
         ctx.setSay(say);
         if (ctx.acc("readAloud")) setTimeout(say, 300);
         var buttons = T.wallet.slice().sort(function (a, b) { return b - a; }).map(function (v) {
-          var b = el("button", "answer money-btn", moneyPiece(v, 0.7) + '<span class="ch-cap">' + DENOM_NAME[v] + "</span>");
+          var b = el("button", "answer money-btn", moneyPiece(v, 0.85) + '<span class="ch-cap">' + DENOM_NAME[v] + "</span>");
           b.type = "button"; b.setAttribute("aria-label", "Add a " + DENOM_NAME[v]); b._v = v;
           tray.appendChild(b); return b;
         });

@@ -1,7 +1,8 @@
-/* Sol's Labyrinth · SWD: pictures drawn in SVG (no image files), so every question works offline and in Canvas.
-   Coins carry the words a real coin carries (ONE CENT, FIVE CENTS, ONE DIME, QUARTER DOLLAR) and the true size order
-   (dime < penny < nickel < quarter); with the "Show coin values" accommodation they also show 1¢, 5¢, 10¢, 25¢.
-   Each function returns an HTML string. */
+/* Sol's Labyrinth · SWD: the pictures. Money is real photos (assets/money/: both sides of the penny, nickel, dime and
+   quarter, and the $1, $2, $5, $10, $20, $50 and $100 bills), shown in the coins' true size order (dime < penny < nickel
+   < quarter); with the "Show coin values" accommodation a coin also shows 1¢, 5¢, 10¢ or 25¢ under it. Bills are always
+   shown well under three-fourths of their real size and one side only, as US rules on pictures of currency require.
+   Everything else (clocks, signs, ten-frames, fraction pictures …) is drawn in SVG. Each function returns an HTML string. */
 (function () {
   "use strict";
   var SWD = window.SWD = window.SWD || {};
@@ -25,6 +26,14 @@
   A.coinName = function (v, n) { var c = COINS[v]; return c ? (n === 1 || n == null ? c.name : c.plural) : ""; };
   /* one coin; scale 1 = real size order at about 2 px per mm */
   A.coin = function (v, scale, opts) {
+    opts = opts || {};
+    var c = COINS[v]; if (!c) return "";
+    var d = Math.round(c.d * (scale || 1.6)), vals = opts.values != null ? opts.values : showValues(), side = opts.side === "back" ? "back" : "front";
+    return '<span class="coin-photo coin-' + v + '" style="width:' + d + 'px"><img src="assets/money/coin-' + v + "-" + side + '.png" width="' + d + '" height="' + d + '" alt="' +
+      (opts.label === false ? "" : esc(c.name + (side === "back" ? " (back)" : ""))) + '" draggable="false">' + (vals ? '<span class="coin-val">' + v + "¢</span>" : "") + "</span>";
+  };
+  /* the drawn coin (before SWD 1.0 used photos); kept for anything that needs a picture without an image file */
+  A.coinDrawn = function (v, scale, opts) {
     opts = opts || {};
     var c = COINS[v]; if (!c) return "";
     var s = (scale || 1.6), d = c.d * s, r = d / 2, cx = r + 2, cy = r + 2, W = d + 4, body = "";
@@ -51,6 +60,15 @@
   /* ── bills ── */
   var BILL_WORD = { 100: "ONE", 500: "FIVE", 1000: "TEN", 2000: "TWENTY", 5000: "FIFTY", 10000: "ONE HUNDRED" };
   A.bill = function (cents, scale) {
+    var n = cents / 100;
+    if ([1, 2, 5, 10, 20, 50, 100].indexOf(n) !== -1) {
+      /* 156 px wide at scale 1: about a quarter of a real bill's size on a classroom screen */
+      var w = Math.round(156 * (scale || 1)), h = Math.round(w * 100 / 236);
+      return '<img class="bill-photo" src="assets/money/bill-' + n + '.png" width="' + w + '" height="' + h + '" alt="$' + n + ' bill" draggable="false">';
+    }
+    return A.billDrawn(cents, scale);
+  };
+  A.billDrawn = function (cents, scale) {
     var s = scale || 1, W = 156 * s, H = 66 * s, n = cents / 100, body = "";
     body += '<rect x="1" y="1" width="' + (W - 2) + '" height="' + (H - 2) + '" rx="' + 4 * s + '" fill="#d9e4cf" stroke="#53704a" stroke-width="' + 2 * s + '"/>';
     body += '<rect x="' + 7 * s + '" y="' + 7 * s + '" width="' + (W - 14 * s) + '" height="' + (H - 14 * s) + '" rx="' + 3 * s + '" fill="none" stroke="#7d9a6f" stroke-width="' + 1.2 * s + '"/>';

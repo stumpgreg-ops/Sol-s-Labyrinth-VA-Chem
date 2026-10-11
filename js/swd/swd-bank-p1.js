@@ -12,9 +12,10 @@
   var COINV = [1, 5, 10, 25];
   function coinChoice(v, big) { return { text: A.coinName(v), html: A.coin(v, big ? 1.5 : 1.25), say: A.coinName(v) }; }
   add("money", { code: "P1.money.coin-name", name: "Name the coin", tier: 1,
-    gen: function (r) {
-      var v = r.pick(COINV), others = COINV.filter(function (x) { return x !== v; });
-      return item({ prompt: "What is this coin called?", visual: A.coin(v, 2.2), choices: [A.coinName(v)].concat(r.shuffle(others).map(function (x) { return A.coinName(x); })),
+    gen: function (r, t) {
+      /* from the 2nd step, the back of the coin some of the time: students meet both sides */
+      var v = r.pick(COINV), others = COINV.filter(function (x) { return x !== v; }), back = t >= 2 && r.chance(0.4);
+      return item({ prompt: back ? "This is the <b>back</b> of a coin. What coin is it?" : "What is this coin called?", visual: A.coin(v, 3, { side: back ? "back" : "front" }), choices: [A.coinName(v)].concat(r.shuffle(others).map(function (x) { return A.coinName(x); })),
         hint: { 1: "A penny is the copper (brown) coin.", 5: "A nickel is a big silver coin with a smooth edge.", 10: "A dime is the smallest coin.", 25: "A quarter is the biggest coin." }[v] });
     },
     pair: function (r) { var v = r.pick(COINV); return { a: { text: "", html: A.coin(v, 1.4), say: "a coin" }, b: A.coinName(v), key: "coin" + v }; },
@@ -30,9 +31,9 @@
     },
     pair: function (r) { var v = r.pick([100, 500, 1000, 2000]); return { a: { text: "", html: A.bill(v, 0.7), say: "a bill" }, b: { text: "$" + v / 100, say: v / 100 + " dollars" }, key: "bill" + v }; } });
   add("money", { code: "P1.money.coin-value", name: "How much is the coin worth?", tier: 2,
-    gen: function (r) {
-      var v = r.pick(COINV);
-      return item({ prompt: "How much is this coin worth?", visual: A.coin(v, 2.2), choices: [v + "¢"].concat(r.shuffle(COINV.filter(function (x) { return x !== v; })).map(function (x) { return x + "¢"; })),
+    gen: function (r, t) {
+      var v = r.pick(COINV), back = t >= 3 && r.chance(0.35);
+      return item({ prompt: back ? "This is the <b>back</b> of a coin. How much is it worth?" : "How much is this coin worth?", visual: A.coin(v, 3, { side: back ? "back" : "front" }), choices: [v + "¢"].concat(r.shuffle(COINV.filter(function (x) { return x !== v; })).map(function (x) { return x + "¢"; })),
         hint: "Penny 1¢, nickel 5¢, dime 10¢, quarter 25¢." });
     },
     pair: function (r) { var v = r.pick(COINV); return { a: { text: "", html: A.coin(v, 1.4), say: A.coinName(v) }, b: { text: v + "¢", say: v + " cents" }, key: "cv" + v }; },
